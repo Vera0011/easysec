@@ -1,0 +1,17 @@
+---
+grype_package_name: grype
+grype_group: grype
+grype_user: grype
+grype_time:
+  weekday: "0"
+  hour: "3"
+  minute: "0"
+
+# Config paths - Should not be changed
+grype_host: https://get.anchore.io/grype
+grype_binary_path: /usr/local/sbin/grype
+grype_binary_folder: /usr/local/sbin
+grype_config_folder: /etc/grype
+grype_log_folder: /var/log/grype
+grype_custom_config_path: /etc/grype/config.yaml
+grype_log_path: /var/log/grype/audit.log

@@ -65,11 +65,11 @@
 - name: Schedule weekly Lynis audit via cron (root)
   when: lynis_time is defined and lynis_time | length > 0
   ansible.builtin.cron:
-    name: "Lynis audit - Ansible automation"
+    name: "Lynis audit - EasySec"
     user: root
     month: "{{ lynis_time.month | default(omit) }}"
     day: "{{ lynis_time.day | default(omit) }}"
     weekday: "{{ lynis_time.weekday | default(omit) }}"
     hour: "{{ lynis_time.hour | default(omit) }}"
     minute: "{{ lynis_time.minute | default(omit) }}"
-    job: "{{ lynis_binary_path }} audit system >> /var/log/lynis/cron.log 2>&1"
+    job: "{{ lynis_binary_path }} audit system 2>&1"
