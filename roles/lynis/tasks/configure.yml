@@ -34,7 +34,7 @@
   ansible.builtin.file:
     path: "{{ lynis_config_folder }}"
     owner: "{{ lynis_user }}"
-    group: "{{ lynis_group_name }}"
+    group: "{{ lynis_group }}"
     mode: "0750"
     state: directory
 
@@ -42,7 +42,7 @@
   ansible.builtin.file:
     path: "{{ lynis_log_folder }}"
     owner: "{{ lynis_user }}"
-    group: "{{ lynis_group_name }}"
+    group: "{{ lynis_group }}"
     mode: "0750"
     state: directory
 
@@ -59,7 +59,7 @@
     dest: "{{ lynis_custom_config_path }}"
     mode: "0440"
     owner: "{{ lynis_user }}"
-    group: "{{ lynis_group_name }}"
+    group: "{{ lynis_group }}"
     attributes: +i
 
 - name: Schedule weekly Lynis audit via cron (root)
