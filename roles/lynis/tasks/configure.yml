@@ -1,0 +1,75 @@
+---
+- name: We create the required group
+  ansible.builtin.group:
+    name: "{{ lynis_group }}"
+    state: present
+
+- name: We create the required user
+  ansible.builtin.user:
+    state: present
+    name: "{{ lynis_user }}"
+    group: "{{ lynis_group }}"
+    create_home: false
+    system: true
+    umask: "027"
+    password: "!"
+
+- name: We remove inmutable flag if binary is found
+  failed_when: false
+  changed_when: false
+  ansible.builtin.file:
+    path: "{{ lynis_binary_path }}"
+    attributes: -i
+
+- name: Modify Lynis binary
+  ansible.builtin.file:
+    path: "{{ lynis_binary_path }}"
+    owner: "{{ lynis_user }}"
+    group: "{{ lynis_group }}"
+    mode: "0750"
+    state: file
+    attributes: +i
+
+- name: Modify config folder
+  ansible.builtin.file:
+    path: "{{ lynis_config_folder }}"
+    owner: "{{ lynis_user }}"
+    group: "{{ lynis_group }}"
+    mode: "0750"
+    state: directory
+
+- name: Modify log folder
+  ansible.builtin.file:
+    path: "{{ lynis_log_folder }}"
+    owner: "{{ lynis_user }}"
+    group: "{{ lynis_group }}"
+    mode: "0750"
+    state: directory
+
+- name: We remove inmutable flag if config is found
+  failed_when: false
+  changed_when: false
+  ansible.builtin.file:
+    path: "{{ lynis_custom_config_path }}"
+    attributes: -i
+
+- name: Sends custom configuration to Lynis
+  ansible.builtin.template:
+    src: templates/lynis.conf.j2
+    dest: "{{ lynis_custom_config_path }}"
+    mode: "0440"
+    owner: "{{ lynis_user }}"
+    group: "{{ lynis_group }}"
+    attributes: +i
+
+- name: Schedule weekly Lynis audit via cron (root)
+  when: lynis_time is defined and lynis_time | length > 0
+  ansible.builtin.cron:
+    name: "Lynis audit - Ansible automation"
+    user: root
+    month: "{{ lynis_time.month | default(omit) }}"
+    day: "{{ lynis_time.day | default(omit) }}"
+    weekday: "{{ lynis_time.weekday | default(omit) }}"
+    hour: "{{ lynis_time.hour | default(omit) }}"
+    minute: "{{ lynis_time.minute | default(omit) }}"
+    job: "{{ lynis_binary_path }} audit system >> /var/log/lynis/cron.log 2>&1"
