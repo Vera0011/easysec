@@ -1,4 +1,4 @@
-# Ansible - Open source Español
+# EasySec - Español
 ## Introducción
 Este archivo será usado como índice, para poder revisar y analizar las herramientas y documentación disponibles de manera más fácil
 
