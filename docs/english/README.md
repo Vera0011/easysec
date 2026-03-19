@@ -1,4 +1,4 @@
-# Ansible - Open Source (English)
+# EasySec - English
 ## Introduction
 This file will serve as an index to make it easier to review and analyze the available tools and documentation
 
