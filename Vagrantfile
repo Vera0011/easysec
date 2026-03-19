@@ -54,7 +54,7 @@ Vagrant.configure("2") do |config|
     ]
 
     # Tasks to execute
-    tasks = ["proxychains", "lynis"]
+    tasks = ["proxychains", "lynis", "grype"]
 
     # Server setup
     servers.each do |spec|

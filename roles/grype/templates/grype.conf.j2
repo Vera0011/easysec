@@ -1,0 +1,97 @@
+log:
+  quiet: false
+  level: "warn"
+  file: "{{ grype_log_path }}"
+
+dev:
+  profile: "cpu, mem"
+  db:
+    debug: false
+
+output: []
+file: ""
+pretty: false
+distro: "{{ ansible_distribution | lower }}:{{ ansible_distribution_version }}"
+add-cpes-if-none: true
+output-template-file: ""
+check-for-app-update: true
+only-fixed: false
+only-notfixed: false
+ignore-wontfix: ""
+platform: "linux"
+
+search:
+  scope: "all-layers"
+  unindexed-archives: false
+  indexed-archives: true
+
+ignore: []
+exclude: []
+
+external-sources:
+  enable: false
+  maven:
+    search-maven-upstream: true
+    base-url: "https://search.maven.org/solrsearch/select"
+    rate-limit: 300ms
+
+match:
+  java:
+    using-cpes: false
+  jvm:
+    using-cpes: true
+  dotnet:
+    using-cpes: false
+  golang:
+    using-cpes: false
+    always-use-cpe-for-stdlib: true
+    allow-main-module-pseudo-version-comparison: false
+  javascript:
+    using-cpes: false
+  python:
+    using-cpes: false
+  ruby:
+    using-cpes: false
+  rust:
+    using-cpes: false
+  stock:
+    using-cpes: true
+
+fail-on-severity: ""
+registry:
+  insecure-skip-tls-verify: false
+  insecure-use-http: false
+  auth: []
+  ca-cert: ""
+
+show-suppressed: false
+by-cve: false
+sort-by: "risk"
+name: ""
+default-image-pull-source: ""
+from: []
+vex-documents: []
+vex-add: []
+match-upstream-kernel-headers: false
+
+fix-channel:
+  redhat-eus:
+    apply: "auto"
+    versions: ">= 8.0"
+
+timestamp: true
+
+db:
+  cache-dir: "/etc/grype/.cache/db"
+  update-url: "https://grype.anchore.io/databases"
+  ca-cert: ""
+  auto-update: true
+  validate-by-hash-on-start: true
+  validate-age: true
+  max-allowed-built-age: 120h0m0s
+  require-update-check: false
+  update-available-timeout: 30s
+  update-download-timeout: 5m0s
+  max-update-check-frequency: 2h0m0s
+
+exp:

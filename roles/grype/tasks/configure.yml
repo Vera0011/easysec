@@ -1,0 +1,81 @@
+---
+- name: We create the required group
+  ansible.builtin.group:
+    name: "{{ grype_group }}"
+    state: present
+
+- name: We create the required user
+  ansible.builtin.user:
+    state: present
+    name: "{{ grype_user }}"
+    group: "{{ grype_group }}"
+    create_home: false
+    system: true
+    umask: "027"
+    password: "!"
+
+- name: We remove inmutable flag if binary is found
+  failed_when: false
+  changed_when: false
+  ansible.builtin.file:
+    path: "{{ grype_binary_path }}"
+    attributes: -i
+
+- name: Modify Grype binary
+  ansible.builtin.file:
+    path: "{{ grype_binary_path }}"
+    owner: "{{ grype_user }}"
+    group: "{{ grype_group }}"
+    mode: "0750"
+    state: file
+    attributes: +i
+
+- name: Modify config folder
+  ansible.builtin.file:
+    path: "{{ grype_config_folder }}"
+    owner: "{{ grype_user }}"
+    group: "{{ grype_group }}"
+    mode: "0750"
+    state: directory
+
+- name: Modify log folder
+  ansible.builtin.file:
+    path: "{{ grype_log_folder }}"
+    owner: "{{ grype_user }}"
+    group: "{{ grype_group }}"
+    mode: "0750"
+    state: directory
+
+- name: We remove inmutable flag if config is found
+  failed_when: false
+  changed_when: false
+  ansible.builtin.file:
+    path: "{{ grype_custom_config_path }}"
+    attributes: -i
+
+- name: Sends custom configuration to Grype
+  ansible.builtin.template:
+    src: templates/grype.conf.j2
+    dest: "{{ grype_custom_config_path }}"
+    mode: "0440"
+    owner: "{{ grype_user }}"
+    group: "{{ grype_group }}"
+    attributes: +i
+
+- name: Updates PATH to add the path of the configuration file
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    line: "GRYPE_CONFIG={{ grype_custom_config_path }}"
+    state: present
+
+- name: Schedule weekly Grype audit via cron (root)
+  when: grype_time is defined and grype_time | length > 0
+  ansible.builtin.cron:
+    name: "Grype audit - EasySec"
+    user: root
+    month: "{{ grype_time.month | default(omit) }}"
+    day: "{{ grype_time.day | default(omit) }}"
+    weekday: "{{ grype_time.weekday | default(omit) }}"
+    hour: "{{ grype_time.hour | default(omit) }}"
+    minute: "{{ grype_time.minute | default(omit) }}"
+    job: "{{ grype_binary_path }} system >> {{ grype_log_path }} 2>&1"
