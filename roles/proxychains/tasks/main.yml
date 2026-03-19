@@ -1,0 +1,12 @@
+---
+# Clean always executed to remove old proxies
+- name: Clean
+  ansible.builtin.include_tasks: clean.yml
+
+- name: Install Tor and specific proxies
+  when: proxychains_clean is false
+  ansible.builtin.include_tasks: install.yml
+
+- name: Configure proxychains and Tor setup
+  when: proxychains_clean is false
+  ansible.builtin.include_tasks: configure.yml

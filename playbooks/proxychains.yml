@@ -1,0 +1,9 @@
+---
+- name: Installs Proxychains on test host (Vagrant)
+  hosts: vagrant-kali-1
+  become: true
+  roles:
+    - proxychains
+  vars:
+    proxychains_clean: false
+    proxychains_total_proxies: 5

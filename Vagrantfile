@@ -5,11 +5,15 @@ Vagrant.configure("2") do |config|
 
     # Config for VirtualBox
     config.vm.provider "virtualbox" do |vb|
-      vb.memory = "512"
       vb.linked_clone = true
-      vb.cpus = 1
       vb.check_guest_additions = false
       vb.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"] # Allows promiscuous mode
+    end
+
+    # Generate RSA keys on the host before provisioning
+    config.trigger.before :up do |trigger|
+        trigger.name = "Generate RSA keys"
+        trigger.run = { path: "./scripts/create_keys.sh" }
     end
 
     # We set custom keys for the Vagrant main process
@@ -23,14 +27,26 @@ Vagrant.configure("2") do |config|
 
     ## Servers to set up
     servers = [
-        { name: "vagrant-manager-1", box: "ubuntu/jammy64", ip: "192.168.56.2" },
-        { name: "vagrant-wazuh-1", box: "ubuntu/jammy64", ip: "192.168.56.10" },
-        { name: "vagrant-wazuh-indexer-1", box: "ubuntu/jammy64", ip: "192.168.56.11" },
-        { name: "vagrant-kibana-1", box: "ubuntu/jammy64", ip: "192.168.56.12" }
+        { 
+            name: "vagrant-manager-1",
+            box: "ubuntu/jammy64",
+            ip: "192.168.56.2",
+            memory: "512",
+            cpus: 1,
+            boot_timeout: 600
+        },
+        { 
+            name: "vagrant-kali-1",
+            box: "kalilinux/rolling",
+            ip: "192.168.56.3",
+            memory: "2048",
+            cpus: 2,
+            boot_timeout: 600
+        }
     ]
 
     # Tasks to execute
-    tasks = []
+    tasks = ["proxychains"]
 
     # Server setup
     servers.each do |spec|
@@ -38,13 +54,22 @@ Vagrant.configure("2") do |config|
             node.vm.box = spec[:box]
             node.vm.hostname = spec[:name]
             node.vm.network "private_network", ip: "#{spec[:ip]}"
+            node.vm.boot_timeout = spec[:boot_timeout]
+            
+            # Override provider settings per node if specified
+            if spec[:memory] || spec[:cpus]
+                node.vm.provider "virtualbox" do |vb|
+                    vb.memory = spec[:memory] if spec[:memory]
+                    vb.cpus = spec[:cpus] if spec[:cpus]
+                end
+            end
             
             # Task execution (from manager node)
             if spec[:name] == "vagrant-manager-1"
                 tasks.each do |task|
                     node.vm.provision task, type: "ansible" do |ansible|
-                        ansible.playbook = "tests/#{task}.yml"
-                        ansible.inventory_path = "inventories/hosts.yml"
+                        ansible.playbook = "playbooks/#{task}.yml"
+                        ansible.inventory_path = "inventory/hosts.yml"
                         ansible.limit = "all"
                         ansible.raw_ssh_args = [
                             '-o ControlMaster=auto',

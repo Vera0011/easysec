@@ -1,0 +1,14 @@
+## Proxychains configuration
+
+round_robin_chain
+chain_len = 1
+proxy_dns
+remote_dns_subnet 224
+
+tcp_read_time_out 15000
+tcp_connect_time_out 8000
+
+[ProxyList]
+{% for item in range(1, proxychains_total_proxies + 1) | list %}
+socks5  127.0.0.1 {{ 9050 + item }}
+{% endfor %}

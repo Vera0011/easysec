@@ -1,0 +1,8 @@
+---
+- name: Installs the default software if not found
+  ansible.builtin.apt:
+    name:
+      - proxychains
+      - tor
+    state: present
+    update_cache: true
