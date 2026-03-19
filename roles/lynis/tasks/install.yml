@@ -1,0 +1,46 @@
+---
+- name: Installs required packages
+  ansible.builtin.apt:
+    name:
+      - wget
+      - gnupg
+      - apt-transport-https
+      - ca-certificates
+    update_cache: true
+
+- name: Downloads GPG key
+  ansible.builtin.get_url:
+    url: https://packages.cisofy.com/keys/cisofy-software-public.key
+    dest: /tmp/lynis.key
+    mode: "0644"
+
+- name: Verify Lynis GPG key fingerprint
+  register: lynis_gpg_output
+  changed_when: false
+  failed_when: "'84FAA9983B24AEF24D6C87F1FEBB7D1812576482' not in lynis_gpg_output.stdout"
+  ansible.builtin.command:
+    cmd: gpg --dry-run --quiet --no-keyring --import --import-options import-show /tmp/lynis.key
+
+- name: Dearmor Lynis GPG key
+  ansible.builtin.command:
+    cmd: gpg --dearmor -o {{ lynis_keyring_path }} /tmp/lynis.key
+    creates: "{{ lynis_keyring_path }}"
+
+- name: Remove temporary key file
+  ansible.builtin.file:
+    path: /tmp/lynis.key
+    state: absent
+
+- name: Add official repository to apt sources
+  ansible.builtin.apt_repository:
+    repo: >
+      deb [arch=amd64 signed-by={{ lynis_keyring_path }}]
+      https://packages.cisofy.com/community/lynis/deb/ stable main
+    state: present
+    filename: lynis
+    update_cache: true
+
+- name: Install Lynis
+  ansible.builtin.apt:
+    name: lynis
+    state: present
