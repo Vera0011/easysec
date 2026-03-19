@@ -1,0 +1,16 @@
+---
+lynis_package_name: lynis
+lynis_lang: en
+lynis_user: lynis
+lynis_group: lynis
+lynis_time:
+  weekday: "0"
+  hour: "3"
+  minute: "0"
+
+# Config paths - Should not be changed
+lynis_binary_path: /usr/sbin/lynis
+lynis_keyring_path: /etc/apt/keyrings/lynis-keyring.gpg
+lynis_config_folder: /etc/lynis
+lynis_log_folder: /var/log/lynis
+lynis_custom_config_path: /etc/lynis/custom.prf

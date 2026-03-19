@@ -10,7 +10,7 @@ The implementation of this tool in Ansible is as follows:
 3. Traffic generated during use will be redirected to Tor services.
 
 ## Usage
-1. Run the playbook (instructions can be found [here](../../../roles/proxychains/README.md))
+1. Run the playbook (instructions can be found [here](../../../../roles/proxychains/README.md))
 2. After installation, run the following command:
 ```bash
 proxychains -q <service>
