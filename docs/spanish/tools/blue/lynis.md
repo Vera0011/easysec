@@ -1,6 +1,6 @@
 # Lynis
 ## Introducción
-Lynis es un paquete disponible en distribuciones del kernel de Linux (Ubuntu, Kali Linux...). Se emplea para realizar auditorías de seguridad del sistema, analizando configuraciones, vulnerabilidades y el estado general del sistema. </br>
+Lynis es un software instalable. Se emplea para realizar auditorías de seguridad del sistema, analizando configuraciones, vulnerabilidades y el estado general del sistema. </br>
 Esta herramienta pertenece a la sección de `Blue Team`.
 
 ## Implementación

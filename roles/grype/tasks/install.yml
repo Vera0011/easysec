@@ -1,0 +1,16 @@
+---
+- name: Downloads installation script
+  ansible.builtin.get_url:
+    url: "{{ grype_host }}"
+    dest: /tmp/grype_install.sh
+    mode: "0700"
+
+- name: Install Grype
+  ansible.builtin.command:
+    cmd: /tmp/grype_install.sh -b {{ grype_binary_folder }}
+    creates: "{{ grype_binary_path }}"
+
+- name: Installation script removal
+  ansible.builtin.file:
+    path: /tmp/grype_install.sh
+    state: absent
