@@ -42,6 +42,14 @@ Vagrant.configure("2") do |config|
             memory: "2048",
             cpus: 2,
             boot_timeout: 600
+        },
+        { 
+            name: "vagrant-ubuntu-1",
+            box: "ubuntu/jammy64",
+            ip: "192.168.56.4",
+            memory: "2048",
+            cpus: 2,
+            boot_timeout: 600
         }
     ]
 
