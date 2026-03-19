@@ -1,0 +1,4 @@
+---
+proxychains_package_name: proxychains
+proxychains_clean: false
+proxychains_total_proxies: 1

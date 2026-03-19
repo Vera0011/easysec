@@ -1,0 +1,7 @@
+## Configuration of Tor service
+
+SocksPort {{ 9050 + item }} IsolateSOCKSAuth
+DataDirectory /var/lib/tor/instance-{{ item }}
+PidFile /var/lib/tor/instance-{{ item }}/tor.pid
+Log notice file /var/log/tor/instance-{{ item }}.log
+SocksPolicy accept 127.0.0.1
