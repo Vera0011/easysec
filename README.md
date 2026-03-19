@@ -1,4 +1,4 @@
-# Ansible - OpenSource tools
+# Ansible - Open source tools
 ## Introduction
 ### English
 This repository includes a variety of roles, documentation, and tools designed to help small and medium-sized enterprises (SMEs) implement security measures within their own organizations.
