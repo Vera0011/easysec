@@ -8,4 +8,5 @@ Este archivo será usado como índice, para poder revisar y analizar las herrami
 
 ## Blue team
 ### Herramientas
-- Lynis - Un software para analizar y generar reportes (en base a ciertas directrices) de máquinas. Información sobre la implementación [aquí](./tools/blue/lynis.md)
+- Lynis - Un software para analizar y generar reportes (en base a ciertas directrices) de máquinas y contenedores. Información sobre la implementación [aquí](./tools/blue/lynis.md)
+- Grype - Un software para analizar y generar reportes de máquinas, contenedores y repositorios. Información sobre la implementación [aquí](./tools/blue/grype.md)

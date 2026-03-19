@@ -72,4 +72,4 @@
     weekday: "{{ lynis_time.weekday | default(omit) }}"
     hour: "{{ lynis_time.hour | default(omit) }}"
     minute: "{{ lynis_time.minute | default(omit) }}"
-    job: "{{ lynis_binary_path }} audit system >> {{ lynis_log_path }} 2>&1"
+    job: "{{ lynis_binary_path }} audit system 2>&1"

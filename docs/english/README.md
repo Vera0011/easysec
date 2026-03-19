@@ -8,4 +8,5 @@ This file will serve as an index to make it easier to review and analyze the ava
 
 ## Blue team
 ### Tools
-- Lynis - Software for analyzing machines and generating reports (based on specific guidelines). Information on implementation [here](./tools/blue/lynis.md)
+- Lynis - Software for machine and container analysis and generating reports (based on specific guidelines). Information of implementation [here](./tools/blue/lynis.md)
+- Grype - Software for machine, container and repository analysis and generating reports. Information of implementation [here](./tools/blue/grype.md)

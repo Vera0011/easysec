@@ -14,4 +14,4 @@ grype_binary_folder: /usr/local/sbin
 grype_config_folder: /etc/grype
 grype_log_folder: /var/log/grype
 grype_custom_config_path: /etc/grype/config.yaml
-grype_log_path: /var/log/grype/audit.yml
+grype_log_path: /var/log/grype/audit.log

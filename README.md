@@ -24,34 +24,74 @@ Toda la documentación relacionada con este proyecto puede ser encontrada en [aq
 Depending on how the project progresses, these are the tools and environments I would like to implement:
 - [X] Proxychains + Tor
 - [X] Lynis
-- [] Grype
-- [] SOC environment - Wazuh
-- [] SOAR environment - Shuffle
-- [] Bandit
-- [] HashiCorp Vault
-- [] Checkov
-- [] Trivy
-- [] Gitleaks
-- [] Betterleaks
-- [] Fail2ban
-- [] Aikido Safe-chain
-- [] ScoutSuite
-- [] Red Teaming Environment - Required Tools
+- [X] Grype
+- [ ] Syft
+- [ ] Grant
+- [ ] Keycloak
+- [ ] Netmaker
+- [ ] Pomerium
+- [ ] Netbird
+- [ ] MISP
+- [ ] TheHive
+- [ ] Suricata
+- [ ] Nftables
+- [ ] Iptables
+- [ ] UFW
+- [ ] Teleport
+- [ ] Jenkins
+- [ ] Graylog
+- [ ] OpenSCAP
+- [ ] InSpec
+- [ ] OpenVAS
+- [ ] Nessus
+- [ ] Trivy
+- [ ] SOC environment - Wazuh
+- [ ] SOAR environment - Shuffle
+- [ ] Bandit
+- [ ] HashiCorp Vault
+- [ ] Checkov
+- [ ] Trivy
+- [ ] Gitleaks
+- [ ] Betterleaks
+- [ ] Fail2ban
+- [ ] Aikido Safe-chain
+- [ ] ScoutSuite
+- [ ] Red Teaming Environment - Required Tools
 
 ### Español
-Según cómo vaya el proyecto, estas son las herramientas y entornos que me gustaría a implementar:
+Según cómo vaya el proyecto, estas son las herramientas y entornos que me gustaría implementar:
 - [X] Proxychains + Tor
 - [X] Lynis
-- [] Grype
-- [] Entorno SOC - Wazuh
-- [] Entorno SOAR - Shuffle
-- [] Bandit
-- [] HashiCorp Vault
-- [] Checkov
-- [] Trivy
-- [] Gitleaks
-- [] Betterleaks
-- [] Fail2ban
-- [] Aikido Safe-chain
-- [] ScoutSuite
-- [] Entorno Red Teaming - Herramientas necesarias
+- [X] Grype
+- [ ] Syft
+- [ ] Grant
+- [ ] Keycloak
+- [ ] Netmaker
+- [ ] Pomerium
+- [ ] Netbird
+- [ ] MISP
+- [ ] TheHive
+- [ ] Suricata
+- [ ] Nftables
+- [ ] Iptables
+- [ ] UFW
+- [ ] Teleport
+- [ ] Jenkins
+- [ ] Graylog
+- [ ] OpenSCAP
+- [ ] InSpec
+- [ ] OpenVAS
+- [ ] Nessus
+- [ ] Trivy
+- [ ] Entorno SOC - Wazuh
+- [ ] Entorno SOAR - Shuffle
+- [ ] Bandit
+- [ ] HashiCorp Vault
+- [ ] Checkov
+- [ ] Trivy
+- [ ] Gitleaks
+- [ ] Betterleaks
+- [ ] Fail2ban
+- [ ] Aikido Safe-chain
+- [ ] ScoutSuite
+- [ ] Entorno Red Teaming - Herramientas necesarias
