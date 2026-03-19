@@ -4,6 +4,16 @@
     name: "{{ lynis_group }}"
     state: present
 
+- name: We create the required user
+  ansible.builtin.user:
+    state: present
+    name: "{{ lynis_user }}"
+    group: "{{ lynis_group }}"
+    create_home: false
+    system: true
+    umask: "027"
+    password: "!"
+
 - name: We remove inmutable flag if binary is found
   failed_when: false
   changed_when: false

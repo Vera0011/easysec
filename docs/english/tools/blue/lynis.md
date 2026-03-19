@@ -6,7 +6,7 @@ This tool belongs to the `Blue Team` section.
 ## Implementation
 The implementation of this tool in Ansible is as follows:
 1. Lynis is installed and configured on the specified host
-2. A dedicated user and group are used to run Lynis. If they do not exist, they are automatically created
+2. A dedicated user and group are used to run Lynis. If they do not exist, they are automatically created (the created user is "system" type and does not have a home path set)
 3. A cron job is configured (optionally) for the automatic generation of reports
 4. The current activated compliance standards are:
     - `cis`

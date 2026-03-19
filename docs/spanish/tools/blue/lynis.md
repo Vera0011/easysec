@@ -6,7 +6,7 @@ Esta herramienta pertenece a la sección de `Blue Team`.
 ## Implementación
 La implementación de esta herramienta en Ansible es la siguiente:
 1. Se instala y configura Lynis en el host especificado
-2. Se emplea un usuario y grupo dedicado para la ejecución de Lynis. Si no existe, se crean automáticamente
+2. Se emplea un usuario y grupo dedicado para la ejecución de Lynis. Si no existe, se crean automáticamente (el usuario creado es del tipo "sistema" y no tiene la ruta del home)
 3. Se configura (opcionalmente) un cron job para la generación automática de reportes
 4. Las normas de cumplimiento activadas actualmente son:
     - `cis`
