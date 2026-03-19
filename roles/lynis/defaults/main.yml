@@ -1,12 +1,11 @@
 ---
 lynis_package_name: lynis
+lynis_lang: en
 lynis_user: lynis
 lynis_group: lynis
 lynis_time:
-  month: "0"
-  day: "0"
   weekday: "0"
-  hour: "0"
+  hour: "3"
   minute: "0"
 
 # Config paths - Should not be changed
