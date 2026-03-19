@@ -1,0 +1,56 @@
+---
+- name: Lists all instances from tor (old ones)
+  register: proxychains_active_services
+  changed_when: false
+  ansible.builtin.shell: |
+    sudo systemctl list-units --no-legend "tor@instance-*"
+
+- name: Extracts the names of the services
+  ansible.builtin.set_fact:
+    proxychains_mapped_services: >-
+      {{
+        proxychains_active_services.stdout_lines
+        | map('regex_search', 'tor@instance-[^. ]+')
+        | select('string')
+        | list
+      }}
+
+- name: Stops and deletes all current services
+  loop: "{{ proxychains_mapped_services }}"
+  ansible.builtin.systemd:
+    state: stopped
+    enabled: false
+    name: "{{ item }}.service"
+
+- name: Deletes all previous logs
+  ansible.builtin.file:
+    path: /var/log/tor
+    state: absent
+    force: true
+
+- name: Deletes all previous data
+  ansible.builtin.file:
+    path: /var/lib/tor
+    state: absent
+    force: true
+
+- name: Deletes all previous configs
+  ansible.builtin.file:
+    path: /etc/tor/instances
+    state: absent
+    force: true
+
+- name: Deletes all previous units
+  ansible.builtin.file:
+    path: /etc/systemd/system/tor@.service
+    state: absent
+    force: true
+
+- name: Reloads daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Resets daemon (for failed units)
+  changed_when: false
+  ansible.builtin.command: |
+    systemctl reset-failed

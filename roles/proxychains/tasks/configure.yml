@@ -1,0 +1,94 @@
+---
+- name: Creates the default log directory
+  ansible.builtin.file:
+    path: /var/log/tor
+    recurse: true
+    state: directory
+    group: debian-tor
+    owner: debian-tor
+    mode: "755"
+
+- name: Creates the default log files
+  loop: "{{ range(1, proxychains_total_proxies + 1) | list }}"
+  ansible.builtin.file:
+    dest: /var/log/tor/instance-{{ item }}.log
+    state: touch
+    group: debian-tor
+    owner: debian-tor
+    mode: "644"
+
+- name: Creates the default lib dirs
+  loop: "{{ range(1, proxychains_total_proxies + 1) | list }}"
+  ansible.builtin.file:
+    path: /var/lib/tor/instance-{{ item }}
+    recurse: true
+    state: directory
+    group: debian-tor
+    owner: debian-tor
+    mode: "755"
+
+- name: Creates the config directory for proxies
+  ansible.builtin.file:
+    path: /etc/tor/instances
+    mode: "755"
+    recurse: true
+    state: directory
+    owner: debian-tor
+    group: debian-tor
+
+- name: Creates the config files of proxies
+  loop: "{{ range(1, proxychains_total_proxies + 1) | list }}"
+  ansible.builtin.template:
+    src: templates/service.config.j2
+    dest: /etc/tor/instances/instance-{{ item }}
+    mode: "644"
+    owner: root
+    group: root
+    force: true
+
+- name: Create the unit file for the systemctl daemon
+  ansible.builtin.template:
+    src: templates/service.unit.config.j2
+    dest: /etc/systemd/system/tor@.service
+    mode: "644"
+    owner: root
+    group: root
+
+- name: Create the run directory
+  loop: "{{ range(1, proxychains_total_proxies + 1) | list }}"
+  ansible.builtin.file:
+    path: /run/tor/instance-{{ item }}
+    recurse: true
+    state: directory
+    group: root
+    owner: root
+    mode: "644"
+
+- name: We restart systemctl daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Creates the config for proxychains
+  ansible.builtin.template:
+    src: templates/proxychains.config.j2
+    dest: /etc/proxychains.conf
+    mode: "644"
+    owner: root
+    group: root
+    force: true
+
+- name: Creates the config for proxychains4
+  ansible.builtin.template:
+    src: templates/proxychains.config.j2
+    dest: /etc/proxychains4.conf
+    mode: "644"
+    owner: root
+    group: root
+    force: true
+
+- name: We start and enable all Tor services
+  loop: "{{ range(1, proxychains_total_proxies + 1) | list }}"
+  ansible.builtin.systemd:
+    state: started
+    enabled: true
+    name: tor@instance-{{ item }}

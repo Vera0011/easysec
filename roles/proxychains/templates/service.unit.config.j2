@@ -1,0 +1,18 @@
+[Unit]
+Description= Tor Proxy - Instance %i - Ansible automation
+After=network.target
+
+[Service]
+Type=simple
+User=debian-tor
+Group=debian-tor
+ExecStart=/usr/bin/tor -f /etc/tor/instances/%i
+RuntimeDirectoryMode=0700
+PIDFile=/var/lib/tor/%i/tor.pid
+Restart=on-failure
+LimitNOFILE=65536
+LimitCORE=infinity
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target
