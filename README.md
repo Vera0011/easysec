@@ -23,7 +23,7 @@ Toda la documentación relacionada con este proyecto puede ser encontrada en [aq
 ### English
 Depending on how the project progresses, these are the tools and environments I would like to implement:
 - [X] Proxychains + Tor
-- [] Lynis
+- [X] Lynis
 - [] Grype
 - [] SOC environment - Wazuh
 - [] SOAR environment - Shuffle
@@ -41,7 +41,7 @@ Depending on how the project progresses, these are the tools and environments I 
 ### Español
 Según cómo vaya el proyecto, estas son las herramientas y entornos que me gustaría a implementar:
 - [X] Proxychains + Tor
-- [] Lynis
+- [X] Lynis
 - [] Grype
 - [] Entorno SOC - Wazuh
 - [] Entorno SOAR - Shuffle
