@@ -65,7 +65,7 @@
 - name: Updates PATH to add the path of the configuration file
   ansible.builtin.lineinfile:
     path: /etc/environment
-    line: "syft_CONFIG={{ syft_custom_config_path }}"
+    line: "SYFT_CONFIG={{ syft_custom_config_path }}"
     state: present
 
 - name: Schedule weekly Syft audit via cron (root)
