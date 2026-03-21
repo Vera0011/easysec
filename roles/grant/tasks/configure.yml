@@ -1,0 +1,81 @@
+---
+- name: We create the required group
+  ansible.builtin.group:
+    name: "{{ grant_group }}"
+    state: present
+
+- name: We create the required user
+  ansible.builtin.user:
+    state: present
+    name: "{{ grant_user }}"
+    group: "{{ grant_group }}"
+    create_home: false
+    system: true
+    umask: "027"
+    password: "!"
+
+- name: We remove inmutable flag if binary is found
+  failed_when: false
+  changed_when: false
+  ansible.builtin.file:
+    path: "{{ grant_binary_path }}"
+    attributes: -i
+
+- name: Modify Grant binary
+  ansible.builtin.file:
+    path: "{{ grant_binary_path }}"
+    owner: "{{ grant_user }}"
+    group: "{{ grant_group }}"
+    mode: "0750"
+    state: file
+    attributes: +i
+
+- name: Modify config folder
+  ansible.builtin.file:
+    path: "{{ grant_config_folder }}"
+    owner: "{{ grant_user }}"
+    group: "{{ grant_group }}"
+    mode: "0750"
+    state: directory
+
+- name: Modify log folder
+  ansible.builtin.file:
+    path: "{{ grant_log_folder }}"
+    owner: "{{ grant_user }}"
+    group: "{{ grant_group }}"
+    mode: "0750"
+    state: directory
+
+- name: We remove inmutable flag if config is found
+  failed_when: false
+  changed_when: false
+  ansible.builtin.file:
+    path: "{{ grant_custom_config_path }}"
+    attributes: -i
+
+- name: Sends custom configuration to Grant
+  ansible.builtin.template:
+    src: templates/grant.conf.j2
+    dest: "{{ grant_custom_config_path }}"
+    mode: "0440"
+    owner: "{{ grant_user }}"
+    group: "{{ grant_group }}"
+    attributes: +i
+
+- name: Updates PATH to add the path of the configuration file
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    line: "GRANT_CONFIG={{ grant_custom_config_path }}"
+    state: present
+
+- name: Schedule weekly Grant audit via cron (root)
+  when: grant_time is defined and grant_time | length > 0
+  ansible.builtin.cron:
+    name: "Grant audit - EasySec"
+    user: root
+    month: "{{ grant_time.month | default(omit) }}"
+    day: "{{ grant_time.day | default(omit) }}"
+    weekday: "{{ grant_time.weekday | default(omit) }}"
+    hour: "{{ grant_time.hour | default(omit) }}"
+    minute: "{{ grant_time.minute | default(omit) }}"
+    job: "{{ grant_binary_path }} / 2>&1"
