@@ -9,6 +9,8 @@ Con este workflow (proporcionado por Anchore) se puede escanear un sistema, un c
 - Análisis de dependencias
 - Análisis de licencias
 
+La implementación actual del workflow solo ejecuta un análisis de todo el sistema (en un cronjob)
+
 ## Organización del workflow
 ![image](../../../../assets/anchore_workflow.png)
 

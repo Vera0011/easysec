@@ -9,6 +9,8 @@ With this worflow (provided by Anchore) a system, container or project can be sc
 - Dependency analysis
 - License analysis
 
+The current workflow implementation executes only a system-wide scan (in cronjob)
+
 ## Workflow organization
 ![image](../../../../assets/anchore_workflow.png)
 
