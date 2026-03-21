@@ -61,8 +61,9 @@ Vagrant.configure("2") do |config|
         }
     ]
 
-    # Tasks to execute
-    tasks = ["proxychains", "lynis", "grype", "syft"]
+    # Tasks to execute - Single playbooks and complete workflows
+    playbooks = ["proxychains", "lynis", "grype", "syft", "grant"]
+    workflows = []
 
     # Server setup
     servers.each do |spec|
@@ -80,11 +81,27 @@ Vagrant.configure("2") do |config|
                 end
             end
             
-            # Task execution (from manager node)
+            # Playbooks and workflows execution (from manager node)
             if spec[:name] == "vagrant-manager-1"
-                tasks.each do |task|
+                playbooks.each do |task|
                     node.vm.provision task, type: "ansible" do |ansible|
                         ansible.playbook = "playbooks/#{task}.yml"
+                        ansible.inventory_path = "inventory/hosts.yml"
+                        ansible.limit = "all"
+                        ansible.raw_ssh_args = [
+                            '-o ControlMaster=auto',
+                            '-o ControlPersist=300s',
+                            '-o PreferredAuthentications=publickey',
+                            '-o StrictHostKeyChecking=no',
+                            '-o UserKnownHostsFile=/dev/null',
+                            "-o IdentityFile=./vagrant/id_rsa"
+                        ]
+                    end
+                end
+
+                workflows.each do |task|
+                    node.vm.provision task, type: "ansible" do |ansible|
+                        ansible.playbook = "workflows/#{task}.yml"
                         ansible.inventory_path = "inventory/hosts.yml"
                         ansible.limit = "all"
                         ansible.raw_ssh_args = [
