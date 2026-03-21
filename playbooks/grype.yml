@@ -1,6 +1,6 @@
 ---
 - name: Installs Grype on test host (Vagrant)
-  hosts: vagrant-ubuntu-1
+  hosts: vagrant-jammy-1, vagrant-noble-1
   become: true
   roles:
     - grype

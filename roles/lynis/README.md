@@ -39,6 +39,7 @@ The role has been tested in the following hosts:
 
 ### Target hosts
 - Ubuntu Server 22.04 (Jammy Jellyfish)
+- Ubuntu Server 24.04 (Noble Numbat)
 
 ### Manager hosts
 - Ubuntu Server 22.04 (Jammy Jellyfish)
