@@ -78,4 +78,4 @@
     weekday: "{{ syft_time.weekday | default(omit) }}"
     hour: "{{ syft_time.hour | default(omit) }}"
     minute: "{{ syft_time.minute | default(omit) }}"
-    job: "{{ syft_binary_path }} / 2>&1"
+    job: "{{ syft_job }}"

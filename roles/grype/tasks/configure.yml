@@ -78,4 +78,4 @@
     weekday: "{{ grype_time.weekday | default(omit) }}"
     hour: "{{ grype_time.hour | default(omit) }}"
     minute: "{{ grype_time.minute | default(omit) }}"
-    job: "{{ grype_binary_path }} / 2>&1"
+    job: "{{ grype_job }}"

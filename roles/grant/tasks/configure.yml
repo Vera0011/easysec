@@ -78,4 +78,4 @@
     weekday: "{{ grant_time.weekday | default(omit) }}"
     hour: "{{ grant_time.hour | default(omit) }}"
     minute: "{{ grant_time.minute | default(omit) }}"
-    job: "{{ grant_binary_path }} list / 2>&1"
+    job: "{{ grant_job }}"
