@@ -1,0 +1,16 @@
+---
+- name: Downloads installation script
+  ansible.builtin.get_url:
+    url: "{{ grant_host }}"
+    dest: /tmp/grant_install.sh
+    mode: "0700"
+
+- name: Install Grant
+  ansible.builtin.command:
+    cmd: /tmp/grant_install.sh -b {{ grant_binary_folder }}
+    creates: "{{ grant_binary_path }}"
+
+- name: Installation script removal
+  ansible.builtin.file:
+    path: /tmp/grant_install.sh
+    state: absent

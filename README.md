@@ -17,7 +17,7 @@ Depending on how the project progresses, these are the tools and environments I 
 - [X] Lynis
 - [X] Grype
 - [X] Syft
-- [ ] Grant
+- [X] Grant
 - [ ] Keycloak
 - [ ] Netmaker
 - [ ] Pomerium
