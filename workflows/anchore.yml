@@ -1,0 +1,40 @@
+---
+- name: Installs the Anchore workflow
+  hosts: vagrant-jammy-1, vagrant-noble-1
+  become: true
+  roles:
+    - syft
+    - grype
+    - grant
+  vars:
+    syft_group: anchore
+    syft_user: anchore
+    syft_time: {} # No execution of cronjob
+    syft_config_folder: /etc/anchore
+    syft_log_folder: /var/log/anchore
+    syft_custom_config_path: /etc/anchore/config.yaml
+    syft_log_path: /var/log/anchore/syft.log
+
+    grype_group: anchore
+    grype_user: anchore
+    grype_time: {} # No execution of cronjob
+    grype_config_folder: /etc/anchore
+    grype_log_folder: /var/log/anchore
+    grype_custom_config_path: /etc/anchore/config.yaml
+    grype_log_path: /var/log/anchore/grype.log
+
+    grant_group: anchore
+    grant_user: anchore
+    grant_time:
+      weekday: "0"
+      hour: "3"
+      minute: "0"
+    grant_config_folder: /etc/anchore
+    grant_log_folder: /var/log/anchore
+    grant_custom_config_path: /etc/anchore/config.yaml
+    grant_log_path: /var/log/anchore/grant.log
+    grant_job_title: "Anchore workflow - EasySec"
+    grant_job: >  # Same job for all workflows
+      {{ syft_binary_path }} / -o json > {{ syft_log_folder }}/audit-sbom.json 2>&1 &&
+      {{ grype_binary_path }} sbom:{{ syft_log_folder }}/audit-sbom.json >> {{ grype_log_path }} 2>&1 &&
+      {{ grant_binary_path }} check {{ syft_log_folder }}/audit-sbom.json >> {{ grant_log_path }} 2>&1
