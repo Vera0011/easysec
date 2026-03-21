@@ -63,7 +63,7 @@ Vagrant.configure("2") do |config|
 
     # Tasks to execute - Single playbooks and complete workflows
     playbooks = ["proxychains", "lynis", "grype", "syft", "grant"]
-    workflows = []
+    workflows = ["anchore"]
 
     # Server setup
     servers.each do |spec|

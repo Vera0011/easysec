@@ -54,3 +54,6 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - Grype - Un software para analizar y generar reportes de máquinas, contenedores y repositorios. Información sobre la implementación [aquí](./tools/blue/grype.md)
 - Syft - Un software para generar SBOMs. Información sobre la implementación [aquí](./tools/blue/syft.md)
 - Grant - Un software para analizar las licencias de las dependencias empleadas. Información sobre la implementación [aquí](./tools/blue/grant.md)
+
+#### Workflows
+- Anchore - Workflow que incluye varias herramientas para analizar dependencias y licencias. Información sobre la implementación [aquí](./workflows/blue/anchore.md)

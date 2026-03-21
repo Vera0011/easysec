@@ -15,3 +15,5 @@ grant_config_folder: /etc/grant
 grant_log_folder: /var/log/grant
 grant_custom_config_path: /etc/grant/config.yaml
 grant_log_path: /var/log/grant/audit.log
+grant_job_title: "Grant audit - EasySec"
+grant_job: "{{ grant_binary_path }} list / 2>&1"
