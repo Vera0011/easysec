@@ -1,0 +1,17 @@
+---
+grant_package_name: grant
+grant_group: grant
+grant_user: grant
+grant_time:
+  weekday: "0"
+  hour: "3"
+  minute: "0"
+
+# Config paths - Should not be changed
+grant_host: https://get.anchore.io/grant
+grant_binary_path: /usr/local/sbin/grant
+grant_binary_folder: /usr/local/sbin
+grant_config_folder: /etc/grant
+grant_log_folder: /var/log/grant
+grant_custom_config_path: /etc/grant/config.yaml
+grant_log_path: /var/log/grant/audit.log

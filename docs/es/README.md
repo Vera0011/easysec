@@ -1,6 +1,6 @@
 # EasySec - Español
 ## Introducción
-EasySec es un repositorio el cual incluye múltiples roles, documentación y herramientas con el objetivo de ayudar a las PYMEs con la aplicación de medidas de seguridad en sus propias empresas, además de fomentar ejercicios de pentesting y red teaming. Este archivo será usado como índice, para poder revisar y analizar las herramientas y documentación disponibles de manera más fácil.
+EasySec es un repositorio el cual incluye múltiples roles, documentación y herramientas con el objetivo de ayudar a las PYMEs con la aplicación de medidas de seguridad en sus propias empresas, además de fomentar ejercicios de pentesting y red teaming. Este archivo será usado como índice, para poder revisar y analizar las herramientas y documentación disponibles de manera más fácil. Las herramientas y flujos implementados son idempotentes. Esto significa que sin importar la cantidad de veces ejecutado, el resultado será siempre el mismo.
 
 ## Disclaimer y contribuciones
 Este proyecto es completamente open source, creado por Vera y con licencia [MIT](./../../LICENSE.md). Cualquier aporte, sugerencia o implementación puede ser pedido en la sección de "Pull requests".
@@ -11,7 +11,7 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - [X] Lynis
 - [X] Grype
 - [X] Syft
-- [ ] Grant
+- [X] Grant
 - [ ] Keycloak
 - [ ] Netmaker
 - [ ] Pomerium
@@ -53,3 +53,4 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - Lynis - Un software para analizar y generar reportes (en base a ciertas directrices) de máquinas y contenedores. Información sobre la implementación [aquí](./tools/blue/lynis.md)
 - Grype - Un software para analizar y generar reportes de máquinas, contenedores y repositorios. Información sobre la implementación [aquí](./tools/blue/grype.md)
 - Syft - Un software para generar SBOMs. Información sobre la implementación [aquí](./tools/blue/syft.md)
+- Grant - Un software para analizar las licencias de las dependencias empleadas. Información sobre la implementación [aquí](./tools/blue/grant.md)
