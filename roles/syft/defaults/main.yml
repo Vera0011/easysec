@@ -15,4 +15,5 @@ syft_config_folder: /etc/syft
 syft_log_folder: /var/log/syft
 syft_custom_config_path: /etc/syft/config.yaml
 syft_log_path: /var/log/syft/audit.log
+syft_job_title: "Syft audit - EasySec"
 syft_job: "{{ syft_binary_path }} / 2>&1"

@@ -69,9 +69,9 @@
     state: present
 
 - name: Schedule weekly Grant audit via cron (root)
-  when: grant_time is defined and grant_time | length > 0
+  when: grant_time is defined and grant_time.keys() | length > 0
   ansible.builtin.cron:
-    name: "Grant audit - EasySec"
+    name: "{{ grant_job_title }}"
     user: root
     month: "{{ grant_time.month | default(omit) }}"
     day: "{{ grant_time.day | default(omit) }}"
