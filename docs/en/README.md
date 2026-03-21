@@ -10,7 +10,7 @@ Depending on how the project progresses, these are the tools and environments I 
 - [X] Proxychains + Tor
 - [X] Lynis
 - [X] Grype
-- [ ] Syft
+- [X] Syft
 - [ ] Grant
 - [ ] Keycloak
 - [ ] Netmaker
@@ -52,3 +52,4 @@ Depending on how the project progresses, these are the tools and environments I 
 #### Tools
 - Lynis - Software for machine and container analysis and generating reports (based on specific guidelines). Information of implementation [here](./tools/blue/lynis.md)
 - Grype - Software for machine, container and repository analysis and generating reports. Information of implementation [here](./tools/blue/grype.md)
+- Syft - Software for SBOM generation. Information of implementation [here](./tools/blue/syft.md)

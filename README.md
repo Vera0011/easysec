@@ -16,7 +16,7 @@ Depending on how the project progresses, these are the tools and environments I 
 - [X] Proxychains + Tor
 - [X] Lynis
 - [X] Grype
-- [ ] Syft
+- [X] Syft
 - [ ] Grant
 - [ ] Keycloak
 - [ ] Netmaker
