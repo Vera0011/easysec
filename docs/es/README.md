@@ -35,6 +35,7 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - [X] Syft
 - [X] Grant
 - [ ] Keycloak
+- [ ] OpenLDAP
 - [ ] Netmaker
 - [ ] Pomerium
 - [ ] Netbird

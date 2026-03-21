@@ -35,6 +35,7 @@ Depending on how the project progresses, these are the tools and environments I 
 - [X] Syft
 - [X] Grant
 - [ ] Keycloak
+- [ ] OpenLDAP
 - [ ] Netmaker
 - [ ] Pomerium
 - [ ] Netbird
