@@ -11,7 +11,7 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - [X] Lynis
 - [X] Grype
 - [X] Syft
-- [ ] Grant
+- [X] Grant
 - [ ] Keycloak
 - [ ] Netmaker
 - [ ] Pomerium
@@ -53,3 +53,4 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - Lynis - Un software para analizar y generar reportes (en base a ciertas directrices) de máquinas y contenedores. Información sobre la implementación [aquí](./tools/blue/lynis.md)
 - Grype - Un software para analizar y generar reportes de máquinas, contenedores y repositorios. Información sobre la implementación [aquí](./tools/blue/grype.md)
 - Syft - Un software para generar SBOMs. Información sobre la implementación [aquí](./tools/blue/syft.md)
+- Grant - Un software para analizar las licencias de las dependencias empleadas. Información sobre la implementación [aquí](./tools/blue/grant.md)
