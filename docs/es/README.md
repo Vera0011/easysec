@@ -1,6 +1,6 @@
 # EasySec - Español
 ## Introducción
-EasySec es un repositorio el cual incluye múltiples roles, documentación y herramientas con el objetivo de ayudar a las PYMEs con la aplicación de medidas de seguridad en sus propias empresas, además de fomentar ejercicios de pentesting y red teaming. Este archivo será usado como índice, para poder revisar y analizar las herramientas y documentación disponibles de manera más fácil.
+EasySec es un repositorio el cual incluye múltiples roles, documentación y herramientas con el objetivo de ayudar a las PYMEs con la aplicación de medidas de seguridad en sus propias empresas, además de fomentar ejercicios de pentesting y red teaming. Este archivo será usado como índice, para poder revisar y analizar las herramientas y documentación disponibles de manera más fácil. Las herramientas y flujos implementados son idempotentes. Esto significa que sin importar la cantidad de veces ejecutado, el resultado será siempre el mismo.
 
 ## Disclaimer y contribuciones
 Este proyecto es completamente open source, creado por Vera y con licencia [MIT](./../../LICENSE.md). Cualquier aporte, sugerencia o implementación puede ser pedido en la sección de "Pull requests".
