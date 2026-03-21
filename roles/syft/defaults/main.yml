@@ -1,0 +1,17 @@
+---
+syft_package_name: syft
+syft_group: syft
+syft_user: syft
+syft_time:
+  weekday: "0"
+  hour: "3"
+  minute: "0"
+
+# Config paths - Should not be changed
+syft_host: https://get.anchore.io/syft
+syft_binary_path: /usr/local/sbin/syft
+syft_binary_folder: /usr/local/sbin
+syft_config_folder: /etc/syft
+syft_log_folder: /var/log/syft
+syft_custom_config_path: /etc/syft/config.yaml
+syft_log_path: /var/log/syft/audit.log

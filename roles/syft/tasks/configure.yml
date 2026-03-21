@@ -1,0 +1,81 @@
+---
+- name: We create the required group
+  ansible.builtin.group:
+    name: "{{ syft_group }}"
+    state: present
+
+- name: We create the required user
+  ansible.builtin.user:
+    state: present
+    name: "{{ syft_user }}"
+    group: "{{ syft_group }}"
+    create_home: false
+    system: true
+    umask: "027"
+    password: "!"
+
+- name: We remove inmutable flag if binary is found
+  failed_when: false
+  changed_when: false
+  ansible.builtin.file:
+    path: "{{ syft_binary_path }}"
+    attributes: -i
+
+- name: Modify Syft binary
+  ansible.builtin.file:
+    path: "{{ syft_binary_path }}"
+    owner: "{{ syft_user }}"
+    group: "{{ syft_group }}"
+    mode: "0750"
+    state: file
+    attributes: +i
+
+- name: Modify config folder
+  ansible.builtin.file:
+    path: "{{ syft_config_folder }}"
+    owner: "{{ syft_user }}"
+    group: "{{ syft_group }}"
+    mode: "0750"
+    state: directory
+
+- name: Modify log folder
+  ansible.builtin.file:
+    path: "{{ syft_log_folder }}"
+    owner: "{{ syft_user }}"
+    group: "{{ syft_group }}"
+    mode: "0750"
+    state: directory
+
+- name: We remove inmutable flag if config is found
+  failed_when: false
+  changed_when: false
+  ansible.builtin.file:
+    path: "{{ syft_custom_config_path }}"
+    attributes: -i
+
+- name: Sends custom configuration to Syft
+  ansible.builtin.template:
+    src: templates/syft.conf.j2
+    dest: "{{ syft_custom_config_path }}"
+    mode: "0440"
+    owner: "{{ syft_user }}"
+    group: "{{ syft_group }}"
+    attributes: +i
+
+- name: Updates PATH to add the path of the configuration file
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    line: "syft_CONFIG={{ syft_custom_config_path }}"
+    state: present
+
+- name: Schedule weekly Syft audit via cron (root)
+  when: syft_time is defined and syft_time | length > 0
+  ansible.builtin.cron:
+    name: "Syft audit - EasySec"
+    user: root
+    month: "{{ syft_time.month | default(omit) }}"
+    day: "{{ syft_time.day | default(omit) }}"
+    weekday: "{{ syft_time.weekday | default(omit) }}"
+    hour: "{{ syft_time.hour | default(omit) }}"
+    minute: "{{ syft_time.minute | default(omit) }}"
+    job: "{{ syft_binary_path }} / 2>&1"
