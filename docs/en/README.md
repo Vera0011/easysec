@@ -54,3 +54,6 @@ Depending on how the project progresses, these are the tools and environments I 
 - Grype - Software for machine, container and repository analysis and generating reports. Information of implementation [here](./tools/blue/grype.md)
 - Syft - Software for SBOM generation. Information of implementation [here](./tools/blue/syft.md)
 - Grant - Software to analyze currently used Licenses. Information of implementation [here](./tools/blue/grant.md)
+
+#### Workflows
+- Anchore - Workflow including multiple tools to analyze dependencies and licenses. Information of implementation [here](./workflows/blue/anchore.md)

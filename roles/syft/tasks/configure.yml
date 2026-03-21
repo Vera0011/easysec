@@ -69,13 +69,13 @@
     state: present
 
 - name: Schedule weekly Syft audit via cron (root)
-  when: syft_time is defined and syft_time | length > 0
+  when: syft_time is defined and syft_time.keys() | length > 0
   ansible.builtin.cron:
-    name: "Syft audit - EasySec"
+    name: "{{ syft_job_title }}"
     user: root
     month: "{{ syft_time.month | default(omit) }}"
     day: "{{ syft_time.day | default(omit) }}"
     weekday: "{{ syft_time.weekday | default(omit) }}"
     hour: "{{ syft_time.hour | default(omit) }}"
     minute: "{{ syft_time.minute | default(omit) }}"
-    job: "{{ syft_binary_path }} / 2>&1"
+    job: "{{ syft_job }}"

@@ -15,3 +15,5 @@ grype_config_folder: /etc/grype
 grype_log_folder: /var/log/grype
 grype_custom_config_path: /etc/grype/config.yaml
 grype_log_path: /var/log/grype/audit.log
+grype_job_title: "Grype audit - EasySec"
+grype_job: "{{ grype_binary_path }} / 2>&1"
