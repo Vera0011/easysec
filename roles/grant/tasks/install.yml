@@ -1,4 +1,10 @@
 ---
+- name: Downloads cosign installation script
+  ansible.builtin.get_url:
+    url: "{{ grant_cosign_url }}"
+    dest: "{{ grant_cosign_binary_path }}"
+    mode: "0555"
+
 - name: Downloads installation script
   ansible.builtin.get_url:
     url: "{{ grant_host }}"
@@ -7,7 +13,7 @@
 
 - name: Install Grant
   ansible.builtin.command:
-    cmd: /tmp/grant_install.sh -b {{ grant_binary_folder }}
+    cmd: /tmp/grant_install.sh -b {{ grant_binary_folder }} -v
     creates: "{{ grant_binary_path }}"
 
 - name: Installation script removal

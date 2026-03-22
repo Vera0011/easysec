@@ -9,6 +9,8 @@ grype_time:
 
 # Config paths - Should not be changed
 grype_host: https://get.anchore.io/grype
+grype_cosign_url: https://github.com/sigstore/cosign/releases/download/v3.0.5/cosign-linux-amd64
+grype_cosign_binary_path: /usr/local/sbin/cosign-linux-amd64
 grype_binary_path: /usr/local/sbin/grype
 grype_binary_folder: /usr/local/sbin
 grype_config_folder: /etc/grype

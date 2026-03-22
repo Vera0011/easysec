@@ -1,4 +1,10 @@
 ---
+- name: Downloads cosign installation script
+  ansible.builtin.get_url:
+    url: "{{ syft_cosign_url }}"
+    dest: "{{ syft_cosign_binary_path }}"
+    mode: "0555"
+
 - name: Downloads installation script
   ansible.builtin.get_url:
     url: "{{ syft_host }}"
@@ -7,7 +13,7 @@
 
 - name: Install Syft
   ansible.builtin.command:
-    cmd: /tmp/syft_install.sh -b {{ syft_binary_folder }}
+    cmd: /tmp/syft_install.sh -b {{ syft_binary_folder }} -v
     creates: "{{ syft_binary_path }}"
 
 - name: Installation script removal
