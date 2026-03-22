@@ -1,0 +1,4 @@
+---
+keycloak_package_name: keycloak
+keycloak_user: keycloak
+keycloak_group: keycloak
