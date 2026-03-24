@@ -2,3 +2,8 @@
 keycloak_package_name: keycloak
 keycloak_user: keycloak
 keycloak_group: keycloak
+
+# Config envs - Should not be changed unless knowing what they do
+keycloak_java_package: openjdk-21-jdk
+keycloak_host: https://github.com/keycloak/keycloak/releases/download/26.5.6/keycloak-26.5.6.zip
+keycloak_path: /opt/keycloak
