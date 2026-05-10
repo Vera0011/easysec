@@ -24,7 +24,7 @@ El script se puede ejecutar (desde la ruta raíz del proyecto) con:
 ```bash
 ./script/execute.sh
 ```
-> [!NOTA]
+> [!NOTE]
 > Asegúrate de que Vagrant y VirtualBox estén instalados y en ejecución antes de ejecutar cualquier script
 
 ## Roadmap
