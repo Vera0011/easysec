@@ -54,8 +54,13 @@ Vagrant.configure("2") do |config|
     ]
 
     # Tasks to execute - Single playbooks and complete workflows
-    playbooks = ["proxychains", "lynis", "grype", "syft", "grant"]
-    workflows = ["anchore"]
+    all_playbooks = ["proxychains", "lynis", "grype", "syft", "grant"]
+    all_workflows = ["anchore"]
+
+    # Updates list if requested by the user
+    custom = ENV.fetch("CUSTOM_MODULES", "").split(",").map(&:strip).reject(&:empty?)
+    playbooks = custom.empty? ? all_playbooks : all_playbooks & custom
+    workflows = custom.empty? ? all_workflows : all_workflows & custom
 
     # Server setup
     servers.each do |spec|
