@@ -1,0 +1,14 @@
+---
+- name: Generates a SSL certificate on test host (Vagrant)
+  hosts: vagrant-jammy-1
+  become: true
+  roles:
+    - ssl
+  vars:
+    ssl_provider: "selfsigned"
+    ssl_generate: true
+    ssl_generate_config:
+      domain: "easysec.x"
+      output_path: "/opt/easysec.x.pem"
+      privatekey_path: "/opt/easysec.x.key"
+      email: "whoami@easysec.x"

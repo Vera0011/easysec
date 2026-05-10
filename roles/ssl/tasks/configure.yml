@@ -1,0 +1,52 @@
+---
+- name: Configures Certbot and provider credentials
+  block:
+    - name: We create the required group
+      ansible.builtin.group:
+        name: "{{ ssl_group }}"
+        state: present
+
+    - name: We create the required user
+      ansible.builtin.user:
+        state: present
+        name: "{{ ssl_user }}"
+        group: "{{ ssl_group }}"
+        create_home: false
+        system: true
+        umask: "027"
+        password: "!"
+
+    - name: Correct permissions - Config directory
+      ansible.builtin.file:
+        path: "{{ ssl_config_path }}"
+        mode: "0750"
+        group: "{{ ssl_user }}"
+        owner: "{{ ssl_user }}"
+        state: directory
+
+    - name: Correct permissions - Log directory
+      ansible.builtin.file:
+        path: "{{ ssl_log_dir }}"
+        mode: "0755"
+        group: "{{ ssl_user }}"
+        owner: "{{ ssl_user }}"
+        state: directory
+
+    - name: Manage DNS Provider Credentials
+      when: ssl_dns_enabled
+      ansible.builtin.copy:
+        dest: "{{ ssl_config_path }}/{{ ssl_provider }}.ini"
+        owner: "{{ ssl_user }}"
+        group: "{{ ssl_group }}"
+        mode: "0640"
+        content: |-
+          {% if ssl_provider == 'digitalocean' %}
+          dns_digitalocean_token={{ ssl_credentials.token }}
+          {% elif ssl_provider == 'ovh' %}
+          dns_ovh_endpoint=ovh-eu
+          dns_ovh_application_key={{ ssl_credentials.token }}
+          dns_ovh_application_secret={{ ssl_credentials.secret }}
+          dns_ovh_consumer_key={{ ssl_credentials.consumer }}
+          {% elif ssl_provider == 'cloudflare' %}
+          dns_cloudflare_api_token={{ ssl_credentials.token }}
+          {% endif %}
