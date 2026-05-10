@@ -54,7 +54,7 @@ Vagrant.configure("2") do |config|
     ]
 
     # Tasks to execute - Single playbooks and complete workflows
-    all_playbooks = ["proxychains", "lynis", "grype", "syft", "grant"]
+    all_playbooks = ["proxychains", "lynis", "grype", "syft", "grant", "ssl"]
     all_workflows = ["anchore"]
 
     # Updates list if requested by the user

@@ -1,0 +1,28 @@
+---
+ssl_package_name: ssl
+ssl_user: ssl
+ssl_group: ssl
+
+ssl_dns_enabled: false
+ssl_provider: "cloudflare"
+ssl_credentials:
+  token: "token1234"
+
+ssl_generate: true
+ssl_generate_config:
+  domain: "easysec.x"
+  output_path: "/opt/test/myfullchain.pem"
+  privatekey_path: "/opt/test/mykey.key"
+  email: "whoami@easysec.x"
+
+# Config paths - Should not be changed
+ssl_config_path: /etc/letsencrypt
+ssl_live_certs: /etc/letsencrypt/live
+ssl_credentials_path: /etc/letsencript
+ssl_log_dir: /var/log/letsencrypt
+ssl_job_title: "EASYSEC - Renewal for {{ ssl_generate_config.domain }}"
+ssl_job: >-
+  certbot renew \
+  --quiet \
+  --cert-name {{ ssl_generate_config.domain }} \
+  --deploy-hook {{ ssl_live_certs }}/{{ ssl_generate_config.domain }}/renewal.sh
