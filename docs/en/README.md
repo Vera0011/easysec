@@ -41,6 +41,7 @@ Depending on how the project progresses, these are the tools and environments I 
 - [ ] Fail2ban
 - [ ] Aikido Safe-chain
 - [ ] ScoutSuite
+- [ ] NixOS - Based on [Sécurix](https://github.com/cloud-gouv/securix)
 - [ ] Red Teaming Environment - Required Tools
 
 ## Resources

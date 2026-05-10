@@ -41,6 +41,7 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - [ ] Fail2ban
 - [ ] Aikido Safe-chain
 - [ ] ScoutSuite
+- [ ] NixOS - Basado en [Sécurix](https://github.com/cloud-gouv/securix)
 - [ ] Entorno Red Teaming - Herramientas necesarias
 
 ## Recursos
