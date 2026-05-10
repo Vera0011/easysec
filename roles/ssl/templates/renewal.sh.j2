@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#########################################################################################################
+#                                                                                                       #
+#   EASYSEC - SSL Renewal                                                                               #
+#   This script renews automatically the available certificates and updates them in the specified path  # 
+#                                                                                                       #
+#########################################################################################################
+
+{% if ssl_generate_config.output_path %}
+cp {{ ssl_config_path }}/live/{{ ssl_generate_config.domain }}/fullchain.pem {{ ssl_generate_config.output_path }}
+{% endif %}
+
+{% if ssl_generate_config.privatekey_path %}
+cp {{ ssl_config_path }}/live/{{ ssl_generate_config.domain }}/privkey.key {{ ssl_generate_config.privatekey_path }}
+{% endif %}

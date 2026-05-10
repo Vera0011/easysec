@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ## - Available modules - ##
-ALL_BLUE_MODULES="lynis,grype,syft,grant"
+ALL_BLUE_MODULES="lynis,grype,syft,grant,ssl"
 ALL_BLUE_WORKFLOWS="anchore"
 ALL_RED_MODULES="proxychains"
 ALL_RED_WORKFLOWS=""

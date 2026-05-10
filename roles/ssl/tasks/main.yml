@@ -1,0 +1,12 @@
+---
+- name: Installs tools
+  when: ssl_provider != "selfsigned"
+  ansible.builtin.include_tasks: install.yml
+
+- name: Configures tools
+  when: ssl_provider != "selfsigned"
+  ansible.builtin.include_tasks: configure.yml
+
+- name: Generates a certificate
+  when: ssl_generate
+  ansible.builtin.include_tasks: generate.yml
