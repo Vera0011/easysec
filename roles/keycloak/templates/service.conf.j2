@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User={{ keycloak_user }}
 Group={{ keycloak_group }}
-ExecStart={{ keycloak_path }}/bin/kc.sh start --config-file={{ keycloak_config_dir }}/keycloak.conf
+ExecStart={{ keycloak_path }}/bin/kc.sh start
 Restart=on-failure
 RestartSec=10
 

@@ -14,25 +14,40 @@
     home: "{{ keycloak_path }}"
     create_home: false
 
-- name: Update permissions in config folder
-  ansible.builtin.file:
-    path: "{{ keycloak_path }}"
-    owner: "{{ keycloak_user }}"
-    group: "{{ keycloak_group }}"
-    state: directory
-    mode: "750"
+- name: Moves files to correct directory
+  block:
+    - name: Creates software directory
+      ansible.builtin.file:
+        path: "{{ keycloak_path }}"
+        state: directory
+        owner: "{{ keycloak_user }}"
+        group: "{{ keycloak_group }}"
+        mode: "0750"
 
-- name: Config directory creation
-  ansible.builtin.file:
-    path: "{{ keycloak_path }}"
-    owner: "{{ keycloak_user }}"
-    group: "{{ keycloak_group }}"
-    state: directory
-    mode: "750"
+    - name: Decompress file
+      ansible.builtin.unarchive:
+        src: /tmp/keycloak.tar.gz
+        dest: "{{ keycloak_path }}"
+        extra_opts:
+          - "--strip-components=1"
+        remote_src: true
+
+    - name: Remove Keycloak archive
+      ansible.builtin.file:
+        path: "/tmp/keycloak.tar.gz"
+        state: absent
 
 - name: Log directory creation
   ansible.builtin.file:
-    path: "{{ keycloak_path }}"
+    path: "{{ keycloak_log_dir }}"
+    owner: "{{ keycloak_user }}"
+    group: "{{ keycloak_group }}"
+    state: directory
+    mode: "755"
+
+- name: Config directory creation
+  ansible.builtin.file:
+    path: "{{ keycloak_config_dir }}"
     owner: "{{ keycloak_user }}"
     group: "{{ keycloak_group }}"
     state: directory
@@ -49,8 +64,8 @@
 
 - name: Deploy systemd service
   ansible.builtin.template:
-    src: templates/keycloak.service.j2
-    dest: /etc/systemd/system/keycloak.service
+    src: templates/service.conf.j2
+    dest: "{{ keycloak_systemd_path }}"
     owner: root
     group: root
     mode: "0644"

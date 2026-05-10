@@ -1,0 +1,6 @@
+---
+- name: Installs Keycloak on test host (Vagrant)
+  hosts: vagrant-keycloak-1
+  become: true
+  roles:
+    - keycloak

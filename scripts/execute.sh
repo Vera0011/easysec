@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ## - Available modules - ##
-ALL_BLUE_MODULES="lynis,grype,syft,grant,ssl"
+ALL_BLUE_MODULES="lynis,grype,syft,grant,keycloak"
 ALL_BLUE_WORKFLOWS="anchore"
 ALL_RED_MODULES="proxychains"
 ALL_RED_WORKFLOWS=""
@@ -104,7 +104,7 @@ show_module_3() {
     # Module 3 interface - Displays the current modules and workflows, and allows to select multiple of them and validates the input
     clear
     local valid_modules="${ALL_BLUE_MODULES},${ALL_RED_MODULES}"
-    local valid_workflows="${ALL_BLUE_WORKFLOWS}" #,${ALL_RED_WORKFLOWS}"
+    local valid_workflows="${ALL_BLUE_WORKFLOWS}"
     local all_valid="${valid_modules},${valid_workflows}"
     local errors=()
 

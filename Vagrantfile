@@ -54,7 +54,7 @@ Vagrant.configure("2") do |config|
         {
             name: "vagrant-keycloak-1",
             box: "ubuntu/jammy64",
-            ip: "192.168.56.4",
+            ip: "192.168.56.5",
             memory: "2048",
             cpus: 2,
             boot_timeout: 600
@@ -62,7 +62,7 @@ Vagrant.configure("2") do |config|
     ]
 
     # Tasks to execute - Single playbooks and complete workflows
-    all_playbooks = ["proxychains", "lynis", "grype", "syft", "grant", "ssl"]
+    all_playbooks = ["proxychains", "lynis", "grype", "syft", "grant", "keycloak"]
     all_workflows = ["anchore"]
 
     # Updates list if requested by the user

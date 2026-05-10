@@ -9,8 +9,9 @@ keycloak_host: https://github.com/keycloak/keycloak/releases/download/26.5.6/key
 keycloak_path: /opt/keycloak
 keycloak_config_dir: /etc/keycloak
 keycloak_log_dir: /var/log/keycloak
+keycloak_systemd_path: /etc/systemd/system/keycloak.service
 
-keycloak_hostname: localhost
+keycloak_hostname: "{{ ansible_host }}"
 keycloak_http_port: 8080
 keycloak_https_port: 8043
 
@@ -19,4 +20,4 @@ keycloak_database_host: localhost
 keycloak_database_port: 5432
 keycloak_database_name: keycloak
 keycloak_database_user: keycloak
-keycloak_database_password: a
+keycloak_database_password: keycloak

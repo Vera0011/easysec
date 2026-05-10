@@ -10,14 +10,3 @@
     url: "{{ keycloak_host }}"
     dest: /tmp/keycloak.tar.gz
     mode: "0600"
-
-- name: Decompress file
-  ansible.builtin.unarchive:
-    src: /tmp/keycloak.tar.gz
-    dest: "{{ keycloak_path }}"
-    remote_src: true
-
-- name: Remove Keycloak archive
-  ansible.builtin.file:
-    path: "/tmp/keycloak.tar.gz"
-    state: absent
