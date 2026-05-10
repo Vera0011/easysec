@@ -51,14 +51,14 @@ Vagrant.configure("2") do |config|
             cpus: 2,
             boot_timeout: 600
         },
-        {
-            name: "vagrant-noble-1",
-            box: "bento/ubuntu-24.04",
-            ip: "192.168.56.5",
-            memory: "2048",
-            cpus: 2,
-            boot_timeout: 600
-        }
+        #{
+        #    name: "vagrant-noble-1",
+        #    box: "bento/ubuntu-24.04",
+        #    ip: "192.168.56.5",
+        #    memory: "2048",
+        #    cpus: 2,
+        #    boot_timeout: 600
+        #}
     ]
 
     # Tasks to execute - Single playbooks and complete workflows
