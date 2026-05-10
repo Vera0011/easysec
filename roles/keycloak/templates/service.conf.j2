@@ -1,0 +1,13 @@
+[Unit]
+Description=Keycloak Identity Provider - EasySec
+After=network.target
+
+[Service]
+User={{ keycloak_user }}
+Group={{ keycloak_group }}
+ExecStart={{ keycloak_path }}/bin/kc.sh start --config-file={{ keycloak_config_dir }}/keycloak.conf
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

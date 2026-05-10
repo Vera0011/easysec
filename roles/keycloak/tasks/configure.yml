@@ -1,0 +1,59 @@
+---
+- name: Create Keycloak group
+  ansible.builtin.group:
+    name: "{{ keycloak_group }}"
+    system: true
+    state: present
+
+- name: Create Keycloak user
+  ansible.builtin.user:
+    name: "{{ keycloak_user }}"
+    group: "{{ keycloak_group }}"
+    system: true
+    shell: /sbin/nologin
+    home: "{{ keycloak_path }}"
+    create_home: false
+
+- name: Update permissions in config folder
+  ansible.builtin.file:
+    path: "{{ keycloak_path }}"
+    owner: "{{ keycloak_user }}"
+    group: "{{ keycloak_group }}"
+    state: directory
+    mode: "750"
+
+- name: Config directory creation
+  ansible.builtin.file:
+    path: "{{ keycloak_path }}"
+    owner: "{{ keycloak_user }}"
+    group: "{{ keycloak_group }}"
+    state: directory
+    mode: "750"
+
+- name: Log directory creation
+  ansible.builtin.file:
+    path: "{{ keycloak_path }}"
+    owner: "{{ keycloak_user }}"
+    group: "{{ keycloak_group }}"
+    state: directory
+    mode: "750"
+
+- name: Deploy Keycloak configuration
+  ansible.builtin.template:
+    src: templates/keycloak.conf.j2
+    dest: "{{ keycloak_config_dir }}/keycloak.conf"
+    owner: "{{ keycloak_user }}"
+    group: "{{ keycloak_group }}"
+    mode: "0640"
+  notify: Restart Keycloak
+
+- name: Deploy systemd service
+  ansible.builtin.template:
+    src: templates/keycloak.service.j2
+    dest: /etc/systemd/system/keycloak.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload daemon
+    - Restart Keycloak

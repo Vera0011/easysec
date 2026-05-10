@@ -5,5 +5,18 @@ keycloak_group: keycloak
 
 # Config envs - Should not be changed unless knowing what they do
 keycloak_java_package: openjdk-21-jdk
-keycloak_host: https://github.com/keycloak/keycloak/releases/download/26.5.6/keycloak-26.5.6.zip
+keycloak_host: https://github.com/keycloak/keycloak/releases/download/26.5.6/keycloak-26.5.6.tar.gz
 keycloak_path: /opt/keycloak
+keycloak_config_dir: /etc/keycloak
+keycloak_log_dir: /var/log/keycloak
+
+keycloak_hostname: localhost
+keycloak_http_port: 8080
+keycloak_https_port: 8043
+
+keycloak_database_type: postgres
+keycloak_database_host: localhost
+keycloak_database_port: 5432
+keycloak_database_name: keycloak
+keycloak_database_user: keycloak
+keycloak_database_password: a
