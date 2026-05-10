@@ -5,6 +5,28 @@ EasySec is a repository that includes a variety of roles, documentation, and too
 ## Disclaimer and contributions
 This project is completely open source, created by Vera and licensed under the [MIT License](./../../LICENSE.md). Any contributions, suggestions, or implementations can be submitted in the “Pull Requests” section.
 
+## Setup
+Two scripts are available under [`scripts/`](../../scripts/):
+- **execute.sh**: Interactive CLI to select and run specific modules or workflows in Vagrant
+- **test.sh**: Ruls all modules and workflows in Vagrant - used to valide setup
+
+### Environment
+The recommended setup uses [UV](https://github.com/astral-sh/uv) for Python environment management. These are the recommended actions:
+```bash
+uv python pin                       # Uses the .python-version file and selects the specific interpreter version
+uv venv .venv                       # Creates the virtual environment
+source .venv/bin/activate           # Activates the virtual environment
+uv pip install -r requirements.txt  # Installs required dependencies
+```
+
+### Running
+The script can be executed (from the root project path) with:
+```bash
+./script/execute.sh
+```
+> [!NOTE]
+> Ensure Vagrant and VirtualBox are installed and running before executing any script
+
 ## Roadmap
 Depending on how the project progresses, these are the tools and environments I would like to implement:
 - [X] Proxychains + Tor
