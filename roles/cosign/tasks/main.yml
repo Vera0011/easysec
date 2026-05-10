@@ -1,0 +1,6 @@
+---
+- name: Gather facts
+  ansible.builtin.setup:
+
+- name: Tool installation
+  ansible.builtin.include_tasks: install.yml

@@ -1,10 +1,4 @@
 ---
-- name: Downloads cosign installation script
-  ansible.builtin.get_url:
-    url: "{{ grant_cosign_url }}"
-    dest: "{{ grant_cosign_binary_path }}"
-    mode: "0555"
-
 - name: Downloads installation script
   ansible.builtin.get_url:
     url: "{{ grant_host }}"

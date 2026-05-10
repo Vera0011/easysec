@@ -1,10 +1,4 @@
 ---
-- name: Downloads cosign installation script
-  ansible.builtin.get_url:
-    url: "{{ grype_cosign_url }}"
-    dest: "{{ grype_cosign_binary_path }}"
-    mode: "0555"
-
 - name: Downloads installation script
   ansible.builtin.get_url:
     url: "{{ grype_host }}"

@@ -1,0 +1,6 @@
+---
+cosign_package_name: cosign
+
+# Config paths - Should not be changed
+cosign_url: https://github.com/sigstore/cosign/releases/download/v3.0.5/cosign-linux-amd64
+cosign_binary_path: /usr/local/sbin/cosign

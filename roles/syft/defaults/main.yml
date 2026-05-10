@@ -9,8 +9,7 @@ syft_time:
 
 # Config paths - Should not be changed
 syft_host: https://get.anchore.io/syft
-syft_cosign_url: https://github.com/sigstore/cosign/releases/download/v3.0.5/cosign-linux-amd64
-syft_cosign_binary_path: /usr/local/sbin/cosign-linux-amd64
+syft_cosign_binary_path: /usr/local/sbin/cosign
 syft_binary_path: /usr/local/sbin/syft
 syft_binary_folder: /usr/local/sbin
 syft_config_folder: /etc/syft
