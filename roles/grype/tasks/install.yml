@@ -7,7 +7,7 @@
 
 - name: Install Grype
   ansible.builtin.command:
-    cmd: /tmp/grype_install.sh -b {{ grype_binary_folder }}
+    cmd: /tmp/grype_install.sh -b {{ grype_binary_folder }} -v
     creates: "{{ grype_binary_path }}"
 
 - name: Installation script removal

@@ -9,6 +9,7 @@ grype_time:
 
 # Config paths - Should not be changed
 grype_host: https://get.anchore.io/grype
+grype_cosign_binary_path: /usr/local/sbin/cosign
 grype_binary_path: /usr/local/sbin/grype
 grype_binary_folder: /usr/local/sbin
 grype_config_folder: /etc/grype

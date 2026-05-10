@@ -7,7 +7,7 @@
 
 - name: Install Grant
   ansible.builtin.command:
-    cmd: /tmp/grant_install.sh -b {{ grant_binary_folder }}
+    cmd: /tmp/grant_install.sh -b {{ grant_binary_folder }} -v
     creates: "{{ grant_binary_path }}"
 
 - name: Installation script removal

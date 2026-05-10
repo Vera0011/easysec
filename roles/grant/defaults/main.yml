@@ -9,6 +9,7 @@ grant_time:
 
 # Config paths - Should not be changed
 grant_host: https://get.anchore.io/grant
+grant_cosign_binary_path: /usr/local/sbin/cosign
 grant_binary_path: /usr/local/sbin/grant
 grant_binary_folder: /usr/local/sbin
 grant_config_folder: /etc/grant

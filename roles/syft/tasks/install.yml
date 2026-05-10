@@ -7,7 +7,7 @@
 
 - name: Install Syft
   ansible.builtin.command:
-    cmd: /tmp/syft_install.sh -b {{ syft_binary_folder }}
+    cmd: /tmp/syft_install.sh -b {{ syft_binary_folder }} -v
     creates: "{{ syft_binary_path }}"
 
 - name: Installation script removal

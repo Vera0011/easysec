@@ -25,6 +25,6 @@ Proxychains configuration is applied and sets round-robin method (in the usage o
 ## Test suite
 The role has been tested in the following hosts:
 ### Target hosts
-- `Kali Linux - Rolling`
+- Kali Linux - Rolling
 ### Manager hosts
-- `Ubuntu Server 22.04 (Jammy Jellyfish)`
+- Ubuntu Server 22.04 (Jammy Jellyfish)

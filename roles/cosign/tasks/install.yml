@@ -1,0 +1,6 @@
+---
+- name: Downloads cosign installation script
+  ansible.builtin.get_url:
+    url: "{{ cosign_url }}"
+    dest: "{{ cosign_binary_path }}"
+    mode: "0555"
