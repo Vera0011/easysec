@@ -2,6 +2,9 @@
 keycloak_package_name: keycloak
 keycloak_user: keycloak
 keycloak_group: keycloak
+keycloak_hostname: "keycloak.x"
+keycloak_ssl_cert_file: /etc/keycloak/keycloak.pem
+keycloak_ssl_key_file: /etc/keycloak/keycloak.key
 
 # Config envs - Should not be changed unless knowing what they do
 keycloak_java_package: openjdk-21-jdk
@@ -11,8 +14,6 @@ keycloak_config_dir: /etc/keycloak
 keycloak_log_dir: /var/log/keycloak
 keycloak_systemd_path: /etc/systemd/system/keycloak.service
 
-keycloak_hostname: "{{ ansible_host }}"
-keycloak_http_port: 8080
 keycloak_https_port: 8043
 
 keycloak_database_type: postgres
