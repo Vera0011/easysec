@@ -10,3 +10,6 @@ This project is completely open source, created by Vera and licensed under the [
 
 ## Documentation
 All documentation related to this project can be found [here](./docs/en/README.md)
+
+## Contact
+You can contact me via [email](mailto:contact.vera0011@gmail.com) or through [Discord](https://discord.gg/vN7XcnC4jM)
