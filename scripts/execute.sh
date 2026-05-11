@@ -150,7 +150,7 @@ show_module_3() {
 
 ## - Input - ##
 show_banner
-sleep 5
+sleep 2
 
 while true; do
     show_menu

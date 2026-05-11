@@ -35,22 +35,22 @@ Vagrant.configure("2") do |config|
             cpus: 1,
             boot_timeout: 600
         },
-        { 
-            name: "vagrant-kali-1",
-            box: "kalilinux/rolling",
-            ip: "192.168.56.3",
-            memory: "2048",
-            cpus: 2,
-            boot_timeout: 600
-        },
-        { 
-            name: "vagrant-ubuntu-1",
-            box: "ubuntu/jammy64",
-            ip: "192.168.56.4",
-            memory: "2048",
-            cpus: 2,
-            boot_timeout: 600
-        },
+        #{ 
+        #    name: "vagrant-kali-1",
+        #    box: "kalilinux/rolling",
+        #    ip: "192.168.56.3",
+        #    memory: "2048",
+        #    cpus: 2,
+        #    boot_timeout: 600
+        #},
+        #{ 
+        #    name: "vagrant-ubuntu-1",
+        #    box: "ubuntu/jammy64",
+        #    ip: "192.168.56.4",
+        #    memory: "2048",
+        #    cpus: 2,
+        #    boot_timeout: 600
+        #},
         {
             name: "vagrant-keycloak-1",
             box: "ubuntu/jammy64",

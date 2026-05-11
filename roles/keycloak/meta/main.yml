@@ -1,0 +1,8 @@
+---
+dependencies:
+  - role: ssl
+    vars:
+      ssl_provider: "{{ keycloak_ssl_provider }}"
+      ssl_credentials: "{{ keycloak_ssl_credentials }}"
+      ssl_generate: "{{ keycloak_ssl_generate }}"
+      ssl_generate_config: "{{ keycloak_ssl_config }}"
