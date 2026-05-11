@@ -1,7 +1,7 @@
 ---
 ssl_package_name: ssl
-ssl_user: ssl
-ssl_group: ssl
+ssl_user: root
+ssl_group: root
 
 ssl_dns_enabled: false
 ssl_provider: "cloudflare"
@@ -18,7 +18,7 @@ ssl_generate_config:
 # Config paths - Should not be changed
 ssl_config_path: /etc/letsencrypt
 ssl_live_certs: /etc/letsencrypt/live
-ssl_credentials_path: /etc/letsencript
+ssl_credentials_path: /etc/letsencrypt
 ssl_log_dir: /var/log/letsencrypt
 ssl_job_title: "EASYSEC - Renewal for {{ ssl_generate_config.domain }}"
 ssl_job: >-
