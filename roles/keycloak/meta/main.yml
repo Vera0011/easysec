@@ -6,3 +6,4 @@ dependencies:
       ssl_credentials: "{{ keycloak_ssl_credentials }}"
       ssl_generate: "{{ keycloak_ssl_generate }}"
       ssl_generate_config: "{{ keycloak_ssl_config }}"
+      ssl_dns_enabled: "{{ keycloak_ssl_dns_enabled }}"

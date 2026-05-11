@@ -56,10 +56,12 @@
 - name: Deploy Keycloak configuration
   ansible.builtin.template:
     src: templates/keycloak.conf.j2
-    dest: "{{ keycloak_config_dir }}/keycloak.conf"
+    dest: "{{ keycloak_config_path }}"
     owner: "{{ keycloak_user }}"
     group: "{{ keycloak_group }}"
     mode: "0640"
+  notify:
+    - Restart Keycloak
 
 - name: Deploy systemd service
   ansible.builtin.template:
@@ -70,3 +72,4 @@
     mode: "0644"
   notify:
     - Reload daemon
+    - Restart Keycloak
