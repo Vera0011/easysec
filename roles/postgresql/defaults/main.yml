@@ -16,8 +16,8 @@ postgresql_wal_enable: false
 
 # User configuration
 postgresql_users:
-  - { name: "easysec", password: "generate", superuser: true }
-  - { name: "manager-easysec", password: "generate", superuser: false }
+  - { name: "easysec", password: "", superuser: true }
+  - { name: "manager-easysec", password: "", superuser: false }
 
 # Database configuration
 postgresql_databases:
