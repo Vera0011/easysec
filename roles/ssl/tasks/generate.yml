@@ -25,7 +25,9 @@
         src: "{{ ssl_live_certs }}/{{ ssl_generate_config.domain }}/fullchain.pem"
         dest: "{{ ssl_generate_config.output_path }}"
         remote_src: true
-        mode: "0660"
+        owner: "{{ ssl_generate_config.owner | default(ssl_user) }}"
+        group: "{{ ssl_generate_config.group | default(ssl_group) }}"
+        mode: "0600"
 
     - name: Sends the private key to the specified path
       when: ssl_generate_config.privatekey_path | length > 0
@@ -33,7 +35,9 @@
         src: "{{ ssl_live_certs }}/{{ ssl_generate_config.domain }}/privkey.key"
         dest: "{{ ssl_generate_config.privatekey_path }}"
         remote_src: true
-        mode: "0660"
+        owner: "{{ ssl_generate_config.owner | default(ssl_user) }}"
+        group: "{{ ssl_generate_config.group | default(ssl_group) }}"
+        mode: "0600"
 
     - name: Adds script for renewal
       ansible.builtin.template:
@@ -57,6 +61,9 @@
       when: ssl_generate_config.privatekey_path | length > 0
       community.crypto.openssl_privatekey:
         path: "{{ ssl_generate_config.privatekey_path }}"
+        owner: "{{ ssl_generate_config.owner | default(ssl_user) }}"
+        group: "{{ ssl_generate_config.group | default(ssl_group) }}"
+        mode: "0600"
 
     - name: Generates the selfsigned certificate
       when: ssl_generate_config.output_path | length > 0
@@ -64,3 +71,6 @@
         path: "{{ ssl_generate_config.output_path }}"
         provider: selfsigned
         privatekey_path: "{{ ssl_generate_config.privatekey_path }}"
+        owner: "{{ ssl_generate_config.owner | default(ssl_user) }}"
+        group: "{{ ssl_generate_config.group | default(ssl_group) }}"
+        mode: "0600"
