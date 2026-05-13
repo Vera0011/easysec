@@ -1,9 +1,4 @@
 ---
-postgresql_package_name: postgresql
-postgresql_version: 18
-postgresql_user: postgres
-postgresql_group: postgres
-
 postgresql_port: 5432
 postgresql_address: "'*'"
 
@@ -23,46 +18,53 @@ postgresql_users:
 postgresql_databases:
   - { name: "easysec", owner: "manager-easysec", encoding: "UTF-8" }
 
-# SSL configuration - PostgreSQL connections
-postgresql_cert_file: "{{ postgresql_config_dir }}/server.crt"
-postgresql_key_file: "{{ postgresql_config_dir }}/server.key"
-## SSL configuration - Refer to SSL role (roles/ssl/README.md)
-postgresql_ssl_dns_enabled: false
-postgresql_ssl_provider: "cloudflare"
-postgresql_ssl_credentials:
-  token: "token1234"
-postgresql_ssl_generate: true
-postgresql_ssl_config:
-  domain: "postgresql.easysec.x"
-  output_path: "{{ postgresql_cert_file }}"
-  privatekey_path: "{{ postgresql_key_file }}"
-  email: "admin@postgresql.easysec.x"
-  owner: "{{ postgresql_user }}"
-  group: "{{ postgresql_group }}"
+# SSL configuration - PostgreSQL connections + SSL role (refer to roles/ssl/README.md)
+postgresql_ssl:
+  cert_path: "{{ postgresql_config_dir }}/server.crt"
+  key_path: "{{ postgresql_config_dir }}/server.key"
+  enable_dns: false
+  provider: "cloudflare"
+  credentials:
+    token: "token1234"
+  generate: true
+  generate_config:
+    domain: "postgresql.easysec.x"
+    output_path: "{{ postgresql_cert_file }}"
+    privatekey_path: "{{ postgresql_key_file }}"
+    email: "admin@postgresql.easysec.x"
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"
 
 # Oauth configuration - PostgreSQL connection
-postgresql_oauth_provider: kc_validator
-postgresql_oauth_endpoint: https://<keycloak>/realms/<realm>/protocol/openid-connect/token
-postgresql_oauth_audience: postgres-resource
-postgresql_oauth_resource_name: appdb
-postgresql_oauth_client_id: postgres-resource
-postgresql_oauth_http_timeout: 2000
-postgresql_oauth_issuer: https://<keycloak>/realms/<realm>
+postgresql_oauth:
+  provider: kc_validator
+  endpoint: https://<keycloak>/realms/<realm>/protocol/openid-connect/token
+  audience: postgres-resource
+  resource_name: appdb
+  client_id: postgres-resource
+  http_timeout: 2000
+  issuer: https://<keycloak>/realms/<realm>
 
 # WAL configuration
-postgresql_wal_level: "replica"
-postgresql_wal_max_size: "1GB"
-postgresql_wal_min_size: "80MB"
-postgresql_wal_max_senders: 10
-postgresql_wal_max_replicas: 10
+postgresql_wal:
+  level: "replica"
+  max_size: "1GB"
+  min_size: "80MB"
+  max_senders: 10
+  max_replicas: 10
 
 # Access configuration - Updates PG_HBA template
 postgresql_hba_entries:
-  - { type: "local", database: "all", user: "postgres", "address": "", method: "peer" }
+  - { type: "local", database: "all", user: "postgres", address: "", method: "peer" }
   - { type: "hostssl", database: "all", user: "all", address: "0.0.0.0/0", method: "scram-sha-256" }
   - { type: "host", database: "all", user: "all", address: "0.0.0.0/0", method: "reject" }
 
 # Config envs - Should not be changed unless knowing what they do
+postgresql_package_name: postgresql
+postgresql_version: 18
+postgresql_user: postgres
+postgresql_group: postgres
+
 postgresql_key_url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
 postgresql_key_path: "/etc/apt/keyrings/{{ postgresql_package_name }}.asc"
 postgresql_repo_url: https://apt.postgresql.org/pub/repos/apt

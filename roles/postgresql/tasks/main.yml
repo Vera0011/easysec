@@ -13,9 +13,9 @@
   ansible.builtin.import_role:
     name: ssl
   vars:
-    ssl_provider: "{{ postgresql_ssl_provider }}"
-    ssl_credentials: "{{ postgresql_ssl_credentials }}"
-    ssl_generate: "{{ postgresql_ssl_generate }}"
-    ssl_generate_config: "{{ postgresql_ssl_config }}"
-    ssl_dns_enabled: "{{ postgresql_ssl_dns_enabled }}"
+    ssl_provider: "{{ postgresql_ssl.provider }}"
+    ssl_credentials: "{{ postgresql_ssl.credentials }}"
+    ssl_generate: "{{ postgresql_ssl.generate }}"
+    ssl_generate_config: "{{ postgresql_ssl.generate_config }}"
+    ssl_dns_enabled: "{{ postgresql_ssl.enable_dns }}"
   notify: Restart PostgreSQL

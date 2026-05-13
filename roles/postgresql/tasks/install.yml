@@ -8,6 +8,7 @@
       - python3-psycopg2
       - libpq-dev
     update_cache: true
+    state: present
 
 - name: Downloads signing key
   ansible.builtin.get_url:
@@ -32,3 +33,14 @@
     name: "{{ postgresql_package_name }}-{{ postgresql_version }}"
     update_cache: true
     state: present
+
+- name: Oauth flow
+  when: postgresql_oauth_enable
+  block:
+    - name: Installs Oauth packages
+      ansible.builtin.apt:
+        name:
+          - libcurl4-openssl-dev
+          - postgresql-server-dev-{{ postgresql_version }}
+        state: present
+        update_cache: true
