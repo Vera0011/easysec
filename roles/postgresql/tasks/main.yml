@@ -1,0 +1,21 @@
+---
+- name: Gather facts
+  ansible.builtin.setup:
+
+- name: PostgreSQL installation
+  ansible.builtin.include_tasks: install.yml
+
+- name: PostgreSQL configuration
+  ansible.builtin.include_tasks: configure.yml
+
+- name: Creates SSL certificate
+  when: postgresql_ssl_enable
+  ansible.builtin.import_role:
+    name: ssl
+  vars:
+    ssl_provider: "{{ postgresql_ssl.provider }}"
+    ssl_credentials: "{{ postgresql_ssl.credentials }}"
+    ssl_generate: "{{ postgresql_ssl.generate }}"
+    ssl_generate_config: "{{ postgresql_ssl.generate_config }}"
+    ssl_dns_enabled: "{{ postgresql_ssl.enable_dns }}"
+  notify: Restart PostgreSQL

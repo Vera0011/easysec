@@ -35,22 +35,22 @@ Vagrant.configure("2") do |config|
             cpus: 1,
             boot_timeout: 600
         },
-        #{ 
-        #    name: "vagrant-kali-1",
-        #    box: "kalilinux/rolling",
-        #    ip: "192.168.56.3",
-        #    memory: "2048",
-        #    cpus: 2,
-        #    boot_timeout: 600
-        #},
-        #{ 
-        #    name: "vagrant-ubuntu-1",
-        #    box: "ubuntu/jammy64",
-        #    ip: "192.168.56.4",
-        #    memory: "2048",
-        #    cpus: 2,
-        #    boot_timeout: 600
-        #},
+        { 
+            name: "vagrant-kali-1",
+            box: "kalilinux/rolling",
+            ip: "192.168.56.3",
+            memory: "2048",
+            cpus: 2,
+            boot_timeout: 600
+        },
+        { 
+            name: "vagrant-ubuntu-1",
+            box: "ubuntu/jammy64",
+            ip: "192.168.56.4",
+            memory: "2048",
+            cpus: 2,
+            boot_timeout: 600
+        },
         {
             name: "vagrant-keycloak-1",
             box: "ubuntu/jammy64",
@@ -58,12 +58,20 @@ Vagrant.configure("2") do |config|
             memory: "2048",
             cpus: 2,
             boot_timeout: 600
+        },
+        {
+            name: "vagrant-postgresql-1",
+            box: "ubuntu/jammy64",
+            ip: "192.168.56.6",
+            memory: "2048",
+            cpus: 2,
+            boot_timeout: 600
         }
     ]
 
     # Tasks to execute - Single playbooks and complete workflows
-    all_playbooks = ["proxychains", "lynis", "grype", "syft", "grant", "ssl", "keycloak"]
-    all_workflows = ["anchore"]
+    all_playbooks = ["proxychains", "lynis", "grype", "syft", "grant", "ssl", "postgresql"]
+    all_workflows = ["anchore", "keycloak"]
 
     # Updates list if requested by the user
     custom = ENV.fetch("CUSTOM_MODULES", "").split(",").map(&:strip).reject(&:empty?)

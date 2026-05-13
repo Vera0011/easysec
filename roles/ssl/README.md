@@ -22,6 +22,8 @@ Certbot is used under the hood (for public domains). This allows to generate the
       output_path: "/opt/test/myfullchain.pem"
       privatekey_path: "/opt/test/mykey.key"
       email: "whoami@easysec.x"
+      owner: "easysec"
+      group: "easysec"
 ```
 
 ## Properties
@@ -37,6 +39,8 @@ Certbot is used under the hood (for public domains). This allows to generate the
     - `output_path`: Where to store the `fullchain.pem` file (absolute path). Performs a `cp`, not a `mv`
     - `privatekey_path`: Where to store the `privkey.key` file (absolute path). Performs a `cp`, not a `mv`
     - `email`: Contact email of the domain
+    - `owner`: If the output files (keys) need a specific user. Defaults to the role user
+    - `group`: If the output files (keys) need a specific group. Defaults to the role group
 
 ## Test suite
 > [!CAUTION]

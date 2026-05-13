@@ -1,0 +1,5 @@
+# PG_HBA configuration - EasySec
+
+{% for entry in postgresql_hba_entries %}
+{{ entry.type }}   {{ entry.database }}   {{ entry.user }}   {{ entry.address }}   {{ entry.method }}
+{% endfor %}
