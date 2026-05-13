@@ -1,0 +1,81 @@
+---
+- name: Configuring memory overcommit - Sysctl configurations
+  loop: "{{ postgresql_sysctl_params }}"
+  ansible.posix.sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: true
+
+- name: Configure secure socket directory
+  ansible.builtin.file:
+    path: "{{ postgresql_unix_socket_dir }}"
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"
+    mode: "0700"
+    state: directory
+  notify: Reload daemon
+
+- name: Create PostgreSQL log directory
+  ansible.builtin.file:
+    path: "{{ postgresql_log_dir }}"
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"
+    mode: "0750"
+    state: directory
+
+- name: Sends custom server configuration
+  ansible.builtin.template:
+    src: templates/postgresql.conf.j2
+    dest: "{{ postgresql_conf_path }}"
+    mode: "0660"
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"
+
+- name: Sends custom pg_hba configuration
+  ansible.builtin.template:
+    src: templates/pg_hba.conf.j2
+    dest: "{{ postgresql_hba_path }}"
+    mode: "0660"
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"
+
+- name: User configuration
+  become: true
+  become_user: "{{ postgresql_user }}"
+  block:
+    - name: Generate random password - Custom superadmin user
+      when: postgresql_user_enable and item.password == "generate"
+      loop: "{{ postgresql_users }}"
+      vars:
+        pass_generated: "{{ lookup('ansible.builtin.password', '/dev/null', length=32, chars=['ascii_letters', 'digits']) }}"
+      ansible.builtin.set_fact:
+        postgresql_passwords: "{{ postgresql_passwords | default({}) | combine({item.name: pass_generated}) }}"
+
+    - name: Create custom superadmin
+      when: postgresql_user_enable
+      loop: "{{ postgresql_users }}"
+      community.postgresql.postgresql_user:
+        name: "{{ item.name }}"
+        password: "{{ postgresql_passwords[item.name] if item.password == 'generate' else item.password }}"
+        state: present
+        role_attr_flags: "{{ 'SUPERUSER' if item.superuser else 'NOSUPERUSER,NOCREATEDB,NOCREATEROLE' }}"
+
+    - name: Log generated passwords
+      when: item.password == 'generate'
+      loop: "{{ postgresql_users }}"
+      ansible.builtin.debug:
+        msg: "User: {{ item.name }} | Password: {{ postgresql_passwords[item.name] }}"
+
+- name: Database configuration
+  become: true
+  become_user: "{{ postgresql_user }}"
+  block:
+    - name: Create custom databases
+      when: postgresql_database_enable
+      loop: "{{ postgresql_databases }}"
+      community.postgresql.postgresql_db:
+        name: "{{ item.name }}"
+        owner: "{{ item.owner }}"
+        encoding: "{{ item.encoding }}"
+        state: present

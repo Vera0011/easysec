@@ -1,0 +1,34 @@
+---
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - curl
+      - ca-certificates
+      - acl
+      - python3-psycopg2
+      - libpq-dev
+    update_cache: true
+
+- name: Downloads signing key
+  ansible.builtin.get_url:
+    url: "{{ postgresql_key_url }}"
+    dest: "{{ postgresql_key_path }}"
+    mode: "0644"
+
+- name: Creates source file
+  ansible.builtin.copy:
+    dest: "{{ postgresql_apt_source }}"
+    content: |
+      Types: deb
+      URIs: {{ postgresql_repo_url }}
+      Suites: {{ ansible_facts['distribution_release'] }}-pgdg
+      Architectures: amd64
+      Components: main
+      Signed-By: {{ postgresql_key_path }}
+    mode: "0644"
+
+- name: Install PostgreSQL
+  ansible.builtin.apt:
+    name: "{{ postgresql_package_name }}-{{ postgresql_version }}"
+    update_cache: true
+    state: present

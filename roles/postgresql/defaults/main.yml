@@ -1,0 +1,84 @@
+---
+postgresql_package_name: postgresql
+postgresql_version: 18
+postgresql_user: postgres
+postgresql_group: postgres
+
+postgresql_port: 5432
+postgresql_address: "'*'"
+
+# Modules
+postgresql_user_enable: true
+postgresql_database_enable: true
+postgresql_ssl_enable: true
+postgresql_oauth_enable: false
+postgresql_wal_enable: false
+
+# User configuration
+postgresql_users:
+  - { name: "easysec", password: "generate", superuser: true }
+  - { name: "manager-easysec", password: "generate", superuser: false }
+
+# Database configuration
+postgresql_databases:
+  - { name: "easysec", owner: "manager-easysec", encoding: "UTF-8" }
+
+# SSL configuration - PostgreSQL connections
+postgresql_cert_file: "{{ postgresql_config_dir }}/server.crt"
+postgresql_key_file: "{{ postgresql_config_dir }}/server.key"
+## SSL configuration - Refer to SSL role (roles/ssl/README.md)
+postgresql_ssl_dns_enabled: false
+postgresql_ssl_provider: "cloudflare"
+postgresql_ssl_credentials:
+  token: "token1234"
+postgresql_ssl_generate: true
+postgresql_ssl_config:
+  domain: "postgresql.easysec.x"
+  output_path: "{{ postgresql_cert_file }}"
+  privatekey_path: "{{ postgresql_key_file }}"
+  email: "admin@postgresql.easysec.x"
+  owner: "{{ postgresql_user }}"
+  group: "{{ postgresql_group }}"
+
+# Oauth configuration - PostgreSQL connection
+postgresql_oauth_provider: kc_validator
+postgresql_oauth_endpoint: https://<keycloak>/realms/<realm>/protocol/openid-connect/token
+postgresql_oauth_audience: postgres-resource
+postgresql_oauth_resource_name: appdb
+postgresql_oauth_client_id: postgres-resource
+postgresql_oauth_http_timeout: 2000
+postgresql_oauth_issuer: https://<keycloak>/realms/<realm>
+
+# WAL configuration
+postgresql_wal_level: "replica"
+postgresql_wal_max_size: "1GB"
+postgresql_wal_min_size: "80MB"
+postgresql_wal_max_senders: 10
+postgresql_wal_max_replicas: 10
+
+# Access configuration - Updates PG_HBA template
+postgresql_hba_entries:
+  - { type: "local", database: "all", user: "postgres", "address": "", method: "peer" }
+  - { type: "hostssl", database: "all", user: "all", address: "0.0.0.0/0", method: "scram-sha-256" }
+  - { type: "host", database: "all", user: "all", address: "0.0.0.0/0", method: "reject" }
+
+# Config envs - Should not be changed unless knowing what they do
+postgresql_key_url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+postgresql_key_path: "/etc/apt/keyrings/{{ postgresql_package_name }}.asc"
+postgresql_repo_url: https://apt.postgresql.org/pub/repos/apt
+postgresql_apt_source: /etc/apt/sources.list.d/pgdg.sources
+
+postgresql_data_dir: /var/lib/postgresql/{{ postgresql_version }}/main
+postgresql_config_dir: /etc/postgresql/{{ postgresql_version }}/main
+postgresql_conf_path: "{{ postgresql_config_dir }}/postgresql.conf"
+postgresql_hba_path: "{{ postgresql_config_dir }}/pg_hba.conf"
+postgresql_indent_path: "{{ postgresql_config_dir }}/pg_ident.conf"
+postgresql_log_dir: /var/log/postgresql
+
+postgresql_unix_socket_dir: /var/run/postgresql
+
+postgresql_shared_buffers: "{{ (ansible_facts['memtotal_mb'] * 0.25) | int }}MB"
+postgresql_sysctl_params:
+  - { name: "vm.overcommit_memory", value: "2" }
+  - { name: "vm.overcommit_ratio", value: "80" }
+  - { name: "vm.nr_hugepages", value: "{{ ((ansible_facts['memtotal_mb'] * 0.25 / 2) * 1.1) | int }}" }
