@@ -5,4 +5,15 @@
   roles:
     - postgresql
   vars:
-    postgresql_ssl_provider: "selfsigned"
+    postgresql_ssl:
+      cert_path: "{{ postgresql_config_dir }}/server.crt"
+      key_path: "{{ postgresql_config_dir }}/server.key"
+      provider: "selfsigned"
+      generate: true
+      generate_config:
+        domain: "postgresql.easysec.x"
+        output_path: "{{ postgresql_ssl.cert_path }}"
+        privatekey_path: "{{ postgresql_ssl.key_path }}"
+        email: "admin@postgresql.easysec.x"
+        owner: "{{ postgresql_user }}"
+        group: "{{ postgresql_group }}"

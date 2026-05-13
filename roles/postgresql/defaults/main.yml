@@ -29,8 +29,8 @@ postgresql_ssl:
   generate: true
   generate_config:
     domain: "postgresql.easysec.x"
-    output_path: "{{ postgresql_cert_file }}"
-    privatekey_path: "{{ postgresql_key_file }}"
+    output_path: "{{ postgresql_ssl.cert_path }}"
+    privatekey_path: "{{ postgresql_ssl.key_path }}"
     email: "admin@postgresql.easysec.x"
     owner: "{{ postgresql_user }}"
     group: "{{ postgresql_group }}"

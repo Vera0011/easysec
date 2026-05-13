@@ -209,5 +209,6 @@ while true; do
 done
 
 ## - Execution - ##
+export CUSTOM_MODULES=$MODULES
 vagrant up --provision-with shell --parallel && \
-    CUSTOM_MODULES=$MODULES vagrant provision --provision-with ansible
+    vagrant provision --provision-with ansible

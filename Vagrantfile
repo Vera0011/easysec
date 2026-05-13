@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
     SCRIPT
 
     ## Servers to set up
-    servers = [
+    ALL_SERVERS = [
         { 
             name: "vagrant-manager-1",
             box: "ubuntu/jammy64",
@@ -70,13 +70,44 @@ Vagrant.configure("2") do |config|
     ]
 
     # Tasks to execute - Single playbooks and complete workflows
-    all_playbooks = ["proxychains", "lynis", "grype", "syft", "grant", "ssl", "postgresql"]
-    all_workflows = ["anchore", "keycloak"]
+    ALL_MODULES = ["proxychains", "lynis", "grype", "syft", "grant", "ssl", "postgresql"]
+    ALL_WORKFLOWS = ["anchore", "keycloak"]
+    MAPPING_SERVERS = {
+        "proxychains" => ["vagrant-kali-1"],
+        "lynis"       => ["vagrant-ubuntu-1"],
+        "grype"       => ["vagrant-ubuntu-1"],
+        "syft"        => ["vagrant-ubuntu-1"],
+        "grant"       => ["vagrant-ubuntu-1"],
+        "ssl"         => ["vagrant-ubuntu-1"],
+        "postgresql"  => ["vagrant-postgresql-1"],
+        "keycloak"    => ["vagrant-keycloak-1", "vagrant-postgresql-1"],
+        "anchore"     => ["vagrant-ubuntu-1"]
+    }
 
     # Updates list if requested by the user
-    custom = ENV.fetch("CUSTOM_MODULES", "").split(",").map(&:strip).reject(&:empty?)
-    playbooks = custom.empty? ? all_playbooks : all_playbooks & custom
-    workflows = custom.empty? ? all_workflows : all_workflows & custom
+    modules = ENV.fetch("CUSTOM_MODULES", "").split(",").map(&:strip).reject(&:empty?)
+    playbooks = modules.empty? ? ALL_MODULES : ALL_MODULES & modules
+    workflows = modules.empty? ? ALL_WORKFLOWS : ALL_WORKFLOWS & modules
+    
+    # Only load required servers to speed-up setup
+    required_servers = if modules.empty?
+        ALL_SERVERS.map { |s| s[:name] }
+    else
+        modules.flat_map { |mod| MAPPING_SERVERS.fetch(mod, []) }.uniq
+    end
+
+    # Always include manager
+    required_servers << "vagrant-manager-1"
+    required_servers.uniq!
+
+    servers = ALL_SERVERS.select { |s| required_servers.include?(s[:name]) }
+
+    puts "\n─────────────────────────────────────"
+    puts "  EasySec - Loading environment"
+    puts "─────────────────────────────────────"
+    puts "  Modules  : #{modules.empty? ? "all" : modules.join(', ')}"
+    puts "  Servers  : #{servers.map { |s| s[:name] }.join(', ')}"
+    puts "─────────────────────────────────────\n"
 
     # Server setup
     servers.each do |spec|
