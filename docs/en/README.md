@@ -79,6 +79,7 @@ Depending on how the project progresses, these are the tools and environments I 
 - Syft - Software for SBOM generation. Information of implementation [here](./tools/blue/syft.md)
 - Grant - Software to analyze currently used Licenses. Information of implementation [here](./tools/blue/grant.md)
 - SSL - A set of tools that work together to generate SSL certificates for domains and using DNS providers. Information of the implementation [here](./tools/blue/ssl.md)
+- PostgreSQL - Database installation and configuration. Information of the implementation [here](./tools/blue/postgresql.md)
 
 #### Workflows
 - Anchore - Workflow including multiple tools to analyze dependencies and licenses. Information of implementation [here](./workflows/blue/anchore.md)
