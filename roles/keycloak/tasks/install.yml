@@ -1,0 +1,12 @@
+---
+- name: Installing OpenJDK
+  ansible.builtin.apt:
+    name:
+      - "{{ keycloak_java_package }}"
+    update_cache: true
+
+- name: Downloads software
+  ansible.builtin.get_url:
+    url: "{{ keycloak_host }}"
+    dest: /tmp/keycloak.tar.gz
+    mode: "0600"

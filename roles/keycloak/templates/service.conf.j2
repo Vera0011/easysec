@@ -1,0 +1,17 @@
+[Unit]
+Description=Keycloak Identity Provider - EasySec
+After=network.target
+
+[Service]
+User={{ keycloak_user }}
+Group={{ keycloak_group }}
+{% if keycloak_enable_https %}
+ExecStart={{ keycloak_path }}/bin/kc.sh --config-file={{ keycloak_config_path }} start --optimized
+{% else %}
+ExecStart={{ keycloak_path }}/bin/kc.sh --config-file={{ keycloak_config_path }} start-dev
+{% endif %}
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,21 +1,6 @@
 ---
 - name: Configures Certbot and provider credentials
   block:
-    - name: We create the required group
-      ansible.builtin.group:
-        name: "{{ ssl_group }}"
-        state: present
-
-    - name: We create the required user
-      ansible.builtin.user:
-        state: present
-        name: "{{ ssl_user }}"
-        group: "{{ ssl_group }}"
-        create_home: false
-        system: true
-        umask: "027"
-        password: "!"
-
     - name: Correct permissions - Config directory
       ansible.builtin.file:
         path: "{{ ssl_config_path }}"

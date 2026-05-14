@@ -1,0 +1,8 @@
+---
+- name: Installs PostgreSQL (Vagrant)
+  hosts: vagrant-postgresql-1
+  become: true
+  roles:
+    - postgresql
+  vars:
+    postgresql_ssl_provider: "selfsigned"

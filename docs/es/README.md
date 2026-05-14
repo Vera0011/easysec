@@ -34,7 +34,8 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - [X] Grype
 - [X] Syft
 - [X] Grant
-- [ ] Keycloak
+- [X] Keycloak
+- [ ] OpenLDAP
 - [ ] Netmaker
 - [ ] Pomerium
 - [ ] Netbird
@@ -78,6 +79,7 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - Syft - Un software para generar SBOMs. Información sobre la implementación [aquí](./tools/blue/syft.md)
 - Grant - Un software para analizar las licencias de las dependencias empleadas. Información sobre la implementación [aquí](./tools/blue/grant.md)
 - SSL - Una conjunto de herramientas que trabajan en conjunto para generar certificados SSL para dominios y usando proveedores DNS. Información sobre la implementación [aquí](./tools/blue/ssl.md)
+- PostgreSQL - Instalación y configuración de la base de datos. Información sobre la implementación [aquí](./tools/blue/postgresql.md)
 
 #### Workflows
 - Anchore - Workflow que incluye varias herramientas para analizar dependencias y licencias. Información sobre la implementación [aquí](./workflows/blue/anchore.md)

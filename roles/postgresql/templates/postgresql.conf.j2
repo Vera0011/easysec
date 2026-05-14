@@ -1,0 +1,179 @@
+# -----------------------------
+# PostgreSQL configuration file - EasySec
+# -----------------------------
+# Memory units:  B  = bytes            Time units:  us  = microseconds
+#                kB = kilobytes                     ms  = milliseconds
+#                MB = megabytes                     s   = seconds
+#                GB = gigabytes                     min = minutes
+#                TB = terabytes                     h   = hours
+#                                                   d   = days
+
+#------------------------------------------------------------------------------
+# FILE LOCATIONS
+#------------------------------------------------------------------------------
+
+data_directory = '{{ postgresql_data_dir }}'
+hba_file = '{{ postgresql_hba_path }}'
+ident_file = '{{ postgresql_indent_path }}'
+
+external_pid_file = '{{ postgresql_unix_socket_dir }}/{{ postgresql_version }}-main.pid'   # write an extra PID file
+
+#------------------------------------------------------------------------------
+# CONNECTIONS AND AUTHENTICATION
+#------------------------------------------------------------------------------
+
+# - Connection Settings -
+
+listen_addresses = '{{ postgresql_address }}'
+port = {{ postgresql_port }}
+max_connections = 100
+reserved_connections = 3
+unix_socket_directories = '{{ postgresql_unix_socket_dir }}'
+unix_socket_group = '{{ postgresql_group }}'
+unix_socket_permissions = 0700
+
+# - Authentication -
+
+authentication_timeout = 10s
+password_encryption = scram-sha-256
+scram_iterations = 8192
+md5_password_warnings = on
+
+{% if postgresql_oauth_enable %}
+oauth_validator_libraries = '{{ postgresql_oauth_provider }}'
+kc.token_endpoint: '{{ postgresql_oauth_endpoint }}'
+kc.audience:       '{{ postgresql_oauth_audience }}'
+kc.resource_name:  '{{ postgresql_oauth_resource_name }}'
+kc.client_id:      '{{ postgresql_oauth_client_id }}'
+kc.http_timeout_ms: '{{ postgresql_oauth_http_timeout }}'
+kc.expected_issuer: '{{ postgresql_oauth_issuer }}'
+kc.debug: 'on'
+kc.log_body: 'on'
+{% endif %}
+
+# - SSL -
+
+{% if postgresql_ssl_enable %}
+ssl = on
+ssl_cert_file = '{{ postgresql_ssl_cert_path }}'
+ssl_key_file = '{{ postgresql_ssl_key_path }}'
+ssl_ciphers = 'HIGH:MEDIUM:+3DES:!aNULL'
+ssl_tls13_ciphers = ''
+ssl_prefer_server_ciphers = on
+ssl_min_protocol_version = 'TLSv1.2'
+{% else %}
+ssl = off
+ssl_cert_file = '/etc/ssl/certs/ssl-cert-snakeoil.pem'
+ssl_key_file = '/etc/ssl/private/ssl-cert-snakeoil.key'
+{% endif %}
+
+#------------------------------------------------------------------------------
+# RESOURCE USAGE (except WAL)
+#------------------------------------------------------------------------------
+
+# - Memory -
+
+shared_buffers = {{ postgresql_shared_buffers }}
+
+{% if 'vm.nr_hugepages' in postgresql_sysctl_params | map(attribute='name') | list %}
+huge_pages = on
+{% else %}
+huge_pages = off
+{% endif %}
+
+huge_page_size = 0
+dynamic_shared_memory_type = posix
+
+{% if postgresql_wal_enable %}
+#------------------------------------------------------------------------------
+# WRITE-AHEAD LOG
+#------------------------------------------------------------------------------
+
+# - Settings -
+wal_level = {{ postgresql_wal_level }}
+
+# - Checkpoints -
+max_wal_size = {{ postgresql_wal_max_size }}
+min_wal_size = {{ postgresql_wal_min_size }}
+
+#------------------------------------------------------------------------------
+# REPLICATION
+#------------------------------------------------------------------------------
+
+# - Sending Servers -
+
+# Set these on the primary and on any standby that will send replication data.
+
+max_wal_senders = {{ postgresql_wal_max_senders }}
+max_replication_slots = {{ postgresql_wal_max_replicas }}
+{% endif %}
+
+#------------------------------------------------------------------------------
+# REPORTING AND LOGGING
+#------------------------------------------------------------------------------
+
+# - Where to Log -
+
+log_destination = 'stderr'
+logging_collector = on
+log_directory = '{{ postgresql_log_dir }}'
+log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
+log_file_mode = 0640
+log_rotation_age = 1d
+log_rotation_size = 10MB
+log_truncate_on_rotation = off
+
+# - When to Log -
+
+log_min_messages = info
+log_min_error_statement = error
+
+# - What to Log -
+
+log_connections = 'all'
+log_disconnections = on
+log_duration = on
+log_line_prefix = '%m [%p] %q - %u@%d - %a - %r '
+log_timezone = 'Etc/UTC'
+
+# - Process Title -
+
+cluster_name = '{{ postgresql_version }}/main'
+
+#------------------------------------------------------------------------------
+# VACUUMING
+#------------------------------------------------------------------------------
+
+# - Automatic Vacuuming -
+autovacuum_worker_slots = 16
+
+#------------------------------------------------------------------------------
+# CLIENT CONNECTION DEFAULTS
+#------------------------------------------------------------------------------
+
+# - Statement Behavior -
+client_min_messages = notice
+
+# - Locale and Formatting -
+
+datestyle = 'iso, mdy'
+timezone = 'Etc/UTC'
+
+# These settings are initialized by initdb, but they can be changed.
+lc_messages = 'C.UTF-8'
+lc_monetary = 'C.UTF-8'
+lc_numeric = 'C.UTF-8'
+lc_time = 'C.UTF-8'
+
+# default configuration for text search
+default_text_search_config = 'pg_catalog.english'
+
+#------------------------------------------------------------------------------
+# CONFIG FILE INCLUDES
+#------------------------------------------------------------------------------
+
+# These options allow settings to be loaded from files other than the
+# default postgresql.conf.  Note that these are directives, not variable
+# assignments, so they can usefully be given more than once.
+
+include_dir = 'conf.d'                  # include files ending in '.conf' from

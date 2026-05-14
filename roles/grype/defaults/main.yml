@@ -7,7 +7,7 @@ grype_time:
   hour: "3"
   minute: "0"
 
-# Config paths - Should not be changed
+# Config envs - Should not be changed unless knowing what they do
 grype_host: https://get.anchore.io/grype
 grype_cosign_binary_path: /usr/local/sbin/cosign
 grype_binary_path: /usr/local/sbin/grype

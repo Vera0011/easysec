@@ -1,0 +1,28 @@
+---
+- name: Creation of temporary admin
+  become_user: "{{ keycloak_user }}"
+  become: true
+  block:
+    - name: Generate random password - Temporary admin
+      ansible.builtin.set_fact:
+        keycloak_admin_password: "{{ lookup('ansible.builtin.password', '/dev/null', length=32, chars=['ascii_letters', 'digits']) }}"
+
+    - name: Create first admin
+      ansible.builtin.shell: |
+        KC_BOOTSTRAP_ADMIN_PASSWORD="{{ keycloak_admin_password }}" {{ keycloak_path }}/bin/kc.sh \
+          --config-file={{ keycloak_config_path }} \
+          bootstrap-admin user --username admin --password:env KC_BOOTSTRAP_ADMIN_PASSWORD
+      register: keycloak_bootstrap_result
+      changed_when: true
+      failed_when: false
+
+    - name: Output admin password
+      ansible.builtin.copy:
+        content: |
+          # Keycloak generated user and password - EasySec
+
+          admin: {{ keycloak_admin_password }}
+        dest: "{{ playbook_dir }}/../generated/keycloak_admin.txt"
+        mode: "0640"
+      become: false
+      delegate_to: local

@@ -5,8 +5,8 @@
     - name: Generates the certificate
       ansible.builtin.shell: |
         certbot certonly \
-          --email {{ ssl_generate_config.email }} \
-          -d {{ ssl_generate_config.domain }} \
+          --email {{ ssl_generate_email }} \
+          -d {{ ssl_generate_domain }} \
           --non-interactive \
           --agree-tos {{ dns_args }}
       vars:
@@ -20,25 +20,29 @@
       changed_when: true
 
     - name: Sends the certificate to the specified path
-      when: ssl_generate_config.output_path | length > 0
+      when: ssl_generate_output_path | length > 0
       ansible.builtin.copy:
-        src: "{{ ssl_live_certs }}/{{ ssl_generate_config.domain }}/fullchain.pem"
-        dest: "{{ ssl_generate_config.output_path }}"
+        src: "{{ ssl_live_certs }}/{{ ssl_generate_domain }}/fullchain.pem"
+        dest: "{{ ssl_generate_output_path }}"
         remote_src: true
-        mode: "0660"
+        owner: "{{ ssl_generate_owner | default(ssl_user) }}"
+        group: "{{ ssl_generate_group | default(ssl_group) }}"
+        mode: "0600"
 
     - name: Sends the private key to the specified path
-      when: ssl_generate_config.privatekey_path | length > 0
+      when: ssl_generate_privatekey_path | length > 0
       ansible.builtin.copy:
-        src: "{{ ssl_live_certs }}/{{ ssl_generate_config.domain }}/privkey.key"
-        dest: "{{ ssl_generate_config.privatekey_path }}"
+        src: "{{ ssl_live_certs }}/{{ ssl_generate_domain }}/privkey.key"
+        dest: "{{ ssl_generate_privatekey_path }}"
         remote_src: true
-        mode: "0660"
+        owner: "{{ ssl_generate_owner | default(ssl_user) }}"
+        group: "{{ ssl_generate_group | default(ssl_group) }}"
+        mode: "0600"
 
     - name: Adds script for renewal
       ansible.builtin.template:
         src: templates/renewal.sh.j2
-        dest: "{{ ssl_live_certs }}/{{ ssl_generate_config.domain }}/renewal.sh"
+        dest: "{{ ssl_live_certs }}/{{ ssl_generate_domain }}/renewal.sh"
         mode: "0750"
 
     - name: Configures cronjob to renew certificate
@@ -54,13 +58,44 @@
   when: ssl_provider == "selfsigned"
   block:
     - name: Generates the private key
-      when: ssl_generate_config.privatekey_path | length > 0
+      when: ssl_generate_privatekey_path | length > 0
       community.crypto.openssl_privatekey:
-        path: "{{ ssl_generate_config.privatekey_path }}"
+        path: "{{ ssl_generate_privatekey_path }}"
+        owner: "{{ ssl_generate_owner | default(ssl_user) }}"
+        group: "{{ ssl_generate_group | default(ssl_group) }}"
+        mode: "0600"
+
+    - name: Generates a temporary CSR certificate with hardcoded info
+      when: ssl_generate_privatekey_path | length > 0 and ssl_generate_output_path | length > 0
+      community.crypto.openssl_csr:
+        path: "/tmp/temp.csr"
+        privatekey_path: "{{ ssl_generate_privatekey_path }}"
+        common_name: "EasySec"
+        country_name: "ES"
+        organization_name: "EasySec"
+        organizational_unit_name: "EasySec"
+        subject_alt_name:
+          - "DNS:{{ ssl_generate_domain }}"
+          - "IP:{{ ansible_facts['default_ipv4']['address'] }}"
+        basic_constraints:
+          - "CA:TRUE"
+        basic_constraints_critical: true
+        owner: "{{ ssl_generate_csr_owner | default(ssl_user) }}"
+        group: "{{ ssl_generate_csr_group | default(ssl_group) }}"
+        mode: "0600"
 
     - name: Generates the selfsigned certificate
-      when: ssl_generate_config.output_path | length > 0
+      when: ssl_generate_output_path | length > 0
       community.crypto.x509_certificate:
-        path: "{{ ssl_generate_config.output_path }}"
+        path: "{{ ssl_generate_output_path }}"
         provider: selfsigned
-        privatekey_path: "{{ ssl_generate_config.privatekey_path }}"
+        csr_path: "/tmp/temp.csr"
+        privatekey_path: "{{ ssl_generate_privatekey_path }}"
+        owner: "{{ ssl_generate_owner | default(ssl_user) }}"
+        group: "{{ ssl_generate_group | default(ssl_group) }}"
+        mode: "0600"
+
+    - name: Remove temporary CSR
+      ansible.builtin.file:
+        path: /tmp/temp.csr
+        state: absent

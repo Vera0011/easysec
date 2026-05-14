@@ -1,0 +1,28 @@
+---
+- name: Tool installation
+  ansible.builtin.include_tasks: install.yml
+
+- name: Tool configuration
+  ansible.builtin.include_tasks: configure.yml
+
+- name: Creates SSL certificate
+  when: keycloak_enable_https
+  ansible.builtin.import_role:
+    name: ssl
+  vars:
+    ssl_dns_enabled: "{{ keycloak_ssl_dns_enabled }}"
+    ssl_provider: "{{ keycloak_ssl_provider }}"
+    ssl_credentials: "{{ keycloak_ssl_credentials }}"
+    ssl_generate: "{{ keycloak_ssl_generate }}"
+    ssl_generate_domain: "{{ keycloak_ssl_generate_domain }}"
+    ssl_generate_output_path: "{{ keycloak_ssl_generate_output_path }}"
+    ssl_generate_privatekey_path: "{{ keycloak_ssl_generate_privatekey_path }}"
+    ssl_generate_email: "{{ keycloak_ssl_generate_email }}"
+    ssl_generate_owner: "{{ keycloak_ssl_generate_owner }}"
+    ssl_generate_group: "{{ keycloak_ssl_generate_group }}"
+  notify:
+    - Reload daemon
+    - Restart Keycloak
+
+- name: Tool management
+  ansible.builtin.include_tasks: management.yml

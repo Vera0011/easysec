@@ -7,7 +7,7 @@ syft_time:
   hour: "3"
   minute: "0"
 
-# Config paths - Should not be changed
+# Config envs - Should not be changed unless knowing what they do
 syft_host: https://get.anchore.io/syft
 syft_cosign_binary_path: /usr/local/sbin/cosign
 syft_binary_path: /usr/local/sbin/syft
