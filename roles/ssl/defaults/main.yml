@@ -9,13 +9,12 @@ ssl_credentials:
   token: "token1234"
 
 ssl_generate: true
-ssl_generate_config:
-  domain: "easysec.x"
-  output_path: "/opt/test/myfullchain.pem"
-  privatekey_path: "/opt/test/mykey.key"
-  email: "whoami@easysec.x"
-  group: "ssl" # Permissions for files
-  owner: "ssl" # Permissions for files
+ssl_generate_domain: "easysec.x"
+ssl_generate_output_path: "/opt/test/myfullchain.pem"
+ssl_generate_privatekey_path: "/opt/test/mykey.key"
+ssl_generate_email: "whoami@easysec.x"
+ssl_generate_owner: "{{ ssl_user }}" # Permissions for files
+ssl_generate_group: "{{ ssl_group }}" # Permissions for files
 
 # Config paths - Should not be changed
 ssl_config_path: /etc/letsencrypt

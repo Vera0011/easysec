@@ -17,13 +17,12 @@ Certbot is used under the hood (for public domains). This allows to generate the
     ssl_credentials:
       token: "token1234"
     ssl_generate: true
-    ssl_generate_config:
-      domain: "easysec.x"
-      output_path: "/opt/test/myfullchain.pem"
-      privatekey_path: "/opt/test/mykey.key"
-      email: "whoami@easysec.x"
-      owner: "easysec"
-      group: "easysec"
+    ssl_generate_domain: "easysec.x"
+    ssl_generate_output_path: "/opt/test/myfullchain.pem"
+    ssl_generate_privatekey_path: "/opt/test/mykey.key"
+    ssl_generate_email: "whoami@easysec.x"
+    ssl_generate_owner: "easysec"
+    ssl_generate_group: "easysec"
 ```
 
 ## Properties
@@ -34,13 +33,12 @@ Certbot is used under the hood (for public domains). This allows to generate the
     - `secret`
     - `consumer`
 - `ssl_generate` (true/false): If the role must generate a certificate or not
-- `ssl_generate_config` (dict): Required if `ssl_generate` is true. These are the specifications of the certificate. Available fields:
-    - `domain`: Name of the domain
-    - `output_path`: Where to store the `fullchain.pem` file (absolute path). Performs a `cp`, not a `mv`
-    - `privatekey_path`: Where to store the `privkey.key` file (absolute path). Performs a `cp`, not a `mv`
-    - `email`: Contact email of the domain
-    - `owner`: If the output files (keys) need a specific user. Defaults to the role user
-    - `group`: If the output files (keys) need a specific group. Defaults to the role group
+- `ssl_generate_domain`: Name of the domain to generate
+- `ssl_generate_output_path`: Where to store the `fullchain.pem` file (absolute path). Performs a `cp`, not a `mv`
+- `ssl_generate_privatekey_path`: Where to store the `privkey.key` file (absolute path). Performs a `cp`, not a `mv`
+- `ssl_generate_email`: Contact email of the domain
+- `ssl_generate_owner`: If the output files (keys) need a specific user. Defaults to the role user
+- `ssl_generate_group`: If the output files (keys) need a specific group. Defaults to the role group
 
 ## Test suite
 > [!CAUTION]
