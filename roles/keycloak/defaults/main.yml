@@ -57,4 +57,4 @@ keycloak_config_path: "{{ keycloak_config_dir }}/keycloak.conf"
 keycloak_log_dir: /var/log/keycloak
 keycloak_systemd_path: /etc/systemd/system/keycloak.service
 
-keycloak_port: 8043
+keycloak_port: 8443

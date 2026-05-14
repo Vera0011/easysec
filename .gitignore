@@ -4,3 +4,4 @@
 .vscode
 old
 vagrant/*
+generated/*

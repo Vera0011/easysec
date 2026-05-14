@@ -45,7 +45,7 @@
     owner: "{{ keycloak_user }}"
     group: "{{ keycloak_group }}"
     state: directory
-    mode: "755"
+    mode: "750"
 
 - name: Config directory creation
   ansible.builtin.file:
@@ -69,7 +69,7 @@
     dest: "{{ keycloak_systemd_path }}"
     owner: root
     group: root
-    mode: "0644"
+    mode: "0640"
   notify:
     - Reload daemon
 
