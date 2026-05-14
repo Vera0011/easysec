@@ -62,7 +62,7 @@
         role_attr_flags: "{{ 'SUPERUSER' if item.superuser else 'NOSUPERUSER,NOCREATEDB,NOCREATEROLE' }}"
 
     - name: Log generated passwords
-      when: item.password == 'generate'
+      when: item.password | length == 0
       loop: "{{ postgresql_users }}"
       ansible.builtin.debug:
         msg: "User: {{ item.name }} | Password: {{ postgresql_passwords[item.name] }}"

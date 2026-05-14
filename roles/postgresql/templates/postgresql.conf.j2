@@ -24,7 +24,7 @@ external_pid_file = '{{ postgresql_unix_socket_dir }}/{{ postgresql_version }}-m
 
 # - Connection Settings -
 
-listen_addresses = {{ postgresql_address }}
+listen_addresses = '{{ postgresql_address }}'
 port = {{ postgresql_port }}
 max_connections = 100
 reserved_connections = 3
@@ -40,13 +40,13 @@ scram_iterations = 8192
 md5_password_warnings = on
 
 {% if postgresql_oauth_enable %}
-oauth_validator_libraries = '{{ postgresql_oauth.provider }}'
-kc.token_endpoint: '{{ postgresql_oauth.endpoint }}'
-kc.audience:       '{{ postgresql_oauth.audience }}'
-kc.resource_name:  '{{ postgresql_oauth.resource_name }}'
-kc.client_id:      '{{ postgresql_oauth.client_id }}'
-kc.http_timeout_ms: '{{ postgresql_oauth.http_timeout }}'
-kc.expected_issuer: '{{ postgresql_oauth.issuer }}'
+oauth_validator_libraries = '{{ postgresql_oauth_provider }}'
+kc.token_endpoint: '{{ postgresql_oauth_endpoint }}'
+kc.audience:       '{{ postgresql_oauth_audience }}'
+kc.resource_name:  '{{ postgresql_oauth_resource_name }}'
+kc.client_id:      '{{ postgresql_oauth_client_id }}'
+kc.http_timeout_ms: '{{ postgresql_oauth_http_timeout }}'
+kc.expected_issuer: '{{ postgresql_oauth_issuer }}'
 kc.debug: 'on'
 kc.log_body: 'on'
 {% endif %}
@@ -55,8 +55,8 @@ kc.log_body: 'on'
 
 {% if postgresql_ssl_enable %}
 ssl = on
-ssl_cert_file = '{{ postgresql_ssl.cert_path }}'
-ssl_key_file = '{{ postgresql_ssl.key_path }}'
+ssl_cert_file = '{{ postgresql_ssl_cert_path }}'
+ssl_key_file = '{{ postgresql_ssl_key_path }}'
 ssl_ciphers = 'HIGH:MEDIUM:+3DES:!aNULL'
 ssl_tls13_ciphers = ''
 ssl_prefer_server_ciphers = on
@@ -90,11 +90,11 @@ dynamic_shared_memory_type = posix
 #------------------------------------------------------------------------------
 
 # - Settings -
-wal_level = {{ postgresql_wal.level }}
+wal_level = {{ postgresql_wal_level }}
 
 # - Checkpoints -
-max_wal_size = {{ postgresql_wal.max_size }}
-min_wal_size = {{ postgresql_wal.min_size }}
+max_wal_size = {{ postgresql_wal_max_size }}
+min_wal_size = {{ postgresql_wal_min_size }}
 
 #------------------------------------------------------------------------------
 # REPLICATION
@@ -104,8 +104,8 @@ min_wal_size = {{ postgresql_wal.min_size }}
 
 # Set these on the primary and on any standby that will send replication data.
 
-max_wal_senders = {{ postgresql_wal.max_senders }}
-max_replication_slots = {{ postgresql_wal.max_replicas }}
+max_wal_senders = {{ postgresql_wal_max_senders }}
+max_replication_slots = {{ postgresql_wal_max_replicas }}
 {% endif %}
 
 #------------------------------------------------------------------------------

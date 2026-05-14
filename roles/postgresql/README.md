@@ -27,37 +27,33 @@ The version of PostgreSQL implemented in this role is `v18`.
     postgresql_databases:
       - { name: "easysec", owner: "manager-easysec", encoding: "UTF-8" }
         
-    postgresql_ssl:
-        cert_path: "{{ postgresql_config_dir }}/server.crt"
-        key_path: "{{ postgresql_config_dir }}/server.key"
-        enable_dns: false
-        provider: "cloudflare"
-        credentials:
+    postgresql_ssl_cert_path: "{{ postgresql_config_dir }}/server.crt"
+    postgresql_ssl_key_path: "{{ postgresql_config_dir }}/server.key"
+    postgresql_ssl_enable_dns: false
+    postgresql_ssl_provider: "cloudflare"
+    postgresql_ssl_credentials:
             token: "token1234"
-        generate: true
-        generate_config:
-            domain: "postgresql.easysec.x"
-            output_path: "{{ postgresql_cert_file }}"
-            privatekey_path: "{{ postgresql_key_file }}"
-            email: "admin@postgresql.easysec.x"
-            owner: "{{ postgresql_user }}"
-            group: "{{ postgresql_group }}"
+    postgresql_ssl_generate: true
+    postgresql_ssl_domain: "postgresql.easysec.x"
+    postgresql_ssl_output_path: "{{ postgresql_cert_file }}"
+    postgresql_ssl_privatekey_path: "{{ postgresql_key_file }}"
+    postgresql_ssl_email: "admin@postgresql.easysec.x"
+    postgresql_ssl_owner: "{{ postgresql_user }}"
+    postgresql_ssl_group: "{{ postgresql_group }}"
 
-    postgresql_oauth:
-        provider: kc_validator
-        endpoint: https://<keycloak>/realms/<realm>/protocol/openid-connect/token
-        audience: postgres-resource
-        resource_name: appdb
-        client_id: postgres-resource
-        http_timeout: 2000
-        issuer: https://<keycloak>/realms/<realm>
+    postgresql_oauth_provider: kc_validator
+    postgresql_oauth_endpoint: https://<keycloak>/realms/<realm>/protocol/openid-connect/token
+    postgresql_oauth_audience: postgres-resource
+    postgresql_oauth_resource_name: appdb
+    postgresql_oauth_client_id: postgres-resource
+    postgresql_oauth_http_timeout: 2000
+    postgresql_oauth_issuer: https://<keycloak>/realms/<realm>
 
-    postgresql_wal:
-        level: "replica"
-        max_size: "1GB"
-        min_size: "80MB"
-        max_senders: 10
-        max_replicas: 10
+    postgresql_wal_level: "replica"
+    postgresql_wal_max_size: "1GB"
+    postgresql_wal_min_size: "80MB"
+    postgresql_wal_max_senders: 10
+    postgresql_wal_max_replicas: 10
 
     postgresql_hba_entries:
       - { type: "local", database: "all", user: "postgres", address: "", method: "peer" }
@@ -84,27 +80,25 @@ The version of PostgreSQL implemented in this role is `v18`.
     - `owner` (str): Owner of the database (must be the name of the owner).
     - `encoding` (str): Encoding set. Normally, this should be UTF-8.
 
-- `postgresql_ssl` (dict): The information related to SSL certificates. Some of these fields are related to the [SSL role](../ssl/README.md) and will not be specified here. Available fields:
-    - `cert_path` (str): Where to store the generated certificate 
-    - `key_path` (str): Where to store the generated certificate private key
+Some of these fields are related to the [SSL role](../ssl/README.md) and will not be specified here. Available fields:
+- `postgresql_ssl_cert_path` (str): Where to store the generated certificate
+- `postgresql_ssl_key_path` (str): Where to store the generated certificate private key
 
 > [!CAUTION]
 > Oauth module is only available in versions `18+`
-- `postgresql_oauth` (dict): The information related to the Oauth configuration. Available fields:
-    - `provider` (str): Name of the provider. Default to `kc_validator`
-    - `endpoint` (str): URL of the provider endpoint. Default to `https://<keycloak>/realms/<realm>/protocol/openid-connect/token`
-    - `audience` (str): Audience name from provider. Default to `postgres-resource`
-    - `resource_name` (str): Resource name from provider. Default to `appdb`
-    - `client_id` (str): Id from provider. Default to `postgres-resource`
-    - `http_timeout` (int): Total of milliseconds for timeout. Default to `2000`
-    - `issuer` (str): URL of the realm. Default to `https://<keycloak>/realms/<realm>`
+- `postgresql_oauth_provider` (str): Name of the provider. Default to `kc_validator`
+- `postgresql_oauth_endpoint` (str): URL of the provider endpoint. Default to `https://<keycloak>/realms/<realm>/protocol/openid-connect/token`
+- `postgresql_oauth_audience` (str): Audience name from provider. Default to `postgres-resource`
+- `postgresql_oauth_resource_name` (str): Resource name from provider. Default to `appdb`
+- `postgresql_oauth_client_id` (str): Id from provider. Default to `postgres-resource`
+- `postgresql_oauth_http_timeout` (int): Total of milliseconds for timeout. Default to `2000`
+- `postgresql_oauth_issuer` (str): URL of the realm. Default to `https://<keycloak>/realms/<realm>`
 
-- `postgresql_wal` (dict): The information related to WAL and replication. Available fields:
-    - `level` (str): The replication level. Options can be found [here](https://www.postgresql.org/docs/18/runtime-config-wal.html). Default to `replica`
-    - `max_size` (str): Maximum size to let the WAL grow during checkpoints. More information [here](https://www.postgresql.org/docs/18/runtime-config-wal.html). Default to `1GB`
-    - `min_size` (str): Minimum size for WAL disk usage. More information [here](https://www.postgresql.org/docs/18/runtime-config-wal.html). Default to `80MB`
-    - `max_senders` (int): Maximum of concurrent connections from standby servers. More information [here](https://www.postgresql.org/docs/18/runtime-config-replication.html). Default to `10`
-    - `max_replicas` (int): Maximum of replication slots. More information [here](https://www.postgresql.org/docs/18/runtime-config-replication.html). Default to `10`
+- `postgresql_wal_level` (str): The replication level. Options can be found [here](https://www.postgresql.org/docs/18/runtime-config-wal.html). Default to `replica`
+- `postgresql_wal_max_size` (str): Maximum size to let the WAL grow during checkpoints. More information [here](https://www.postgresql.org/docs/18/runtime-config-wal.html). Default to `1GB`
+- `postgresql_wal_min_size` (str): Minimum size for WAL disk usage. More information [here](https://www.postgresql.org/docs/18/runtime-config-wal.html). Default to `80MB`
+- `postgresql_wal_max_senders` (int): Maximum of concurrent connections from standby servers. More information [here](https://www.postgresql.org/docs/18/runtime-config-replication.html). Default to `10`
+- `postgresql_wal_max_replicas` (int): Maximum of replication slots. More information [here](https://www.postgresql.org/docs/18/runtime-config-replication.html). Default to `10`
 
 - `postgresql_hba_entries` (list of dicts): Entries that are set in `pg_hba.conf`. Available fields:
     - `type` (str): Connection type (`local`, `hostssl`, `host`)

@@ -80,8 +80,8 @@ Vagrant.configure("2") do |config|
         "grant"       => ["vagrant-ubuntu-1"],
         "ssl"         => ["vagrant-ubuntu-1"],
         "postgresql"  => ["vagrant-postgresql-1"],
-        "keycloak"    => ["vagrant-keycloak-1", "vagrant-postgresql-1"],
-        "anchore"     => ["vagrant-ubuntu-1"],
+        "keycloak"    => ["vagrant-keycloak-1"],
+        "anchore"     => ["vagrant-ubuntu-1"]
     }
 
     # Updates list if requested by the user

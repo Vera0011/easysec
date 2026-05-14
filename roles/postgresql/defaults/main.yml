@@ -1,6 +1,6 @@
 ---
 postgresql_port: 5432
-postgresql_address: "'*'"
+postgresql_address: "*"
 
 # Modules
 postgresql_user_enable: true
@@ -19,39 +19,35 @@ postgresql_databases:
   - { name: "easysec", owner: "manager-easysec", encoding: "UTF-8" }
 
 # SSL configuration - PostgreSQL connections + SSL role (refer to roles/ssl/README.md)
-postgresql_ssl:
-  cert_path: "{{ postgresql_config_dir }}/server.crt"
-  key_path: "{{ postgresql_config_dir }}/server.key"
-  enable_dns: false
-  provider: "cloudflare"
-  credentials:
-    token: "token1234"
-  generate: true
-  generate_config:
-    domain: "postgresql.easysec.x"
-    output_path: "{{ postgresql_ssl.cert_path }}"
-    privatekey_path: "{{ postgresql_ssl.key_path }}"
-    email: "admin@postgresql.easysec.x"
-    owner: "{{ postgresql_user }}"
-    group: "{{ postgresql_group }}"
+postgresql_ssl_cert_path: "{{ postgresql_config_dir }}/server.crt"
+postgresql_ssl_key_path: "{{ postgresql_config_dir }}/server.key"
+postgresql_ssl_enable_dns: false
+postgresql_ssl_provider: "cloudflare"
+postgresql_ssl_credentials:
+  token: "token1234"
+postgresql_ssl_generate: true
+postgresql_ssl_domain: "postgresql.easysec.x"
+postgresql_ssl_output_path: "{{ postgresql_ssl_cert_path }}"
+postgresql_ssl_privatekey_path: "{{ postgresql_ssl_key_path }}"
+postgresql_ssl_email: "admin@postgresql.easysec.x"
+postgresql_ssl_owner: "{{ postgresql_user }}"
+postgresql_ssl_group: "{{ postgresql_group }}"
 
 # Oauth configuration - PostgreSQL connection
-postgresql_oauth:
-  provider: kc_validator
-  endpoint: https://<keycloak>/realms/<realm>/protocol/openid-connect/token
-  audience: postgres-resource
-  resource_name: appdb
-  client_id: postgres-resource
-  http_timeout: 2000
-  issuer: https://<keycloak>/realms/<realm>
+postgresql_oauth_provider: kc_validator
+postgresql_oauth_endpoint: https://<keycloak>/realms/<realm>/protocol/openid-connect/token
+postgresql_oauth_audience: postgres-resource
+postgresql_oauth_resource_name: appdb
+postgresql_oauth_client_id: postgres-resource
+postgresql_oauth_http_timeout: 2000
+postgresql_oauth_issuer: https://<keycloak>/realms/<realm>
 
 # WAL configuration
-postgresql_wal:
-  level: "replica"
-  max_size: "1GB"
-  min_size: "80MB"
-  max_senders: 10
-  max_replicas: 10
+postgresql_wal_level: "replica"
+postgresql_wal_max_size: "1GB"
+postgresql_wal_min_size: "80MB"
+postgresql_wal_max_senders: 10
+postgresql_wal_max_replicas: 10
 
 # Access configuration - Updates PG_HBA template
 postgresql_hba_entries:
