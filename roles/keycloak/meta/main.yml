@@ -1,9 +1,26 @@
 ---
 dependencies:
-  - role: ssl
+  - role: postgresql
     vars:
-      ssl_provider: "{{ keycloak_ssl_provider }}"
-      ssl_credentials: "{{ keycloak_ssl_credentials }}"
-      ssl_generate: "{{ keycloak_ssl_generate }}"
-      ssl_generate_config: "{{ keycloak_ssl_config }}"
-      ssl_dns_enabled: "{{ keycloak_ssl_dns_enabled }}"
+      postgresql_port: "{{ keycloak_database_port }}"
+      postgresql_user_enable: true
+      postgresql_database_enable: true
+      postgresql_ssl_enable: true
+
+      postgresql_users:
+        - { name: "easysec", password: "", superuser: true }
+        - { name: "{{ keycloak_database_user }}", password: "{{ keycloak_database_password }}", superuser: false }
+
+      postgresql_databases:
+        - { name: "{{ keycloak_database_name }}", owner: "{{ keycloak_database_user }}", encoding: "UTF-8" }
+
+      postgresql_ssl_provider: "{{ keycloak_database_ssl_provider }}"
+      postgresql_ssl_generate: "{{ keycloak_database_ssl_generate }}"
+      postgresql_ssl_dns_enabled: "{{ keycloak_database_ssl_dns_enabled }}"
+      postgresql_ssl_ssl_credentials: "{{ keycloak_database_ssl_credentials }}"
+      postgresql_ssl_domain: "{{ keycloak_database_ssl_domain }}"
+      postgresql_ssl_email: "{{ keycloak_database_ssl_email }}"
+      postgresql_ssl_owner: "{{ postgresql_user }}"
+      postgresql_ssl_group: "{{ postgresql_group }}"
+
+      postgresql_hba_entries: "{{ keycloak_database.hba_entries }}"

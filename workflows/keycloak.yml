@@ -4,3 +4,10 @@
   become: true
   roles:
     - keycloak
+  vars:
+    keycloak_database:
+      ssl:
+        provider: "selfsigned"
+
+    keycloak_ssl:
+      provider: "selfsigned"

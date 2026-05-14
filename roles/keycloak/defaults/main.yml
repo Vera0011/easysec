@@ -1,27 +1,50 @@
 ---
-keycloak_package_name: keycloak
-keycloak_user: keycloak
-keycloak_group: keycloak
 keycloak_hostname: "keycloak.x"
 
 keycloak_enable_https: true
-keycloak_ssl_cert_file: /etc/keycloak/keycloak.pem
-keycloak_ssl_key_file: /etc/keycloak/keycloak.key
+keycloak_enable_database: true
 
-# SSL configuration - Refer to SSL role (roles/ssl/README.md)
+# Keycloak SSL configuration - passed to SSL role (roles/ssl/README.md)
+keycloak_ssl_cert_path: "{{ keycloak_config_dir }}/keycloak.pem"
+keycloak_ssl_key_path: "{{ keycloak_config_dir }}/keycloak.key"
 keycloak_ssl_dns_enabled: false
 keycloak_ssl_provider: "cloudflare"
 keycloak_ssl_credentials:
   token: "token1234"
-
 keycloak_ssl_generate: true
-keycloak_ssl_config:
-  domain: "{{ keycloak_hostname }}"
-  output_path: "{{ keycloak_ssl_cert_file }}"
-  privatekey_path: "{{ keycloak_ssl_key_file }}"
-  email: "admin@{{ keycloak_hostname }}"
+keycloak_ssl_generate_domain: "{{ keycloak_hostname }}"
+keycloak_ssl_generate_output_path: "{{ keycloak_ssl_cert_path }}"
+keycloak_ssl_generate_privatekey_path: "{{ keycloak_ssl_key_path }}"
+keycloak_ssl_generate_email: "admin@{{ keycloak_hostname }}"
+keycloak_ssl_generate_owner: "{{ keycloak_user }}"
+keycloak_ssl_generate_group: "{{ keycloak_group }}"
+
+# Database configuration - passed to PostgreSQL role (roles/postgresql/README.md)
+keycloak_database_type: postgres
+keycloak_database_host: localhost
+keycloak_database_port: 5432
+keycloak_database_name: keycloak
+keycloak_database_user: keycloak
+keycloak_database_password: keycloak
+keycloak_database_hba_entries:
+  - { type: "local", database: "all", user: "postgres", address: "", method: "peer" }
+  - { type: "hostssl", database: "all", user: "all", address: "0.0.0.0/0", method: "scram-sha-256" }
+  - { type: "host", database: "all", user: "all", address: "0.0.0.0/0", method: "reject" }
+
+# Database SSL - passed to SSL role (roles/ssl/README.md)
+keycloak_database_ssl_dns_enabled: false
+keycloak_database_ssl_provider: "cloudflare"
+keycloak_database_ssl_credentials:
+  token: "token1234"
+keycloak_database_ssl_generate: true
+keycloak_database_ssl_domain: postgresql.easysec.x
+keycloak_database_ssl_email: admin@postgresql.easysec.x
 
 # Config envs - Should not be changed unless knowing what they do
+keycloak_user: keycloak
+keycloak_group: keycloak
+keycloak_package_name: keycloak
+
 keycloak_java_package: openjdk-21-jdk
 keycloak_host: https://github.com/keycloak/keycloak/releases/download/26.5.6/keycloak-26.5.6.tar.gz
 keycloak_path: /opt/keycloak
@@ -31,10 +54,3 @@ keycloak_log_dir: /var/log/keycloak
 keycloak_systemd_path: /etc/systemd/system/keycloak.service
 
 keycloak_port: 8043
-
-keycloak_database_type: postgres
-keycloak_database_host: localhost
-keycloak_database_port: 5432
-keycloak_database_name: keycloak
-keycloak_database_user: keycloak
-keycloak_database_password: keycloak

@@ -60,8 +60,6 @@
     owner: "{{ keycloak_user }}"
     group: "{{ keycloak_group }}"
     mode: "0640"
-  notify:
-    - Restart Keycloak
 
 - name: Deploy systemd service
   ansible.builtin.template:
@@ -72,4 +70,3 @@
     mode: "0644"
   notify:
     - Reload daemon
-    - Restart Keycloak

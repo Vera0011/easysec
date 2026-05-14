@@ -2,13 +2,16 @@
 hostname={{ keycloak_hostname }}
 
 {% if keycloak_enable_https %}
-https-port={{ keycloak_https_port }}
-https-certificate-file={{ keycloak_ssl_cert_file }}
-https-certificate-key-file={{ keycloak_ssl_key_file }}
+## SSL configuration
+https-port={{ keycloak_port }}
+https-certificate-file={{ keycloak_ssl_cert_path }}
+https-certificate-key-file={{ keycloak_ssl_key_path }}
 https-protocols=TLSv1.3,TLSv1.2
 {% else %}
 http-port={{ keycloak_port }}
 {% endif %}
+
+## PostgreSQL configuration
 db={{ keycloak_database_type }}
 db-url-host={{ keycloak_database_host }}
 db-url-port={{ keycloak_database_port }}
@@ -16,5 +19,6 @@ db-url-database={{ keycloak_database_name }}
 db-username={{ keycloak_database_user }}
 db-password={{ keycloak_database_password }}
 
+## Log configuration
 log=file
 log-file={{ keycloak_log_dir }}/keycloak.log
