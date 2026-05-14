@@ -6,7 +6,7 @@ After=network.target
 User={{ keycloak_user }}
 Group={{ keycloak_group }}
 {% if keycloak_enable_https %}
-ExecStart={{ keycloak_path }}/bin/kc.sh --config-file={{ keycloak_config_path }} start
+ExecStart={{ keycloak_path }}/bin/kc.sh --config-file={{ keycloak_config_path }} start --optimized
 {% else %}
 ExecStart={{ keycloak_path }}/bin/kc.sh --config-file={{ keycloak_config_path }} start-dev
 {% endif %}

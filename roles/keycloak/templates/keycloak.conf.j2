@@ -13,9 +13,7 @@ http-port={{ keycloak_port }}
 
 ## PostgreSQL configuration
 db={{ keycloak_database_type }}
-db-url-host={{ keycloak_database_host }}
-db-url-port={{ keycloak_database_port }}
-db-url-database={{ keycloak_database_name }}
+db-url=jdbc:postgresql://{{ keycloak_database_host }}:{{ keycloak_database_port }}/{{ keycloak_database_name }}?ssl=true&sslmode=verify-ca&sslrootcert={{ keycloak_database_ssl_output_path }}
 db-username={{ keycloak_database_user }}
 db-password={{ keycloak_database_password }}
 

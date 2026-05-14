@@ -72,3 +72,12 @@
     mode: "0644"
   notify:
     - Reload daemon
+
+- name: We copy the generated database certificate to Keycloak
+  ansible.builtin.copy:
+    remote_src: true
+    src: "{{ postgresql_ssl_output_path }}"
+    dest: "{{ keycloak_database_ssl_output_path }}"
+    mode: "0640"
+    group: "{{ keycloak_group }}"
+    owner: "{{ keycloak_user }}"

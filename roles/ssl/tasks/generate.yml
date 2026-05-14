@@ -65,15 +65,21 @@
         group: "{{ ssl_generate_group | default(ssl_group) }}"
         mode: "0600"
 
-    - name: Generates the CSR certificate
-      when: ssl_generate_csr_path | length > 0
+    - name: Generates a temporary CSR certificate with hardcoded info
+      when: ssl_generate_privatekey_path | length > 0 and ssl_generate_output_path | length > 0
       community.crypto.openssl_csr:
-        path: "{{ ssl_generate_csr_path }}"
+        path: "/tmp/temp.csr"
         privatekey_path: "{{ ssl_generate_privatekey_path }}"
-        common_name: "{{ ssl_generate_domain }}"
+        common_name: "EasySec"
+        country_name: "ES"
+        organization_name: "EasySec"
+        organizational_unit_name: "EasySec"
         subject_alt_name:
           - "DNS:{{ ssl_generate_domain }}"
           - "IP:{{ ansible_facts['default_ipv4']['address'] }}"
+        basic_constraints:
+          - "CA:TRUE"
+        basic_constraints_critical: true
         owner: "{{ ssl_generate_csr_owner | default(ssl_user) }}"
         group: "{{ ssl_generate_csr_group | default(ssl_group) }}"
         mode: "0600"
@@ -83,7 +89,13 @@
       community.crypto.x509_certificate:
         path: "{{ ssl_generate_output_path }}"
         provider: selfsigned
+        csr_path: "/tmp/temp.csr"
         privatekey_path: "{{ ssl_generate_privatekey_path }}"
         owner: "{{ ssl_generate_owner | default(ssl_user) }}"
         group: "{{ ssl_generate_group | default(ssl_group) }}"
         mode: "0600"
+
+    - name: Remove temporary CSR
+      ansible.builtin.file:
+        path: /tmp/temp.csr
+        state: absent
