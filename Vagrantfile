@@ -27,46 +27,11 @@ Vagrant.configure("2") do |config|
 
     ## Servers to set up
     ALL_SERVERS = [
-        { 
-            name: "vagrant-manager-1",
-            box: "ubuntu/jammy64",
-            ip: "192.168.56.2",
-            memory: "512",
-            cpus: 1,
-            boot_timeout: 600
-        },
-        { 
-            name: "vagrant-kali-1",
-            box: "kalilinux/rolling",
-            ip: "192.168.56.3",
-            memory: "2048",
-            cpus: 2,
-            boot_timeout: 600
-        },
-        { 
-            name: "vagrant-ubuntu-1",
-            box: "ubuntu/jammy64",
-            ip: "192.168.56.4",
-            memory: "2048",
-            cpus: 2,
-            boot_timeout: 600
-        },
-        {
-            name: "vagrant-keycloak-1",
-            box: "ubuntu/jammy64",
-            ip: "192.168.56.5",
-            memory: "2048",
-            cpus: 2,
-            boot_timeout: 600
-        },
-        {
-            name: "vagrant-postgresql-1",
-            box: "ubuntu/jammy64",
-            ip: "192.168.56.6",
-            memory: "2048",
-            cpus: 2,
-            boot_timeout: 600
-        }
+        { name: "vagrant-manager-1", box: "ubuntu/jammy64", ip: "192.168.56.2", memory: "512", cpus: 1, boot_timeout: 600 },
+        { name: "vagrant-kali-1", box: "kalilinux/rolling", ip: "192.168.56.3", memory: "2048", cpus: 2, boot_timeout: 600 },
+        { name: "vagrant-ubuntu-1", box: "ubuntu/jammy64", ip: "192.168.56.4", memory: "2048", cpus: 2, boot_timeout: 600 },
+        { name: "vagrant-keycloak-1", box: "ubuntu/jammy64", ip: "192.168.56.5", memory: "4096", cpus: 2, boot_timeout: 600 },
+        { name: "vagrant-postgresql-1", box: "ubuntu/jammy64", ip: "192.168.56.6", memory: "2048", cpus: 2, boot_timeout: 600 }
     ]
 
     # Tasks to execute - Single playbooks and complete workflows
