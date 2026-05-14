@@ -1,0 +1,22 @@
+# Keycloak configuration - EasySec
+hostname={{ keycloak_hostname }}
+
+{% if keycloak_enable_https %}
+## SSL configuration
+https-port={{ keycloak_port }}
+https-certificate-file={{ keycloak_ssl_cert_path }}
+https-certificate-key-file={{ keycloak_ssl_key_path }}
+https-protocols=TLSv1.3,TLSv1.2
+{% else %}
+http-port={{ keycloak_port }}
+{% endif %}
+
+## PostgreSQL configuration
+db={{ keycloak_database_type }}
+db-url=jdbc:postgresql://{{ keycloak_database_host }}:{{ keycloak_database_port }}/{{ keycloak_database_name }}?ssl=true&sslmode=verify-ca&sslrootcert={{ keycloak_database_ssl_output_path }}
+db-username={{ keycloak_database_user }}
+db-password={{ keycloak_database_password }}
+
+## Log configuration
+log=file
+log-file={{ keycloak_log_dir }}/keycloak.log

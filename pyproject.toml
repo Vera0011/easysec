@@ -1,0 +1,2 @@
+[tool.uv]
+exclude-newer = "P7D"

@@ -1,7 +1,7 @@
 ---
 ssl_package_name: ssl
-ssl_user: ssl
-ssl_group: ssl
+ssl_user: root
+ssl_group: root
 
 ssl_dns_enabled: false
 ssl_provider: "cloudflare"
@@ -9,16 +9,20 @@ ssl_credentials:
   token: "token1234"
 
 ssl_generate: true
-ssl_generate_config:
-  domain: "easysec.x"
-  output_path: "/opt/test/myfullchain.pem"
-  privatekey_path: "/opt/test/mykey.key"
-  email: "whoami@easysec.x"
+ssl_generate_domain: "easysec.x"
+ssl_generate_output_path: "/opt/test/myfullchain.pem"
+ssl_generate_privatekey_path: "/opt/test/mykey.key"
+ssl_generate_country: "ES"
+ssl_generate_organization_name: "EasySec"
+ssl_generate_unit_name: "Security"
+ssl_generate_email: "whoami@easysec.x"
+ssl_generate_owner: "{{ ssl_user }}" # Permissions for files
+ssl_generate_group: "{{ ssl_group }}" # Permissions for files
 
 # Config paths - Should not be changed
 ssl_config_path: /etc/letsencrypt
 ssl_live_certs: /etc/letsencrypt/live
-ssl_credentials_path: /etc/letsencript
+ssl_credentials_path: /etc/letsencrypt
 ssl_log_dir: /var/log/letsencrypt
 ssl_job_title: "EASYSEC - Renewal for {{ ssl_generate_config.domain }}"
 ssl_job: >-

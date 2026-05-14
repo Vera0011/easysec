@@ -1,0 +1,9 @@
+---
+- name: Installs Keycloak on test host (Vagrant)
+  hosts: vagrant-keycloak-1
+  become: true
+  roles:
+    - keycloak
+  vars:
+    keycloak_ssl_provider: "selfsigned"
+    keycloak_database_ssl_provider: "selfsigned"

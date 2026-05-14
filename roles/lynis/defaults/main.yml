@@ -8,7 +8,7 @@ lynis_time:
   hour: "3"
   minute: "0"
 
-# Config paths - Should not be changed
+# Config envs - Should not be changed unless knowing what they do
 lynis_binary_path: /usr/sbin/lynis
 lynis_keyring_path: /etc/apt/keyrings/lynis-keyring.gpg
 lynis_config_folder: /etc/lynis

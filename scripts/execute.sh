@@ -2,9 +2,10 @@
 
 set -euo pipefail
 
+mkdir -p generated
 ## - Available modules - ##
-ALL_BLUE_MODULES="lynis,grype,syft,grant,ssl"
-ALL_BLUE_WORKFLOWS="anchore"
+ALL_BLUE_MODULES="lynis,grype,syft,grant,ssl,postgresql"
+ALL_BLUE_WORKFLOWS="anchore,keycloak"
 ALL_RED_MODULES="proxychains"
 ALL_RED_WORKFLOWS=""
 
@@ -44,9 +45,21 @@ log() {
     echo -e "${BOLD}${color}[${timestamp}] [${type^^}]${RESET} $1"
 }
 
+lock_input() {
+    # This function locks the input available for the user (to avoid discrepancies with the interface)
+    stty -echo -icanon
+}
+
+unlock_input() {
+    # This function unlocks the input available for the user (to avoid discrepancies with the interface)
+    read -r -d '' -t 0.1 FLUSH || true
+    stty echo icanon
+}
+
 show_banner() {
     # Displays welcome banner (EasySec)
     clear
+    lock_input
     echo -e "${CYAN}"
     cat << 'EOF'
     ███████╗ █████╗ ███████╗██╗   ██╗███████╗███████╗ ██████╗
@@ -73,6 +86,7 @@ EOF
 show_list() {
     # LIst interface - Shows available modules and workflows (at the start of the program)
     clear
+    lock_input
     echo -e "\n${DIM}${LINE}${RESET}"
     echo -e "${BOLD}${WHITE}  List - Available resources${RESET}"
     echo -e "${DIM}${LINE}${RESET}\n"
@@ -87,6 +101,7 @@ show_list() {
 show_menu() {
     # Menu interface - Displays the current options of this script
     clear
+    lock_input
     echo -e "\n${DIM}${LINE}${RESET}"
     echo -e "${BOLD}${WHITE}  Menu - Select modules to provision${RESET}"
     echo -e "${DIM}${LINE}${RESET}\n"
@@ -97,14 +112,17 @@ show_menu() {
     echo -e "\n${DIM}${LINE}${RESET}"
     echo -en "\n  Choice [1/2/3/4]: "
 
+    unlock_input
     read -r CHOICE
+    lock_input
 }
 
 show_module_3() {
     # Module 3 interface - Displays the current modules and workflows, and allows to select multiple of them and validates the input
     clear
+    lock_input
     local valid_modules="${ALL_BLUE_MODULES},${ALL_RED_MODULES}"
-    local valid_workflows="${ALL_BLUE_WORKFLOWS}" #,${ALL_RED_WORKFLOWS}"
+    local valid_workflows="${ALL_BLUE_WORKFLOWS}"
     local all_valid="${valid_modules},${valid_workflows}"
     local errors=()
 
@@ -117,7 +135,9 @@ show_module_3() {
     echo -en "\nEnter comma-separated name(s): "
 
     # Inputs
+    unlock_input
     read -r RAW_MODULES
+    lock_input
     IFS=',' read -ra REQUESTED <<< "$RAW_MODULES"
 
     # Validation
@@ -150,7 +170,7 @@ show_module_3() {
 
 ## - Input - ##
 show_banner
-sleep 5
+sleep 2
 
 while true; do
     show_menu
@@ -190,5 +210,6 @@ while true; do
 done
 
 ## - Execution - ##
+export CUSTOM_MODULES=$MODULES
 vagrant up --provision-with shell --parallel && \
-    CUSTOM_MODULES=$MODULES vagrant provision --provision-with ansible
+    vagrant provision --provision-with ansible

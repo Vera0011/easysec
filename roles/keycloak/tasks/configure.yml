@@ -1,0 +1,83 @@
+---
+- name: Create Keycloak group
+  ansible.builtin.group:
+    name: "{{ keycloak_group }}"
+    system: true
+    state: present
+
+- name: Create Keycloak user
+  ansible.builtin.user:
+    name: "{{ keycloak_user }}"
+    group: "{{ keycloak_group }}"
+    system: true
+    shell: /sbin/nologin
+    home: "{{ keycloak_path }}"
+    create_home: false
+
+- name: Moves files to correct directory
+  block:
+    - name: Creates software directory
+      ansible.builtin.file:
+        path: "{{ keycloak_path }}"
+        state: directory
+        owner: "{{ keycloak_user }}"
+        group: "{{ keycloak_group }}"
+        mode: "0750"
+
+    - name: Decompress file
+      ansible.builtin.unarchive:
+        src: /tmp/keycloak.tar.gz
+        dest: "{{ keycloak_path }}"
+        extra_opts:
+          - "--strip-components=1"
+        remote_src: true
+        owner: "{{ keycloak_user }}"
+        group: "{{ keycloak_group }}"
+
+    - name: Remove Keycloak archive
+      ansible.builtin.file:
+        path: "/tmp/keycloak.tar.gz"
+        state: absent
+
+- name: Log directory creation
+  ansible.builtin.file:
+    path: "{{ keycloak_log_dir }}"
+    owner: "{{ keycloak_user }}"
+    group: "{{ keycloak_group }}"
+    state: directory
+    mode: "750"
+
+- name: Config directory creation
+  ansible.builtin.file:
+    path: "{{ keycloak_config_dir }}"
+    owner: "{{ keycloak_user }}"
+    group: "{{ keycloak_group }}"
+    state: directory
+    mode: "750"
+
+- name: Deploy Keycloak configuration
+  ansible.builtin.template:
+    src: templates/keycloak.conf.j2
+    dest: "{{ keycloak_config_path }}"
+    owner: "{{ keycloak_user }}"
+    group: "{{ keycloak_group }}"
+    mode: "0640"
+
+- name: Deploy systemd service
+  ansible.builtin.template:
+    src: templates/service.conf.j2
+    dest: "{{ keycloak_systemd_path }}"
+    owner: root
+    group: root
+    mode: "0640"
+  notify:
+    - Reload daemon
+
+- name: We copy the generated database certificate to Keycloak
+  ansible.builtin.copy:
+    remote_src: true
+    src: "{{ postgresql_ssl_output_path }}"
+    dest: "{{ keycloak_database_ssl_output_path }}"
+    mode: "0640"
+    group: "{{ keycloak_group }}"
+    owner: "{{ keycloak_user }}"
