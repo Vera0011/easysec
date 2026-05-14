@@ -1,0 +1,91 @@
+---
+- name: Create first admin
+  ansible.builtin.shell: |
+    KC_BOOTSTRAP_ADMIN_PASSWORD=admin {{ keycloak_path }}/bin/kc.sh --config-file={{ keycloak_config_path }} \
+      bootstrap-admin user --username admin --password:env KC_BOOTSTRAP_ADMIN_PASSWORD
+  changed_when: true
+
+- name: Get admin token
+  ansible.builtin.uri:
+    url: "https://{{ keycloak_hostname }}:{{ keycloak_port }}/realms/master/protocol/openid-connect/token"
+    method: POST
+    validate_certs: false
+    body_format: form-urlencoded
+    body:
+      client_id: admin-cli
+      username: admin
+      password: admin
+      grant_type: password
+    status_code: 200
+  register: keycloak_token
+
+- name: Create permanent admin user
+  ansible.builtin.uri:
+    url: "https://{{ keycloak_hostname }}:{{ keycloak_port }}/admin/realms/master/users"
+    method: POST
+    validate_certs: false
+    headers:
+      Authorization: "Bearer {{ keycloak_token.json.access_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      username: easysec3
+      enabled: true
+      credentials:
+        - type: password
+          value: easysec
+          temporary: false
+    status_code: 201
+
+- name: Get admin role
+  ansible.builtin.uri:
+    url: "https://{{ keycloak_hostname }}:{{ keycloak_port }}/admin/realms/master/roles/admin"
+    method: GET
+    validate_certs: false
+    headers:
+      Authorization: "Bearer {{ keycloak_token.json.access_token }}"
+    status_code: 200
+  register: keycloak_admin_role
+
+- name: Get created user ID
+  ansible.builtin.uri:
+    url: "https://{{ keycloak_hostname }}:{{ keycloak_port }}/admin/realms/master/users?username=easysec3"
+    method: GET
+    validate_certs: false
+    headers:
+      Authorization: "Bearer {{ keycloak_token.json.access_token }}"
+    status_code: 200
+  register: keycloak_created_user
+
+- name: Assign admin role to permanent user
+  ansible.builtin.uri:
+    url: "https://{{ keycloak_hostname }}:{{ keycloak_port }}/admin/realms/master/users/{{ keycloak_created_user.json[0].id }}/role-mappings/realm"
+    method: POST
+    validate_certs: false
+    headers:
+      Authorization: "Bearer {{ keycloak_token.json.access_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      - id: "{{ keycloak_admin_role.json.id }}"
+        name: admin
+    status_code: 204
+
+- name: Get bootstrap admin user ID
+  ansible.builtin.uri:
+    url: "https://{{ keycloak_hostname }}:{{ keycloak_port }}/admin/realms/master/users?username=admin"
+    method: GET
+    validate_certs: false
+    headers:
+      Authorization: "Bearer {{ keycloak_token.json.access_token }}"
+    status_code: 200
+  register: keycloak_bootstrap_user
+
+- name: Delete bootstrap admin user
+  ansible.builtin.uri:
+    url: "https://{{ keycloak_hostname }}:{{ keycloak_port }}/admin/realms/master/users/{{ keycloak_bootstrap_user.json[0].id }}"
+    method: DELETE
+    validate_certs: false
+    headers:
+      Authorization: "Bearer {{ keycloak_token.json.access_token }}"
+    status_code: 204

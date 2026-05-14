@@ -23,3 +23,6 @@
   notify:
     - Reload daemon
     - Restart Keycloak
+
+- name: Tool management
+  ansible.builtin.include_tasks: management.yml
