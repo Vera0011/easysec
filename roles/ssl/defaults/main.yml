@@ -1,29 +1,43 @@
 ---
-ssl_package_name: ssl
-ssl_user: root
-ssl_group: root
-
-ssl_dns_enabled: false
+# -- DNS-related configuration --#
+ssl_dns: false
 ssl_provider: "cloudflare"
 ssl_credentials:
   token: "token1234"
+  secret: "secret1234"
+  consumer: "consumer1234"
 
+# -- Certificate generation --#
 ssl_generate: true
-ssl_generate_domain: "easysec.x"
-ssl_generate_output_path: "/opt/test/myfullchain.pem"
-ssl_generate_privatekey_path: "/opt/test/mykey.key"
-ssl_generate_country: "ES"
-ssl_generate_organization_name: "EasySec"
-ssl_generate_unit_name: "Security"
-ssl_generate_email: "whoami@easysec.x"
-ssl_generate_owner: "{{ ssl_user }}" # Permissions for files
-ssl_generate_group: "{{ ssl_group }}" # Permissions for files
+ssl_move_cert: false
+ssl_move_key: false
+ssl_move_csr: false
 
-# Config paths - Should not be changed
-ssl_config_path: /etc/letsencrypt
-ssl_live_certs: /etc/letsencrypt/live
-ssl_credentials_path: /etc/letsencrypt
+ssl_cert_path: "/tmp/{{ ssl_email }}.pem"
+ssl_key_path: "/tmp/{{ ssl_email }}.key"
+ssl_csr_path: "/tmp/{{ ssl_email }}.crs"
+ssl_csr_config:
+  country: "ES"
+  organization_name: "EasySec"
+  unit_name: "Security"
+
+ssl_email: "whoami@easysec.x"
+ssl_domain: "easysec.x"
+ssl_new_owner: "{{ ssl_user }}"
+ssl_new_group: "{{ ssl_group }}"
+
+# -- This section should not be changed -- ##
+# -- Execution variables -- #
+ssl_user: root
+ssl_group: root
+
+## -- Config paths --#
+ssl_config_dir: /etc/letsencrypt
+ssl_live_certs_dir: /etc/letsencrypt/live
+ssl_credentials_dir: /etc/letsencrypt
 ssl_log_dir: /var/log/letsencrypt
+
+## -- Job configuration --#
 ssl_job_title: "EASYSEC - Renewal for {{ ssl_generate_config.domain }}"
 ssl_job: >-
   certbot renew \

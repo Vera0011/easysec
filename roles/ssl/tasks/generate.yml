@@ -1,48 +1,48 @@
 ---
 - name: Generates a certificate using the provided credentials
-  when: ssl_provider != "selfsigned"
+  when: ssl_provider != "selfsigned" and ssl_generate
   block:
     - name: Generates the certificate
       ansible.builtin.shell: |
         certbot certonly \
-          --email {{ ssl_generate_email }} \
-          -d {{ ssl_generate_domain }} \
+          --email {{ ssl_email }} \
+          -d {{ ssl_domain }} \
           --non-interactive \
           --agree-tos {{ dns_args }}
       vars:
         dns_args: >-
           {% if ssl_dns_enabled %}
           --dns-{{ ssl_provider }}
-          --dns-{{ ssl_provider }}-credentials {{ ssl_credentials_path }}/{{ ssl_provider }}.ini
+          --dns-{{ ssl_provider }}-credentials {{ ssl_credentials_dir }}/{{ ssl_provider }}.ini
           {% else %}
           --standalone
           {% endif %}
       changed_when: true
 
     - name: Sends the certificate to the specified path
-      when: ssl_generate_output_path | length > 0
+      when: ssl_move_cert
       ansible.builtin.copy:
-        src: "{{ ssl_live_certs }}/{{ ssl_generate_domain }}/fullchain.pem"
-        dest: "{{ ssl_generate_output_path }}"
+        src: "{{ ssl_live_certs_dir }}/{{ ssl_domain }}/fullchain.pem"
+        dest: "{{ ssl_cert_path }}"
         remote_src: true
-        owner: "{{ ssl_generate_owner | default(ssl_user) }}"
-        group: "{{ ssl_generate_group | default(ssl_group) }}"
+        owner: "{{ ssl_new_owner | default(ssl_user) }}"
+        group: "{{ ssl_new_group | default(ssl_group) }}"
         mode: "0600"
 
     - name: Sends the private key to the specified path
-      when: ssl_generate_privatekey_path | length > 0
+      when: ssl_move_key
       ansible.builtin.copy:
-        src: "{{ ssl_live_certs }}/{{ ssl_generate_domain }}/privkey.key"
-        dest: "{{ ssl_generate_privatekey_path }}"
+        src: "{{ ssl_live_certs_dir }}/{{ ssl_domain }}/privkey.key"
+        dest: "{{ ssl_key_path }}"
         remote_src: true
-        owner: "{{ ssl_generate_owner | default(ssl_user) }}"
-        group: "{{ ssl_generate_group | default(ssl_group) }}"
+        owner: "{{ ssl_new_owner | default(ssl_user) }}"
+        group: "{{ ssl_new_group | default(ssl_group) }}"
         mode: "0600"
 
     - name: Adds script for renewal
       ansible.builtin.template:
         src: templates/renewal.sh.j2
-        dest: "{{ ssl_live_certs }}/{{ ssl_generate_domain }}/renewal.sh"
+        dest: "{{ ssl_live_certs_dir }}/{{ ssl_domain }}/renewal.sh"
         mode: "0750"
 
     - name: Configures cronjob to renew certificate
@@ -54,48 +54,45 @@
         minute: "15"
         job: "{{ ssl_job }}"
 
-- name: Generates a self-signed certficate
-  when: ssl_provider == "selfsigned"
+- name: Generates a self-signed private key
+  when: ssl_provider == "selfsigned" and ssl_generate
   block:
     - name: Generates the private key
-      when: ssl_generate_privatekey_path | length > 0
       community.crypto.openssl_privatekey:
-        path: "{{ ssl_generate_privatekey_path }}"
-        owner: "{{ ssl_generate_owner | default(ssl_user) }}"
-        group: "{{ ssl_generate_group | default(ssl_group) }}"
+        path: "{{ ssl_key_path }}"
+        owner: "{{ ssl_new_owner | default(ssl_user) }}"
+        group: "{{ ssl_new_group | default(ssl_group) }}"
         mode: "0600"
 
+- name: Generates a self-signed CSR
+  when: ssl_provider == "selfsigned" and ssl_generate
+  block:
     - name: Generates a temporary CSR certificate with hardcoded info
-      when: ssl_generate_privatekey_path | length > 0 and ssl_generate_output_path | length > 0
       community.crypto.openssl_csr:
-        path: "/tmp/temp.csr"
-        privatekey_path: "{{ ssl_generate_privatekey_path }}"
-        common_name: "EasySec"
-        country_name: "ES"
-        organization_name: "EasySec"
-        organizational_unit_name: "EasySec"
+        path: "{{ ssl_csr_path }}"
+        privatekey_path: "{{ ssl_key_path }}"
+        common_name: "{{ ssl_csr_config.organization_name }}"
+        country_name: "{{ ssl_csr_config.country }}"
+        organization_name: "{{ ssl_csr_config.organization_name }}"
+        organizational_unit_name: "{{ ssl_csr_config.unit_name }}"
         subject_alt_name:
-          - "DNS:{{ ssl_generate_domain }}"
-          - "IP:{{ ansible_facts['default_ipv4']['address'] }}"
+          - "DNS:{{ ssl_domain }}"
         basic_constraints:
           - "CA:TRUE"
         basic_constraints_critical: true
-        owner: "{{ ssl_generate_csr_owner | default(ssl_user) }}"
-        group: "{{ ssl_generate_csr_group | default(ssl_group) }}"
+        owner: "{{ ssl_new_owner | default(ssl_user) }}"
+        group: "{{ ssl_new_group | default(ssl_group) }}"
         mode: "0600"
 
+- name: Generates a self-signed certficate
+  when: ssl_provider == "selfsigned" and ssl_generate
+  block:
     - name: Generates the selfsigned certificate
-      when: ssl_generate_output_path | length > 0
       community.crypto.x509_certificate:
-        path: "{{ ssl_generate_output_path }}"
+        path: "{{ ssl_cert_path }}"
         provider: selfsigned
-        csr_path: "/tmp/temp.csr"
-        privatekey_path: "{{ ssl_generate_privatekey_path }}"
-        owner: "{{ ssl_generate_owner | default(ssl_user) }}"
-        group: "{{ ssl_generate_group | default(ssl_group) }}"
+        csr_path: "{{ ssl_csr_path }}"
+        privatekey_path: "{{ ssl_key_path }}"
+        owner: "{{ ssl_new_owner | default(ssl_user) }}"
+        group: "{{ ssl_new_group | default(ssl_group) }}"
         mode: "0600"
-
-    - name: Remove temporary CSR
-      ansible.builtin.file:
-        path: /tmp/temp.csr
-        state: absent

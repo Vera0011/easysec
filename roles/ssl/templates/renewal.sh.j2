@@ -4,13 +4,14 @@
 #                                                                                                       #
 #   EASYSEC - SSL Renewal                                                                               #
 #   This script renews automatically the available certificates and updates them in the specified path  # 
+#   Affected domain - {{ ssl_domain }}                                                                  #
 #                                                                                                       #
 #########################################################################################################
 
-{% if ssl_generate_config.output_path %}
-cp {{ ssl_config_path }}/live/{{ ssl_generate_config.domain }}/fullchain.pem {{ ssl_generate_config.output_path }}
+{% if ssl_cert %}
+cp {{ ssl_live_certs_dir }}/{{ ssl_domain }}/fullchain.pem {{ ssl_cert_path }}
 {% endif %}
 
-{% if ssl_generate_config.privatekey_path %}
-cp {{ ssl_config_path }}/live/{{ ssl_generate_config.domain }}/privkey.key {{ ssl_generate_config.privatekey_path }}
+{% if ssl_ssl_key %}
+cp {{ ssl_live_certs_dir }}/{{ ssl_domain }}/privkey.key {{ ssl_key_path }}
 {% endif %}
