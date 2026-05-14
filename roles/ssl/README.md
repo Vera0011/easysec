@@ -3,7 +3,7 @@
 ## Introduction
 This role installs, configures and creates a certificate, based on different options enabled in environment variables.
 
-> [!INFO]
+> [!NOTE]
 > CSR certificates are mentioned in this document. This feature (CSR certificate generation, as CA) is only available
 > for self-signed certificates.
 
