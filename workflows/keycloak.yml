@@ -5,9 +5,5 @@
   roles:
     - keycloak
   vars:
-    keycloak_database:
-      ssl:
-        provider: "selfsigned"
-
-    keycloak_ssl:
-      provider: "selfsigned"
+    keycloak_ssl_provider: "selfsigned"
+    keycloak_database_ssl_provider: "selfsigned"

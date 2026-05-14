@@ -13,7 +13,7 @@
   ansible.builtin.import_role:
     name: ssl
   vars:
-    ssl_dns_enabled: "{{ postgresql_ssl_enable_dns }}"
+    ssl_dns_enabled: "{{ postgresql_ssl_dns_enabled }}"
     ssl_provider: "{{ postgresql_ssl_provider }}"
     ssl_credentials: "{{ postgresql_ssl_credentials }}"
     ssl_generate: true

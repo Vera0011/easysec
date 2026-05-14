@@ -21,7 +21,7 @@ postgresql_databases:
 # SSL configuration - PostgreSQL connections + SSL role (refer to roles/ssl/README.md)
 postgresql_ssl_cert_path: "{{ postgresql_config_dir }}/server.crt"
 postgresql_ssl_key_path: "{{ postgresql_config_dir }}/server.key"
-postgresql_ssl_enable_dns: false
+postgresql_ssl_dns_enabled: false
 postgresql_ssl_provider: "cloudflare"
 postgresql_ssl_credentials:
   token: "token1234"

@@ -23,4 +23,4 @@ dependencies:
       postgresql_ssl_owner: "{{ postgresql_user }}"
       postgresql_ssl_group: "{{ postgresql_group }}"
 
-      postgresql_hba_entries: "{{ keycloak_database.hba_entries }}"
+      postgresql_hba_entries: "{{ keycloak_database_hba_entries }}"

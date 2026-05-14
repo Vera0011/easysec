@@ -20,4 +20,6 @@
     ssl_generate_email: "{{ keycloak_ssl_generate_email }}"
     ssl_generate_owner: "{{ keycloak_ssl_generate_owner }}"
     ssl_generate_group: "{{ keycloak_ssl_generate_group }}"
-  notify: Restart Keycloak
+  notify:
+    - Reload daemon
+    - Restart Keycloak
