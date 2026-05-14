@@ -37,6 +37,9 @@ keycloak_database_ssl_provider: "cloudflare"
 keycloak_database_ssl_credentials:
   token: "token1234"
 keycloak_database_ssl_generate: true
+keycloak_database_ssl_csr_path: "/etc/ssl/postgresql.csr"
+keycloak_database_ssl_csr_owner: "{{ keycloak_user }}"
+keycloak_database_ssl_csr_group: "{{ keycloak_group }}"
 keycloak_database_ssl_domain: postgresql.easysec.x
 keycloak_database_ssl_email: admin@postgresql.easysec.x
 

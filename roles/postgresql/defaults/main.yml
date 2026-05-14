@@ -28,6 +28,9 @@ postgresql_ssl_credentials:
 postgresql_ssl_generate: true
 postgresql_ssl_domain: "postgresql.easysec.x"
 postgresql_ssl_output_path: "{{ postgresql_ssl_cert_path }}"
+postgresql_ssl_csr_path: "{{ postgresql_config_dir }}/server.crs"
+postgresql_ssl_csr_owner: "{{ postgresql_user }}"
+postgresql_ssl_csr_group: "{{ postgresql_group }}"
 postgresql_ssl_privatekey_path: "{{ postgresql_ssl_key_path }}"
 postgresql_ssl_email: "admin@postgresql.easysec.x"
 postgresql_ssl_owner: "{{ postgresql_user }}"

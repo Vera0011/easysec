@@ -65,6 +65,19 @@
         group: "{{ ssl_generate_group | default(ssl_group) }}"
         mode: "0600"
 
+    - name: Generates the CSR certificate
+      when: ssl_generate_csr_path | length > 0
+      community.crypto.openssl_csr:
+        path: "{{ ssl_generate_csr_path }}"
+        privatekey_path: "{{ ssl_generate_privatekey_path }}"
+        common_name: "{{ ssl_generate_domain }}"
+        subject_alt_name:
+          - "DNS:{{ ssl_generate_domain }}"
+          - "IP:{{ ansible_facts['default_ipv4']['address'] }}"
+        owner: "{{ ssl_generate_csr_owner | default(ssl_user) }}"
+        group: "{{ ssl_generate_csr_group | default(ssl_group) }}"
+        mode: "0600"
+
     - name: Generates the selfsigned certificate
       when: ssl_generate_output_path | length > 0
       community.crypto.x509_certificate:

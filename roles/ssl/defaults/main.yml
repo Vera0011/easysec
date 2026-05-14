@@ -11,6 +11,9 @@ ssl_credentials:
 ssl_generate: true
 ssl_generate_domain: "easysec.x"
 ssl_generate_output_path: "/opt/test/myfullchain.pem"
+ssl_generate_csr_path: ""
+ssl_generate_csr_owner: "{{ ssl_user }}"
+ssl_generate_csr_group: "{{ ssl_group }}"
 ssl_generate_privatekey_path: "/opt/test/mykey.key"
 ssl_generate_email: "whoami@easysec.x"
 ssl_generate_owner: "{{ ssl_user }}" # Permissions for files

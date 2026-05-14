@@ -35,6 +35,7 @@ Certbot is used under the hood (for public domains). This allows to generate the
 - `ssl_generate` (true/false): If the role must generate a certificate or not
 - `ssl_generate_domain`: Name of the domain to generate
 - `ssl_generate_output_path`: Where to store the `fullchain.pem` file (absolute path). Performs a `cp`, not a `mv`
+- `ssl_generate_csr_path`: Where to store the `CSR` file (absolute path). Performs a `cp`, not a `mv`
 - `ssl_generate_privatekey_path`: Where to store the `privkey.key` file (absolute path). Performs a `cp`, not a `mv`
 - `ssl_generate_email`: Contact email of the domain
 - `ssl_generate_owner`: If the output files (keys) need a specific user. Defaults to the role user
