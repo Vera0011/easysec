@@ -30,7 +30,6 @@ ssl_new_owner: "{{ ssl_user }}"
 ssl_new_group: "{{ ssl_group }}"
 
 # Config: This section should not be changed
-
 ## Folders
 ssl_config_folder: /etc/letsencrypt
 ssl_live_certs_folder: /etc/letsencrypt/live

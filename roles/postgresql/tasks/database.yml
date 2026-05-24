@@ -1,0 +1,12 @@
+---
+- name: Database configuration
+  become: true
+  become_user: "{{ postgresql_user }}"
+  block:
+    - name: Create custom databases
+      loop: "{{ postgresql_databases }}"
+      community.postgresql.postgresql_db:
+        name: "{{ item.name }}"
+        owner: "{{ item.owner }}"
+        encoding: "{{ item.encoding }}"
+        state: present

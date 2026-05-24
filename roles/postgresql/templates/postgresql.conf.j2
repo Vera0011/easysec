@@ -12,11 +12,11 @@
 # FILE LOCATIONS
 #------------------------------------------------------------------------------
 
-data_directory = '{{ postgresql_data_dir }}'
+data_directory = '{{ postgresql_data_folder }}'
 hba_file = '{{ postgresql_hba_path }}'
 ident_file = '{{ postgresql_indent_path }}'
 
-external_pid_file = '{{ postgresql_unix_socket_dir }}/{{ postgresql_version }}-main.pid'   # write an extra PID file
+external_pid_file = '{{ postgresql_unix_socket_folder }}/{{ postgresql_version }}-main.pid'   # write an extra PID file
 
 #------------------------------------------------------------------------------
 # CONNECTIONS AND AUTHENTICATION
@@ -28,7 +28,7 @@ listen_addresses = '{{ postgresql_address }}'
 port = {{ postgresql_port }}
 max_connections = 100
 reserved_connections = 3
-unix_socket_directories = '{{ postgresql_unix_socket_dir }}'
+unix_socket_directories = '{{ postgresql_unix_socket_folder }}'
 unix_socket_group = '{{ postgresql_group }}'
 unix_socket_permissions = 0700
 
@@ -116,7 +116,7 @@ max_replication_slots = {{ postgresql_wal_max_replicas }}
 
 log_destination = 'stderr'
 logging_collector = on
-log_directory = '{{ postgresql_log_dir }}'
+log_directory = '{{ postgresql_log_folder }}'
 log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
 log_file_mode = 0640
 log_rotation_age = 1d

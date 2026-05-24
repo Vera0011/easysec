@@ -8,6 +8,14 @@
 - name: PostgreSQL configuration
   ansible.builtin.include_tasks: configure.yml
 
+- name: User creation if enabled
+  when: postgresql_user_enable
+  ansible.builtin.include_tasks: user.yml
+
+- name: Database creation if enabled
+  when: postgresql_database_enable
+  ansible.builtin.include_tasks: database.yml
+
 - name: Creates SSL certificate
   when: postgresql_ssl_enable
   ansible.builtin.import_role:

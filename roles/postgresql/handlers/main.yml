@@ -5,6 +5,6 @@
 
 - name: Restart PostgreSQL
   ansible.builtin.systemd:
-    name: postgresql
+    name: "{{ postgresql_package_name }}"
     state: restarted
     enabled: true
