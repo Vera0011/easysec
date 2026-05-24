@@ -14,11 +14,10 @@ ssl_credentials:
 ssl_generate: true
 ssl_move_cert: false
 ssl_move_key: false
-ssl_move_csr: false
 
-ssl_cert_path: "/tmp/{{ ssl_email }}.pem"
-ssl_key_path: "/tmp/{{ ssl_email }}.key"
-ssl_csr_path: "/tmp/{{ ssl_email }}.crs"
+ssl_cert_path: "/tmp/{{ ssl_domain }}.pem"
+ssl_key_path: "/tmp/{{ ssl_domain }}.key"
+ssl_csr_path: "/tmp/{{ ssl_domain }}.crs"
 ssl_csr_config:
   country: "ES"
   organization_name: "EasySec"

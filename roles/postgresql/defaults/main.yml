@@ -21,8 +21,8 @@ postgresql_databases:
   - { name: "easysec", owner: "manager-easysec", encoding: "UTF-8" }
 
 # Module - SSL configuration - PostgreSQL connections + SSL role (refer to roles/ssl/README.md)
-postgresql_ssl_cert_path: "{{ postgresql_config_dir }}/server.crt"
-postgresql_ssl_key_path: "{{ postgresql_config_dir }}/server.key"
+postgresql_ssl_cert_path: "{{ postgresql_config_folder }}/server.crt"
+postgresql_ssl_key_path: "{{ postgresql_config_folder }}/server.key"
 postgresql_ssl_dns_enabled: false
 postgresql_ssl_provider: "cloudflare"
 postgresql_ssl_credentials:
@@ -66,7 +66,9 @@ postgresql_package_name: postgresql
 postgresql_version: 18
 postgresql_key_url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
 postgresql_repo_url: https://apt.postgresql.org/pub/repos/apt
-postgresql_repo_config: >
+postgresql_key_path: "/etc/apt/keyrings/{{ postgresql_package_name }}.asc"
+postgresql_apt_source_path: /etc/apt/sources.list.d/pgdg.sources
+postgresql_repo_config: |
   Types: deb
   URIs: {{ postgresql_repo_url }}
   Suites: {{ ansible_facts['distribution_release'] }}-pgdg
@@ -88,11 +90,9 @@ postgresql_log_folder: /var/log/postgresql
 postgresql_unix_socket_folder: /var/run/postgresql
 
 ## Files
-postgresql_key_path: "/etc/apt/keyrings/{{ postgresql_package_name }}.asc"
-postgresql_apt_source_path: /etc/apt/sources.list.d/pgdg.sources
-postgresql_conf_path: "{{ postgresql_config_dir }}/postgresql.conf"
-postgresql_hba_path: "{{ postgresql_config_dir }}/pg_hba.conf"
-postgresql_indent_path: "{{ postgresql_config_dir }}/pg_ident.conf"
+postgresql_conf_path: "{{ postgresql_config_folder }}/postgresql.conf"
+postgresql_hba_path: "{{ postgresql_config_folder }}/pg_hba.conf"
+postgresql_indent_path: "{{ postgresql_config_folder }}/pg_ident.conf"
 postgresql_config_template_path: templates/postgresql.conf.j2
 postgresql_hba_template_path: templates/pg_hba.conf.j2
-postgresql_password_output_path: "{{ playbook_folder }}/../generated/postgresql_users.txt"
+postgresql_password_output_path: "{{ playbook_dir }}/../generated/postgresql_users.txt"

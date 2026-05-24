@@ -18,7 +18,7 @@
 
 - name: Creates source file
   ansible.builtin.copy:
-    dest: "{{ postgresql_apt_source }}"
+    dest: "{{ postgresql_apt_source_path }}"
     content: "{{ postgresql_repo_config }}"
     mode: "0644"
 
