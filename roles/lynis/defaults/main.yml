@@ -1,5 +1,4 @@
 ---
-lynis_package_name: lynis
 lynis_lang: en
 lynis_user: lynis
 lynis_group: lynis
@@ -9,9 +8,25 @@ lynis_time:
   minute: "0"
 
 # Config envs - Should not be changed unless knowing what they do
-lynis_binary_path: /usr/sbin/lynis
+## Config
 lynis_keyring_path: /etc/apt/keyrings/lynis-keyring.gpg
+lynis_key_host: https://packages.cisofy.com/keys/cisofy-software-public.key
+lynis_hashsum: 84FAA9983B24AEF24D6C87F1FEBB7D1812576482
+lynis_apt_config: >
+  deb [arch=amd64 signed-by={{ lynis_keyring_path }}]
+  https://packages.cisofy.com/community/lynis/deb/ stable main
+
+## Folders
 lynis_config_folder: /etc/lynis
 lynis_log_folder: /var/log/lynis
-lynis_custom_config_path: /etc/lynis/custom.prf
-lynis_log_path: /var/log/lynis/audits.log
+
+## Files
+lynis_temp_path: /tmp/lynis.key
+lynis_binary_path: /usr/sbin/lynis
+lynis_template_path: templates/lynis.conf.j2
+lynis_custom_config_path: "{{ lynis_config_folder }}/custom.prf"
+lynis_log_path: "{{ lynis_log_folder }}/audits.log"
+
+## Cron job
+lynis_job_title: "Lynis audit - EasySec"
+lynis_job: "{{ lynis_binary_path }} audit system 2>&1"
