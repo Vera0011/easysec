@@ -55,7 +55,7 @@
 
 - name: Sends custom configuration to Syft
   ansible.builtin.template:
-    src: templates/syft.conf.j2
+    src: "{{ syft_template_path }}"
     dest: "{{ syft_custom_config_path }}"
     mode: "0440"
     owner: "{{ syft_user }}"
