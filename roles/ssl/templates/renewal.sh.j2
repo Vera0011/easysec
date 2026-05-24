@@ -9,9 +9,9 @@
 #########################################################################################################
 
 {% if ssl_cert %}
-cp {{ ssl_live_certs_dir }}/{{ ssl_domain }}/fullchain.pem {{ ssl_cert_path }}
+cp {{ ssl_live_certs_folder }}/{{ ssl_domain }}/fullchain.pem {{ ssl_cert_path }}
 {% endif %}
 
 {% if ssl_ssl_key %}
-cp {{ ssl_live_certs_dir }}/{{ ssl_domain }}/privkey.key {{ ssl_key_path }}
+cp {{ ssl_live_certs_folder }}/{{ ssl_domain }}/privkey.key {{ ssl_key_path }}
 {% endif %}

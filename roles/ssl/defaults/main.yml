@@ -1,5 +1,8 @@
 ---
-# -- DNS-related configuration --#
+ssl_user: root
+ssl_group: root
+
+# DNS-related configuration
 ssl_dns: false
 ssl_provider: "cloudflare"
 ssl_credentials:
@@ -7,7 +10,7 @@ ssl_credentials:
   secret: "secret1234"
   consumer: "consumer1234"
 
-# -- Certificate generation --#
+# Certificate generation
 ssl_generate: true
 ssl_move_cert: false
 ssl_move_key: false
@@ -26,18 +29,18 @@ ssl_domain: "easysec.x"
 ssl_new_owner: "{{ ssl_user }}"
 ssl_new_group: "{{ ssl_group }}"
 
-# -- This section should not be changed -- ##
-# -- Execution variables -- #
-ssl_user: root
-ssl_group: root
+# Config: This section should not be changed
 
-## -- Config paths --#
-ssl_config_dir: /etc/letsencrypt
-ssl_live_certs_dir: /etc/letsencrypt/live
-ssl_credentials_dir: /etc/letsencrypt
-ssl_log_dir: /var/log/letsencrypt
+## Folders
+ssl_config_folder: /etc/letsencrypt
+ssl_live_certs_folder: /etc/letsencrypt/live
+ssl_credentials_folder: /etc/letsencrypt
+ssl_log_folder: /var/log/letsencrypt
 
-## -- Job configuration --#
+## Files
+ssl_renewal_template_path: templates/renewal.sh.j2
+
+## Cron job
 ssl_job_title: "EASYSEC - Renewal for {{ ssl_generate_config.domain }}"
 ssl_job: >-
   certbot renew \
