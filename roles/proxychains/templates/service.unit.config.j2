@@ -1,14 +1,14 @@
 [Unit]
-Description= Tor Proxy - Instance %i - EasySec
+Description=Tor Proxy - Instance %i - EasySec
 After=network.target
 
 [Service]
 Type=simple
-User=debian-tor
-Group=debian-tor
+User={{ proxychains_user }}
+Group={{ proxychains_group }}
 ExecStart=/usr/bin/tor -f /etc/tor/instances/%i
 RuntimeDirectoryMode=0700
-PIDFile=/var/lib/tor/%i/tor.pid
+PIDFile={{ proxychains_lib_folder }}/%i/tor.pid
 Restart=on-failure
 LimitNOFILE=65536
 LimitCORE=infinity

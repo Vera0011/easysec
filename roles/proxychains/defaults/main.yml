@@ -1,4 +1,26 @@
 ---
-proxychains_package_name: proxychains
+proxychains_user: debian-tor
+proxychains_group: debian-tor
 proxychains_clean: false
 proxychains_total_proxies: 1
+
+# Config envs - Should not be changed unless knowing what they do
+## Config
+proxychains_service_start_name: tor@instance
+proxychains_start_port: 9050
+
+## Folders
+proxychains_log_folder: /var/log/tor
+proxychains_lib_folder: /var/lib/tor
+proxychains_config_folder: /etc/tor/instances
+proxychains_execution_folder: /run/tor
+
+## Files
+proxychains_service_unit_path: /etc/systemd/system/tor@.service
+proxychains_config_path: /etc/proxychains.conf
+proxychains_4_config_path: /etc/proxychains4.conf
+
+## Templates
+proxychains_service_config_template_path: templates/service.config.j2
+proxychains_service_unit_template_path: templates/service.unit.config.j2
+proxychains_template_path: templates/proxychains.config.j2
