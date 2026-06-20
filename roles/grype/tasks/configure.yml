@@ -40,7 +40,7 @@
 
 - name: Sends custom configuration to Grype
   ansible.builtin.template:
-    src: "{{ grype_template_path }}"
+    src: templates/grype.conf.j2
     dest: "{{ grype_custom_config_path }}"
     mode: "0440"
     owner: "{{ grype_user }}"

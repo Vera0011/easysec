@@ -17,10 +17,9 @@ syft_log_folder: /var/log/syft
 ## Files
 syft_temp_path: /tmp/syft_install.sh
 syft_binary_path: /usr/local/sbin/syft
-syft_template_path: templates/syft.conf.j2
-syft_custom_config_path: "{{ syft_config_folder }}/config.yaml"
-syft_log_path: "{{ syft_log_folder }}/audit.log"
+syft_custom_config_path: "{{ syft_config_folder }}/syft.yaml"
+syft_log_path: "{{ syft_log_folder }}/syft-audit.log"
 
 ## Cron job
 syft_job_title: "Syft audit - EasySec"
-syft_job: "{{ syft_binary_path }} / 2>&1"
+syft_job: "{{ syft_binary_path }} -c {{ syft_custom_config_path }} / 2>&1"

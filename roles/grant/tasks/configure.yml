@@ -40,7 +40,7 @@
 
 - name: Sends custom configuration to Grant
   ansible.builtin.template:
-    src: "{{ grant_template_path }}"
+    src: templates/grant.conf.j2
     dest: "{{ grant_custom_config_path }}"
     mode: "0440"
     owner: "{{ grant_user }}"

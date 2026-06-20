@@ -17,10 +17,9 @@ grype_log_folder: /var/log/grype
 ## Files
 grype_temp_path: /tmp/grype_install.sh
 grype_binary_path: /usr/local/sbin/grype
-grype_template_path: templates/grype.conf.j2
-grype_custom_config_path: "{{ grype_config_folder }}/config.yaml"
-grype_log_path: "{{ grype_log_folder }}/audit.log"
+grype_custom_config_path: "{{ grype_config_folder }}/grype.yaml"
+grype_log_path: "{{ grype_log_folder }}/grype-audit.log"
 
 ## Cron job
 grype_job_title: "Grype audit - EasySec"
-grype_job: "{{ grype_binary_path }} / 2>&1"
+grype_job: "{{ grype_binary_path }} -c {{ grype_custom_config_path }} / 2>&1"

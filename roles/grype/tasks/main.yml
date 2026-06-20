@@ -1,11 +1,4 @@
 ---
-- name: Gather facts
-  ansible.builtin.setup:
-
-- name: Cosign installation and configuration
-  ansible.builtin.include_role:
-    name: cosign
-
 - name: Tool installation
   ansible.builtin.include_tasks: install.yml
 
