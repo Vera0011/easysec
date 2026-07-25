@@ -6,9 +6,10 @@ EasySec is a repository that includes a variety of roles, documentation, and too
 This project is completely open source, created by Vera and licensed under the [MIT License](./../../LICENSE.md). Any contributions, suggestions, or implementations can be submitted in the “Pull Requests” section.
 
 ## Setup
-Two scripts are available under [`scripts/`](../../scripts/):
+Multiple scripts are available under [`scripts/`](../../scripts/):
 - **execute.sh**: Interactive CLI to select and run specific modules or workflows in Vagrant
 - **test.sh**: Ruls all modules and workflows in Vagrant - used to valide setup
+- **create_keys.sh**: Creates RSA keys for communication in Vagrant. Injected automatically in Vagrantfile.
 
 ### Environment
 The recommended setup uses [UV](https://github.com/astral-sh/uv) for Python environment management. These are the recommended actions:
@@ -35,12 +36,13 @@ Depending on how the project progresses, these are the tools and environments I 
 - [X] Syft
 - [X] Grant
 - [X] Keycloak
-- [ ] OpenLDAP
+- [X] OpenLDAP
 - [ ] Netmaker
 - [ ] Pomerium
 - [ ] Netbird
 - [ ] MISP
 - [ ] TheHive
+- [ ] Snort
 - [ ] Suricata
 - [ ] Nftables
 - [ ] Iptables
