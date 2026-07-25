@@ -17,7 +17,6 @@ ssl_move_key: false
 
 ssl_cert_path: "/etc/ssl/certs/{{ ssl_domain }}.pem"
 ssl_key_path: "/etc/ssl/private/{{ ssl_domain }}.key"
-ssl_csr_path: "/etc/ssl/certs/{{ ssl_domain }}.crs"
 
 ssl_email: "whoami@easysec.x"
 ssl_domain: "easysec.x"

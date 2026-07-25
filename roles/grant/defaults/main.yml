@@ -1,12 +1,13 @@
 ---
-grant_group: grant
 grant_user: grant
+grant_group: grant
 grant_time:
   weekday: "0"
   hour: "3"
   minute: "0"
 
 # Config envs - Should not be changed unless knowing what they do
+## Config
 grant_host: https://get.anchore.io/grant
 
 ## Folders

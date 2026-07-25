@@ -1,12 +1,13 @@
 ---
-grype_group: grype
 grype_user: grype
+grype_group: grype
 grype_time:
   weekday: "0"
   hour: "3"
   minute: "0"
 
 # Config envs - Should not be changed unless knowing what they do
+## Config
 grype_host: https://get.anchore.io/grype
 
 ## Folders

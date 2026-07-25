@@ -1,7 +1,7 @@
 ---
-lynis_lang: en
 lynis_user: lynis
 lynis_group: lynis
+lynis_lang: en
 lynis_time:
   weekday: "0"
   hour: "3"

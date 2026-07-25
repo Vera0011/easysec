@@ -53,7 +53,6 @@ kc.log_body: 'on'
 
 # - SSL -
 
-{% if postgresql_ssl_enable %}
 ssl = on
 ssl_cert_file = '{{ postgresql_ssl.cert_path }}'
 ssl_key_file = '{{ postgresql_ssl.key_path }}'
@@ -61,11 +60,6 @@ ssl_ciphers = 'HIGH:MEDIUM:+3DES:!aNULL'
 ssl_tls13_ciphers = ''
 ssl_prefer_server_ciphers = on
 ssl_min_protocol_version = 'TLSv1.2'
-{% else %}
-ssl = off
-ssl_cert_file = '/etc/ssl/certs/ssl-cert-snakeoil.pem'
-ssl_key_file = '/etc/ssl/private/ssl-cert-snakeoil.key'
-{% endif %}
 
 #------------------------------------------------------------------------------
 # RESOURCE USAGE (except WAL)

@@ -7,6 +7,7 @@ keycloak_enable_database: true
 # Config envs - Should not be changed unless knowing what they do
 ## Config
 keycloak_package_name: keycloak
+keycloak_database_type: postgres
 keycloak_port: 8443
 keycloak_java_package: openjdk-21-jdk
 keycloak_host: https://github.com/keycloak/keycloak/releases/download/26.5.6/keycloak-26.5.6.tar.gz

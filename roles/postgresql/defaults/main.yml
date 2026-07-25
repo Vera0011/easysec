@@ -5,16 +5,10 @@ postgresql_user: postgres
 postgresql_group: postgres
 
 # Modules
-postgresql_ssl_enable: true
 postgresql_user_enable: true
 postgresql_database_enable: true
 postgresql_oauth_enable: false
 postgresql_wal_enable: false
-
-## Module - SSL
-postgresql_ssl:
-  cert_path: /etc/ssl/certs/postgresql.crt
-  key_path: /etc/ssl/private/postgresql.key
 
 # Module - User configuration
 postgresql_users:
@@ -70,7 +64,7 @@ postgresql_sysctl_params:
 postgresql_superadmin_user_rights: SUPERUSER
 postgresql_normal_user_rights: NOSUPERUSER,NOCREATEDB,NOCREATEROLE
 
-# # Folders
+## Folders
 postgresql_data_folder: /var/lib/postgresql/{{ postgresql_version }}/main
 postgresql_config_folder: /etc/postgresql/{{ postgresql_version }}/main
 postgresql_log_folder: /var/log/postgresql
@@ -83,3 +77,6 @@ postgresql_indent_path: "{{ postgresql_config_folder }}/pg_ident.conf"
 postgresql_config_template_path: templates/postgresql.conf.j2
 postgresql_hba_template_path: templates/pg_hba.conf.j2
 postgresql_password_output_path: "{{ playbook_dir }}/../generated/postgresql_users.txt"
+postgresql_ssl:
+  cert_path: /etc/ssl/certs/postgresql.crt
+  key_path: /etc/ssl/private/postgresql.key

@@ -42,14 +42,13 @@
     ssl_cert_path: /etc/ssl/certs/keycloak.pem
     ssl_key_path: /etc/ssl/private/keycloak.key
 
-    keycloak_database_type: postgres
     keycloak_database_host: localhost
     keycloak_database_port: 5432
     keycloak_database_name: keycloak
     keycloak_database_user: keycloak
-    keycloak_database_password: keycloak
 
   pre_tasks:
     - name: Sets the generated password for Keycloak
+      when: keycloak_database_password is not defined
       ansible.builtin.set_fact:
         keycloak_database_password: "{{ (lookup('file', '{{ playbook_dir }}/../generated/postgresql_users.txt') | from_yaml).keycloak }}"

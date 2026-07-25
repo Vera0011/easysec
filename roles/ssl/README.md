@@ -3,9 +3,8 @@
 ## Introduction
 This role installs, configures and creates a certificate, based on different options enabled in environment variables.
 
-> [!NOTE]
-> CSR certificates are mentioned in this document. This feature (CSR certificate generation, as CA) is only available
-> for self-signed certificates.
+> [!CAUTION]
+> This role also creates the group `ssl-cert`, so services can access their specific private keys. Be aware of this when using this role with other role services (for example, PostgreSQL), to ensure that the service user also has access to this group.
 
 ## Usage
 ```yaml
@@ -26,20 +25,11 @@ This role installs, configures and creates a certificate, based on different opt
     ssl_generate: true
     ssl_move_cert: true
     ssl_move_key: true
-    ssl_move_csr: false
 
-    ssl_cert_path: "/tmp/easysec.pem"
-    ssl_key_path: "/tmp/easysec.key"
-    ssl_csr_path: "/tmp/easysec.crs"
-    ssl_csr_config:
-      country: "ES"
-      organization_name: "EasySec"
-      unit_name: "Security"
+    ssl_cert_path: ""/etc/ssl/certs/easysec.pem"
+    ssl_key_path: ""/etc/ssl/private/easysec.key"
 
-    ssl_email: "whoami@easysec.x"
     ssl_domain: "easysec.x"
-    ssl_cert_owner: "root"
-    ssl_cert_group: "root"
 ```
 
 ## Properties
