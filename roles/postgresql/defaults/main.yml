@@ -5,11 +5,16 @@ postgresql_user: postgres
 postgresql_group: postgres
 
 # Modules
+postgresql_ssl_enable: true
 postgresql_user_enable: true
 postgresql_database_enable: true
-postgresql_ssl_enable: true
 postgresql_oauth_enable: false
 postgresql_wal_enable: false
+
+## Module - SSL
+postgresql_ssl:
+  cert_path: /etc/ssl/certs/postgresql.crt
+  key_path: /etc/ssl/private/postgresql.key
 
 # Module - User configuration
 postgresql_users:
@@ -19,24 +24,6 @@ postgresql_users:
 # Module - Database configuration
 postgresql_databases:
   - { name: "easysec", owner: "manager-easysec", encoding: "UTF-8" }
-
-# Module - SSL configuration - PostgreSQL connections + SSL role (refer to roles/ssl/README.md)
-postgresql_ssl_cert_path: "{{ postgresql_config_folder }}/server.crt"
-postgresql_ssl_key_path: "{{ postgresql_config_folder }}/server.key"
-postgresql_ssl_dns_enabled: false
-postgresql_ssl_provider: "cloudflare"
-postgresql_ssl_credentials:
-  token: "token1234"
-postgresql_ssl_generate: true
-postgresql_ssl_domain: "postgresql.easysec.x"
-postgresql_ssl_output_path: "{{ postgresql_ssl_cert_path }}"
-postgresql_ssl_privatekey_path: "{{ postgresql_ssl_key_path }}"
-postgresql_ssl_crt_country: ""
-postgresql_ssl_crt_organization_name: ""
-postgresql_ssl_crt_unit_name: ""
-postgresql_ssl_email: "admin@postgresql.easysec.x"
-postgresql_ssl_owner: "{{ postgresql_user }}"
-postgresql_ssl_group: "{{ postgresql_group }}"
 
 # Module - Oauth
 postgresql_oauth_provider: kc_validator

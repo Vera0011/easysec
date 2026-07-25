@@ -7,13 +7,6 @@
   vars:
     ssl_provider: "selfsigned"
     ssl_generate: true
-
     ssl_domain: "easysec.x"
-
     ssl_move_cert: true
-    ssl_cert_path: "/tmp/easysec.x.pem"
-
     ssl_move_key: true
-    ssl_generate_privatekey_path: "/tmp/easysec.x.key"
-
-    ssl_email: "whoami@easysec.x"

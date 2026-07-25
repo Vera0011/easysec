@@ -15,18 +15,12 @@ ssl_generate: true
 ssl_move_cert: false
 ssl_move_key: false
 
-ssl_cert_path: "/tmp/{{ ssl_domain }}.pem"
-ssl_key_path: "/tmp/{{ ssl_domain }}.key"
-ssl_csr_path: "/tmp/{{ ssl_domain }}.crs"
-ssl_csr_config:
-  country: "ES"
-  organization_name: "EasySec"
-  unit_name: "Security"
+ssl_cert_path: "/etc/ssl/certs/{{ ssl_domain }}.pem"
+ssl_key_path: "/etc/ssl/private/{{ ssl_domain }}.key"
+ssl_csr_path: "/etc/ssl/certs/{{ ssl_domain }}.crs"
 
 ssl_email: "whoami@easysec.x"
 ssl_domain: "easysec.x"
-ssl_new_owner: "{{ ssl_user }}"
-ssl_new_group: "{{ ssl_group }}"
 
 # Config: This section should not be changed
 ## Folders

@@ -8,28 +8,6 @@
 - name: PostgreSQL configuration
   ansible.builtin.include_tasks: configure.yml
 
-- name: Creates SSL certificate
-  when: postgresql_ssl_enable
-  ansible.builtin.import_role:
-    name: ssl
-  vars:
-    ssl_dns: "{{ postgresql_ssl_dns_enabled }}"
-    ssl_provider: "{{ postgresql_ssl_provider }}"
-    ssl_credentials: "{{ postgresql_ssl_credentials }}"
-    ssl_generate: true
-    ssl_email: "{{ postgresql_ssl_domain }}"
-    ssl_cert_path: "{{ postgresql_ssl_output_path }}"
-    ssl_key_path: "{{ postgresql_ssl_privatekey_path }}"
-    ssl_new_owner: "{{ postgresql_user }}"
-    ssl_new_group: "{{ postgresql_group }}"
-    ssl_csr_config:
-      country: "{{ postgresql_ssl_crt_country }}"
-      organization_name: "{{ postgresql_ssl_crt_organization_name }}"
-      unit_name: "{{ postgresql_ssl_crt_unit_name }}"
-  notify:
-    - Restart PostgreSQL
-    - Restart PostgreSQL cluster
-
 - name: User creation if enabled
   when: postgresql_user_enable
   ansible.builtin.include_tasks: user.yml

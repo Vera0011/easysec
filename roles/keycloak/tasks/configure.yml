@@ -8,7 +8,9 @@
 - name: Create Keycloak user
   ansible.builtin.user:
     name: "{{ keycloak_user }}"
-    group: "{{ keycloak_group }}"
+    groups:
+      - "{{ keycloak_group }}"
+      - ssl-cert
     system: true
     shell: /sbin/nologin
     home: "{{ keycloak_path }}"
@@ -45,7 +47,7 @@
     owner: "{{ keycloak_user }}"
     group: "{{ keycloak_group }}"
     state: directory
-    mode: "750"
+    mode: "755"
 
 - name: Config directory creation
   ansible.builtin.file:
@@ -53,7 +55,7 @@
     owner: "{{ keycloak_user }}"
     group: "{{ keycloak_group }}"
     state: directory
-    mode: "750"
+    mode: "755"
 
 - name: Deploy Keycloak configuration
   ansible.builtin.template:
@@ -72,12 +74,4 @@
     mode: "0640"
   notify:
     - Reload daemon
-
-- name: We copy the generated database certificate to Keycloak
-  ansible.builtin.copy:
-    remote_src: true
-    src: "{{ postgresql_ssl_output_path }}"
-    dest: "{{ keycloak_database_ssl_output_path }}"
-    mode: "0640"
-    group: "{{ keycloak_group }}"
-    owner: "{{ keycloak_user }}"
+    - Restart Keycloak

@@ -55,8 +55,8 @@ kc.log_body: 'on'
 
 {% if postgresql_ssl_enable %}
 ssl = on
-ssl_cert_file = '{{ postgresql_ssl_cert_path }}'
-ssl_key_file = '{{ postgresql_ssl_key_path }}'
+ssl_cert_file = '{{ postgresql_ssl.cert_path }}'
+ssl_key_file = '{{ postgresql_ssl.key_path }}'
 ssl_ciphers = 'HIGH:MEDIUM:+3DES:!aNULL'
 ssl_tls13_ciphers = ''
 ssl_prefer_server_ciphers = on

@@ -1,4 +1,7 @@
 ---
+- name: Gather facts
+  ansible.builtin.setup:
+
 # Clean always executed to remove old proxies
 - name: Removes old proxies
   ansible.builtin.include_tasks: clean.yml

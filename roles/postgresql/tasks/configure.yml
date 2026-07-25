@@ -1,4 +1,11 @@
 ---
+- name: Append SSL folder for Postgres user
+  ansible.builtin.user:
+    name: "{{ postgresql_user }}"
+    groups:
+      - ssl-cert
+    append: true
+
 - name: Configuring memory overcommit - Sysctl configurations
   loop: "{{ postgresql_sysctl_params }}"
   ansible.posix.sysctl:

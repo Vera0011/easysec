@@ -18,17 +18,17 @@
       changed_when: true
 
     - name: Deploy certificate and key
+      loop:
+        - { src: fullchain.pem, dest: "{{ ssl_cert_path }}", when: "{{ ssl_move_cert }}", mode: "0644" }
+        - { src: privkey.key, dest: "{{ ssl_key_path }}", when: "{{ ssl_move_key }}", mode: "0600" }
       when: item.when
       ansible.builtin.copy:
         src: "{{ ssl_live_certs_folder }}/{{ ssl_domain }}/{{ item.src }}"
         dest: "{{ item.dest }}"
         remote_src: true
-        owner: "{{ ssl_new_owner | default(ssl_user) }}"
-        group: "{{ ssl_new_group | default(ssl_group) }}"
-        mode: "0600"
-      loop:
-        - { src: fullchain.pem, dest: "{{ ssl_cert_path }}", when: "{{ ssl_move_cert }}" }
-        - { src: privkey.key, dest: "{{ ssl_key_path }}", when: "{{ ssl_move_key }}" }
+        owner: "{{ ssl_user }}"
+        group: "{{ ssl_group }}"
+        mode: "{{ item.mode }}"
 
     - name: Deploy renewal script
       ansible.builtin.template:
@@ -51,31 +51,15 @@
     - name: Generate private key
       community.crypto.openssl_privatekey:
         path: "{{ ssl_key_path }}"
-        owner: "{{ ssl_new_owner | default(ssl_user) }}"
-        group: "{{ ssl_new_group | default(ssl_group) }}"
-        mode: "0600"
-
-    - name: Generate CSR
-      community.crypto.openssl_csr:
-        path: "{{ ssl_csr_path }}"
-        privatekey_path: "{{ ssl_key_path }}"
-        common_name: "{{ ssl_csr_config.organization_name }}"
-        country_name: "{{ ssl_csr_config.country }}"
-        organization_name: "{{ ssl_csr_config.organization_name }}"
-        organizational_unit_name: "{{ ssl_csr_config.unit_name }}"
-        subject_alt_name: ["DNS:{{ ssl_domain }}"]
-        basic_constraints: ["CA:TRUE"]
-        basic_constraints_critical: true
-        owner: "{{ ssl_new_owner | default(ssl_user) }}"
-        group: "{{ ssl_new_group | default(ssl_group) }}"
-        mode: "0600"
+        owner: "{{ ssl_user }}"
+        group: ssl-cert
+        mode: "0640"
 
     - name: Generate certificate
       community.crypto.x509_certificate:
         path: "{{ ssl_cert_path }}"
         provider: selfsigned
-        csr_path: "{{ ssl_csr_path }}"
         privatekey_path: "{{ ssl_key_path }}"
-        owner: "{{ ssl_new_owner | default(ssl_user) }}"
-        group: "{{ ssl_new_group | default(ssl_group) }}"
-        mode: "0600"
+        owner: "{{ ssl_user }}"
+        group: ssl-cert
+        mode: "0644"

@@ -13,6 +13,7 @@
 
     - name: Create users
       loop: "{{ postgresql_users }}"
+      no_log: true
       community.postgresql.postgresql_user:
         name: "{{ item.name }}"
         password: "{{ postgresql_passwords[item.name] if (item.password | default('')) | length == 0 else item.password }}"
@@ -21,12 +22,7 @@
 
 - name: Output generated passwords
   ansible.builtin.copy:
-    content: |
-      # PostgreSQL generated users and passwords - EasySec
-
-      {% for user in postgresql_users %}
-      {{ user.name }}: {{ postgresql_passwords[user.name] if (user.password | default('')) | length == 0 else user.password }}
-      {% endfor %}
+    content: "{{ postgresql_passwords | to_nice_yaml }}"
     dest: "{{ postgresql_password_output_path }}"
     mode: "0640"
   delegate_to: local
