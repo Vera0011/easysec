@@ -1,29 +1,37 @@
 ---
-ssl_package_name: ssl
 ssl_user: root
 ssl_group: root
 
-ssl_dns_enabled: false
+# DNS-related configuration
+ssl_dns: false
 ssl_provider: "cloudflare"
 ssl_credentials:
   token: "token1234"
+  secret: "secret1234"
+  consumer: "consumer1234"
 
+# Certificate generation
 ssl_generate: true
-ssl_generate_domain: "easysec.x"
-ssl_generate_output_path: "/opt/test/myfullchain.pem"
-ssl_generate_privatekey_path: "/opt/test/mykey.key"
-ssl_generate_country: "ES"
-ssl_generate_organization_name: "EasySec"
-ssl_generate_unit_name: "Security"
-ssl_generate_email: "whoami@easysec.x"
-ssl_generate_owner: "{{ ssl_user }}" # Permissions for files
-ssl_generate_group: "{{ ssl_group }}" # Permissions for files
+ssl_move_cert: false
+ssl_move_key: false
 
-# Config paths - Should not be changed
-ssl_config_path: /etc/letsencrypt
-ssl_live_certs: /etc/letsencrypt/live
-ssl_credentials_path: /etc/letsencrypt
-ssl_log_dir: /var/log/letsencrypt
+ssl_cert_path: "/etc/ssl/certs/{{ ssl_domain }}.pem"
+ssl_key_path: "/etc/ssl/private/{{ ssl_domain }}.key"
+
+ssl_email: "whoami@easysec.x"
+ssl_domain: "easysec.x"
+
+# Config: This section should not be changed
+## Folders
+ssl_config_folder: /etc/letsencrypt
+ssl_live_certs_folder: /etc/letsencrypt/live
+ssl_credentials_folder: /etc/letsencrypt
+ssl_log_folder: /var/log/letsencrypt
+
+## Files
+ssl_renewal_template_path: templates/renewal.sh.j2
+
+## Cron job
 ssl_job_title: "EASYSEC - Renewal for {{ ssl_generate_config.domain }}"
 ssl_job: >-
   certbot renew \

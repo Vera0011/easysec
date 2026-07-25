@@ -1,20 +1,26 @@
 ---
-grant_package_name: grant
-grant_group: grant
 grant_user: grant
+grant_group: grant
 grant_time:
   weekday: "0"
   hour: "3"
   minute: "0"
 
 # Config envs - Should not be changed unless knowing what they do
+## Config
 grant_host: https://get.anchore.io/grant
-grant_cosign_binary_path: /usr/local/sbin/cosign
-grant_binary_path: /usr/local/sbin/grant
+
+## Folders
 grant_binary_folder: /usr/local/sbin
 grant_config_folder: /etc/grant
 grant_log_folder: /var/log/grant
-grant_custom_config_path: /etc/grant/config.yaml
-grant_log_path: /var/log/grant/audit.log
+
+## Files
+grant_temp_path: /tmp/grant_install.sh
+grant_binary_path: /usr/local/sbin/grant
+grant_custom_config_path: "{{ grant_config_folder }}/grant.yaml"
+grant_log_path: "{{ grant_log_folder }}/grant-audit.log"
+
+## Cron job
 grant_job_title: "Grant audit - EasySec"
-grant_job: "{{ grant_binary_path }} list / 2>&1"
+grant_job: "{{ grant_binary_path }} -c {{ grant_custom_config_path }} list / 2>&1"

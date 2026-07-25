@@ -2,15 +2,15 @@
 - name: Downloads installation script
   ansible.builtin.get_url:
     url: "{{ syft_host }}"
-    dest: /tmp/syft_install.sh
+    dest: "{{ syft_temp_path }}"
     mode: "0700"
 
 - name: Install Syft
   ansible.builtin.command:
-    cmd: /tmp/syft_install.sh -b {{ syft_binary_folder }} -v
+    cmd: "{{ syft_temp_path }} -b {{ syft_binary_folder }} -v"
     creates: "{{ syft_binary_path }}"
 
 - name: Installation script removal
   ansible.builtin.file:
-    path: /tmp/syft_install.sh
+    path: "{{ syft_temp_path }}"
     state: absent

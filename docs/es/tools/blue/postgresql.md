@@ -13,6 +13,7 @@ La implementación de esta herramienta en Ansible es la siguiente:
     - Implementación de SSL
     - Implementación de OAuth (para futuras implementaciones, no disponible)
     - Implementación de WAL y réplicas
+4. Si hay usuarios creados, un archivo es generado (con sus credenciales) [aquí](../../../../generated/postgresql_users.txt).
 
 ## Uso
 1. Ejecute el playbook (las instrucciones se pueden encontrar [aquí](../../../../roles/postgresql/README.md))

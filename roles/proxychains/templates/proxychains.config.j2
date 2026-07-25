@@ -10,5 +10,5 @@ tcp_connect_time_out 8000
 
 [ProxyList]
 {% for item in range(1, proxychains_total_proxies + 1) | list %}
-socks5  127.0.0.1 {{ 9050 + item }}
+socks5  127.0.0.1 {{ proxychains_start_port + item }}
 {% endfor %}

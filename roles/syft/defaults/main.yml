@@ -1,20 +1,26 @@
 ---
-syft_package_name: syft
-syft_group: syft
 syft_user: syft
+syft_group: syft
 syft_time:
   weekday: "0"
   hour: "3"
   minute: "0"
 
 # Config envs - Should not be changed unless knowing what they do
+## Config
 syft_host: https://get.anchore.io/syft
-syft_cosign_binary_path: /usr/local/sbin/cosign
-syft_binary_path: /usr/local/sbin/syft
+
+## Folders
 syft_binary_folder: /usr/local/sbin
 syft_config_folder: /etc/syft
 syft_log_folder: /var/log/syft
-syft_custom_config_path: /etc/syft/config.yaml
-syft_log_path: /var/log/syft/audit.log
+
+## Files
+syft_temp_path: /tmp/syft_install.sh
+syft_binary_path: /usr/local/sbin/syft
+syft_custom_config_path: "{{ syft_config_folder }}/syft.yaml"
+syft_log_path: "{{ syft_log_folder }}/syft-audit.log"
+
+## Cron job
 syft_job_title: "Syft audit - EasySec"
-syft_job: "{{ syft_binary_path }} / 2>&1"
+syft_job: "{{ syft_binary_path }} -c {{ syft_custom_config_path }} / 2>&1"

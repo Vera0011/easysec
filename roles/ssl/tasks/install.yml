@@ -7,7 +7,7 @@
     update_cache: true
 
 - name: Installs DigitalOcean DNS plugin
-  when: ssl_dns_enabled and ssl_provider == "digitalocean"
+  when: ssl_dns and ssl_provider == "digitalocean"
   ansible.builtin.apt:
     name:
       - python3-certbot-dns-digitalocean
@@ -15,7 +15,7 @@
     update_cache: true
 
 - name: Installs OVH DNS plugin
-  when: ssl_dns_enabled and ssl_provider == "ovh"
+  when: ssl_dns and ssl_provider == "ovh"
   ansible.builtin.apt:
     name:
       - python3-certbot-dns-ovh
@@ -23,7 +23,7 @@
     update_cache: true
 
 - name: Installs Cloudflare DNS plugin
-  when: ssl_dns_enabled and ssl_provider == "cloudflare"
+  when: ssl_dns and ssl_provider == "cloudflare"
   ansible.builtin.apt:
     name:
       - python3-certbot-dns-cloudflare

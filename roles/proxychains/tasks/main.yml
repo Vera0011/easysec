@@ -1,6 +1,9 @@
 ---
+- name: Gather facts
+  ansible.builtin.setup:
+
 # Clean always executed to remove old proxies
-- name: Clean
+- name: Removes old proxies
   ansible.builtin.include_tasks: clean.yml
 
 - name: Install Tor and specific proxies

@@ -8,7 +8,9 @@
 - name: Create Keycloak user
   ansible.builtin.user:
     name: "{{ keycloak_user }}"
-    group: "{{ keycloak_group }}"
+    groups:
+      - "{{ keycloak_group }}"
+      - ssl-cert
     system: true
     shell: /sbin/nologin
     home: "{{ keycloak_path }}"
@@ -26,7 +28,7 @@
 
     - name: Decompress file
       ansible.builtin.unarchive:
-        src: /tmp/keycloak.tar.gz
+        src: "{{ keycloak_temp_path }}"
         dest: "{{ keycloak_path }}"
         extra_opts:
           - "--strip-components=1"
@@ -36,28 +38,28 @@
 
     - name: Remove Keycloak archive
       ansible.builtin.file:
-        path: "/tmp/keycloak.tar.gz"
+        path: "{{ keycloak_temp_path }}"
         state: absent
 
 - name: Log directory creation
   ansible.builtin.file:
-    path: "{{ keycloak_log_dir }}"
+    path: "{{ keycloak_log_folder }}"
     owner: "{{ keycloak_user }}"
     group: "{{ keycloak_group }}"
     state: directory
-    mode: "750"
+    mode: "755"
 
 - name: Config directory creation
   ansible.builtin.file:
-    path: "{{ keycloak_config_dir }}"
+    path: "{{ keycloak_config_folder }}"
     owner: "{{ keycloak_user }}"
     group: "{{ keycloak_group }}"
     state: directory
-    mode: "750"
+    mode: "755"
 
 - name: Deploy Keycloak configuration
   ansible.builtin.template:
-    src: templates/keycloak.conf.j2
+    src: "{{ keycloak_config_template_path }}"
     dest: "{{ keycloak_config_path }}"
     owner: "{{ keycloak_user }}"
     group: "{{ keycloak_group }}"
@@ -65,19 +67,11 @@
 
 - name: Deploy systemd service
   ansible.builtin.template:
-    src: templates/service.conf.j2
-    dest: "{{ keycloak_systemd_path }}"
+    src: "{{ keycloak_unit_template_path }}"
+    dest: "{{ keycloak_unit_path }}"
     owner: root
     group: root
     mode: "0640"
   notify:
     - Reload daemon
-
-- name: We copy the generated database certificate to Keycloak
-  ansible.builtin.copy:
-    remote_src: true
-    src: "{{ postgresql_ssl_output_path }}"
-    dest: "{{ keycloak_database_ssl_output_path }}"
-    mode: "0640"
-    group: "{{ keycloak_group }}"
-    owner: "{{ keycloak_user }}"
+    - Restart Keycloak

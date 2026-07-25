@@ -1,46 +1,46 @@
 ---
 - name: Creates the default log directory
   ansible.builtin.file:
-    path: /var/log/tor
+    path: "{{ proxychains_log_folder }}"
     recurse: true
     state: directory
-    group: debian-tor
-    owner: debian-tor
+    group: "{{ proxychains_group }}"
+    owner: "{{ proxychains_user }}"
     mode: "755"
 
 - name: Creates the default log files
   loop: "{{ range(1, proxychains_total_proxies + 1) | list }}"
   ansible.builtin.file:
-    dest: /var/log/tor/instance-{{ item }}.log
+    dest: "{{ proxychains_log_folder }}/instance-{{ item }}.log"
     state: touch
-    group: debian-tor
-    owner: debian-tor
+    group: "{{ proxychains_group }}"
+    owner: "{{ proxychains_user }}"
     mode: "644"
 
 - name: Creates the default lib dirs
   loop: "{{ range(1, proxychains_total_proxies + 1) | list }}"
   ansible.builtin.file:
-    path: /var/lib/tor/instance-{{ item }}
+    path: "{{ proxychains_lib_folder }}/instance-{{ item }}"
     recurse: true
     state: directory
-    group: debian-tor
-    owner: debian-tor
+    group: "{{ proxychains_group }}"
+    owner: "{{ proxychains_user }}"
     mode: "755"
 
 - name: Creates the config directory for proxies
   ansible.builtin.file:
-    path: /etc/tor/instances
+    path: "{{ proxychains_config_folder }}"
     mode: "755"
     recurse: true
     state: directory
-    owner: debian-tor
-    group: debian-tor
+    owner: "{{ proxychains_user }}"
+    group: "{{ proxychains_group }}"
 
 - name: Creates the config files of proxies
   loop: "{{ range(1, proxychains_total_proxies + 1) | list }}"
   ansible.builtin.template:
-    src: templates/service.config.j2
-    dest: /etc/tor/instances/instance-{{ item }}
+    src: "{{ proxychains_service_config_template_path }}"
+    dest: "{{ proxychains_config_folder }}/instance-{{ item }}"
     mode: "644"
     owner: root
     group: root
@@ -48,8 +48,8 @@
 
 - name: Create the unit file for the systemctl daemon
   ansible.builtin.template:
-    src: templates/service.unit.config.j2
-    dest: /etc/systemd/system/tor@.service
+    src: "{{ proxychains_service_unit_template_path }}"
+    dest: "{{ proxychains_service_unit_path }}"
     mode: "644"
     owner: root
     group: root
@@ -57,7 +57,7 @@
 - name: Create the run directory
   loop: "{{ range(1, proxychains_total_proxies + 1) | list }}"
   ansible.builtin.file:
-    path: /run/tor/instance-{{ item }}
+    path: "{{ proxychains_execution_folder }}/instance-{{ item }}"
     recurse: true
     state: directory
     group: root
@@ -70,8 +70,8 @@
 
 - name: Creates the config for proxychains
   ansible.builtin.template:
-    src: templates/proxychains.config.j2
-    dest: /etc/proxychains.conf
+    src: "{{ proxychains_template_path }}"
+    dest: "{{ proxychains_config_path }}"
     mode: "644"
     owner: root
     group: root
@@ -79,8 +79,8 @@
 
 - name: Creates the config for proxychains4
   ansible.builtin.template:
-    src: templates/proxychains.config.j2
-    dest: /etc/proxychains4.conf
+    src: "{{ proxychains_template_path }}"
+    dest: "{{ proxychains_4_config_path }}"
     mode: "644"
     owner: root
     group: root
@@ -91,4 +91,4 @@
   ansible.builtin.systemd:
     state: started
     enabled: true
-    name: tor@instance-{{ item }}
+    name: "{{ proxychains_service_start_name }}-{{ item }}"

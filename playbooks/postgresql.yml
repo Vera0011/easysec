@@ -3,6 +3,15 @@
   hosts: vagrant-postgresql-1
   become: true
   roles:
+    - ssl
     - postgresql
   vars:
-    postgresql_ssl_provider: "selfsigned"
+    ssl_provider: selfsigned
+    ssl_cert_path: /etc/ssl/certs/postgresql.crt
+    ssl_key_path: /etc/ssl/private/postgresql.key
+    ssl_generate: true
+    ssl_domain: "postgresql.easysec.x"
+
+    postgresql_ssl:
+      cert_path: /etc/ssl/certs/postgresql.crt
+      key_path: /etc/ssl/private/postgresql.key

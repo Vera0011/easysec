@@ -4,3 +4,8 @@
     url: "{{ cosign_url }}"
     dest: "{{ cosign_binary_path }}"
     mode: "0555"
+    timeout: 60
+  retries: 3
+  delay: 5
+  register: cosign_result
+  until: cosign_result is succeeded
