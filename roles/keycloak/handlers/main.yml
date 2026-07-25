@@ -5,6 +5,6 @@
 
 - name: Restart Keycloak
   ansible.builtin.systemd:
-    name: keycloak
+    name: "{{ keycloak_package_name }}"
     state: restarted
     enabled: true

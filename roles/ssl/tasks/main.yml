@@ -3,8 +3,7 @@
   when: ssl_provider != "selfsigned"
   ansible.builtin.include_tasks: install.yml
 
-- name: Configures tools
-  when: ssl_provider != "selfsigned"
+- name: Configures directories
   ansible.builtin.include_tasks: configure.yml
 
 - name: Generates a certificate

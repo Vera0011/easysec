@@ -1,9 +1,10 @@
 ---
 - name: Configures Certbot and provider credentials
+  when: ssl_provider != "selfsigned"
   block:
     - name: Correct permissions - Config directory
       ansible.builtin.file:
-        path: "{{ ssl_config_path }}"
+        path: "{{ ssl_config_folder }}"
         mode: "0750"
         group: "{{ ssl_user }}"
         owner: "{{ ssl_user }}"
@@ -11,7 +12,7 @@
 
     - name: Correct permissions - Log directory
       ansible.builtin.file:
-        path: "{{ ssl_log_dir }}"
+        path: "{{ ssl_log_folder }}"
         mode: "0755"
         group: "{{ ssl_user }}"
         owner: "{{ ssl_user }}"
@@ -20,7 +21,7 @@
     - name: Manage DNS Provider Credentials
       when: ssl_dns_enabled
       ansible.builtin.copy:
-        dest: "{{ ssl_config_path }}/{{ ssl_provider }}.ini"
+        dest: "{{ ssl_config_folder }}/{{ ssl_provider }}.ini"
         owner: "{{ ssl_user }}"
         group: "{{ ssl_group }}"
         mode: "0640"
@@ -35,3 +36,17 @@
           {% elif ssl_provider == 'cloudflare' %}
           dns_cloudflare_api_token={{ ssl_credentials.token }}
           {% endif %}
+
+- name: Configures standard destination paths
+  block:
+    - name: Creation of group if not present
+      ansible.builtin.group:
+        name: ssl-cert
+        state: present
+
+    - name: Modification of key's folder
+      ansible.builtin.file:
+        path: /etc/ssl/private
+        state: directory
+        group: ssl-cert
+        mode: "0750"

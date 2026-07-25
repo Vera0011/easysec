@@ -1,20 +1,26 @@
 ---
-grype_package_name: grype
-grype_group: grype
 grype_user: grype
+grype_group: grype
 grype_time:
   weekday: "0"
   hour: "3"
   minute: "0"
 
 # Config envs - Should not be changed unless knowing what they do
+## Config
 grype_host: https://get.anchore.io/grype
-grype_cosign_binary_path: /usr/local/sbin/cosign
-grype_binary_path: /usr/local/sbin/grype
+
+## Folders
 grype_binary_folder: /usr/local/sbin
 grype_config_folder: /etc/grype
 grype_log_folder: /var/log/grype
-grype_custom_config_path: /etc/grype/config.yaml
-grype_log_path: /var/log/grype/audit.log
+
+## Files
+grype_temp_path: /tmp/grype_install.sh
+grype_binary_path: /usr/local/sbin/grype
+grype_custom_config_path: "{{ grype_config_folder }}/grype.yaml"
+grype_log_path: "{{ grype_log_folder }}/grype-audit.log"
+
+## Cron job
 grype_job_title: "Grype audit - EasySec"
-grype_job: "{{ grype_binary_path }} / 2>&1"
+grype_job: "{{ grype_binary_path }} -c {{ grype_custom_config_path }} / 2>&1"

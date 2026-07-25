@@ -10,9 +10,8 @@ This role installs (and configures) Syft in the specified host. The role can als
   roles:
     - syft
   vars:
-    syft_package_name: syft
-    syft_group: syft
     syft_user: syft
+    syft_group: syft
     syft_time:
       weekday: "0"
       hour: "3"

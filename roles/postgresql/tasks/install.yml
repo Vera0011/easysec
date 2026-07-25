@@ -18,14 +18,8 @@
 
 - name: Creates source file
   ansible.builtin.copy:
-    dest: "{{ postgresql_apt_source }}"
-    content: |
-      Types: deb
-      URIs: {{ postgresql_repo_url }}
-      Suites: {{ ansible_facts['distribution_release'] }}-pgdg
-      Architectures: amd64
-      Components: main
-      Signed-By: {{ postgresql_key_path }}
+    dest: "{{ postgresql_apt_source_path }}"
+    content: "{{ postgresql_repo_config }}"
     mode: "0644"
 
 - name: Install PostgreSQL

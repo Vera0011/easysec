@@ -10,9 +10,9 @@ The implementation of this tool in Ansible is as follows:
 3. There are different modules that can be loaded:
     - User creation
     - Database creation
-    - SSL implementation
     - Oauth implementation (for future implementations, not available)
     - WAL and replica implementation
+4. If users are created, a file is generated (with their credentials) [here](../../../../generated/postgresql_users.txt).
 
 ## Usage
 1. Run the playbook (instructions can be found [here](../../../../roles/postgresql/README.md))

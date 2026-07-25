@@ -1,0 +1,29 @@
+---
+- name: User configuration
+  become: true
+  become_user: "{{ postgresql_user }}"
+  block:
+    - name: Generate random password
+      loop: "{{ postgresql_users }}"
+      when: (item.password | default('')) | length == 0
+      vars:
+        pass_generated: "{{ lookup('ansible.builtin.password', '/dev/null', length=32, chars=['ascii_letters', 'digits']) }}"
+      ansible.builtin.set_fact:
+        postgresql_passwords: "{{ postgresql_passwords | default({}) | combine({item.name: pass_generated}) }}"
+
+    - name: Create users
+      loop: "{{ postgresql_users }}"
+      no_log: true
+      community.postgresql.postgresql_user:
+        name: "{{ item.name }}"
+        password: "{{ postgresql_passwords[item.name] if (item.password | default('')) | length == 0 else item.password }}"
+        state: present
+        role_attr_flags: "{{ postgresql_superadmin_user_rights if item.superuser else postgresql_normal_user_rights }}"
+
+- name: Output generated passwords
+  ansible.builtin.copy:
+    content: "{{ postgresql_passwords | to_nice_yaml }}"
+    dest: "{{ postgresql_password_output_path }}"
+    mode: "0640"
+  delegate_to: local
+  become: false

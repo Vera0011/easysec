@@ -1,9 +1,54 @@
 ---
+- name: Installs PostgreSQL on host
+  hosts: vagrant-keycloak-1
+  become: true
+  roles:
+    - ssl
+    - postgresql
+  vars:
+    ssl_provider: selfsigned
+    ssl_cert_path: /etc/ssl/certs/postgresql.crt
+    ssl_key_path: /etc/ssl/private/postgresql.key
+    ssl_generate: true
+    ssl_domain: "postgresql.easysec.x"
+
+    postgresql_ssl:
+      cert_path: /etc/ssl/certs/postgresql.crt
+      key_path: /etc/ssl/private/postgresql.key
+
+    postgresql_users:
+      - { name: "easysec", password: "", superuser: true } # Auto-generated password
+      - { name: "keycloak", password: "", superuser: false } # Auto-generated password
+
+    postgresql_databases:
+      - { name: "keycloak", owner: "keycloak", encoding: "UTF-8" }
+
+    postgresql_hba_entries:
+      - { type: "local", database: "all", user: "postgres", address: "", method: "peer" }
+      - { type: "hostssl", database: "keycloak", user: "keycloak", address: "127.0.0.1/32", method: "scram-sha-256" }
+      - { type: "hostssl", database: "keycloak", user: "keycloak", address: "::1/128", method: "scram-sha-256" }
+      - { type: "hostssl", database: "all", user: "all", address: "0.0.0.0/0", method: "reject" }
+      - { type: "host", database: "all", user: "all", address: "0.0.0.0/0", method: "reject" }
+
 - name: Installs Keycloak on test host (Vagrant)
   hosts: vagrant-keycloak-1
   become: true
   roles:
+    - ssl
     - keycloak
   vars:
-    keycloak_ssl_provider: "selfsigned"
-    keycloak_database_ssl_provider: "selfsigned"
+    ssl_provider: "selfsigned"
+    ssl_domain: "{{ keycloak_hostname }}"
+    ssl_cert_path: /etc/ssl/certs/keycloak.pem
+    ssl_key_path: /etc/ssl/private/keycloak.key
+
+    keycloak_database_host: localhost
+    keycloak_database_port: 5432
+    keycloak_database_name: keycloak
+    keycloak_database_user: keycloak
+
+  pre_tasks:
+    - name: Sets the generated password for Keycloak
+      when: keycloak_database_password is not defined
+      ansible.builtin.set_fact:
+        keycloak_database_password: "{{ (lookup('file', '{{ playbook_dir }}/../generated/postgresql_users.txt') | from_yaml).keycloak }}"

@@ -14,13 +14,6 @@
     umask: "027"
     password: "!"
 
-- name: We remove inmutable flag if binary is found
-  failed_when: false
-  changed_when: false
-  ansible.builtin.file:
-    path: "{{ grant_binary_path }}"
-    attributes: -i
-
 - name: Modify Grant binary
   ansible.builtin.file:
     path: "{{ grant_binary_path }}"
@@ -28,7 +21,6 @@
     group: "{{ grant_group }}"
     mode: "0750"
     state: file
-    attributes: +i
 
 - name: Modify config folder
   ansible.builtin.file:
@@ -46,13 +38,6 @@
     mode: "0750"
     state: directory
 
-- name: We remove inmutable flag if config is found
-  failed_when: false
-  changed_when: false
-  ansible.builtin.file:
-    path: "{{ grant_custom_config_path }}"
-    attributes: -i
-
 - name: Sends custom configuration to Grant
   ansible.builtin.template:
     src: templates/grant.conf.j2
@@ -60,7 +45,6 @@
     mode: "0440"
     owner: "{{ grant_user }}"
     group: "{{ grant_group }}"
-    attributes: +i
 
 - name: Updates PATH to add the path of the configuration file
   ansible.builtin.lineinfile:
