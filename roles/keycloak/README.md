@@ -33,7 +33,7 @@ This role installs (and configures) Keycloak in the specified host. The role als
 
 ## Test suite
 > [!CAUTION]
-> This role has only been tested in single-node instance (PostgreSQL and Keycloak).
+> This role has only been tested in single-node instance (PostgreSQL and Keycloak).</br>
 The role has been tested in the following hosts:
 ### Target hosts
 - Ubuntu Server 22.04 (Jammy Jellyfish)
