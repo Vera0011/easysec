@@ -9,8 +9,5 @@
 - name: Downloads software
   ansible.builtin.unarchive:
     src: "{{ openldap_host }}"
-    dest: "{{ openldap_conf_dir }}"
+    dest: "{{ openldap_temp_dir }}"
     remote_src: true
-    mode: "0750"
-    owner: "{{ openldap_user }}"
-    group: "{{ openldap_group }}"

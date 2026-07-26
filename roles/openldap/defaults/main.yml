@@ -9,11 +9,27 @@ openldap_ssl:
 # Config envs - Should not be changed unless knowing what they do
 ## Config
 openldap_version: "2.6.13"
-openldap_host: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-{{ openldap_version }}.tgz
+openldap_package_name: openldap-{{ openldap_version }}
+openldap_host: https://www.openldap.org/software/download/OpenLDAP/openldap-release/{{ openldap_package_name }}.tgz
 openldap_required_packages:
   - openssl
+  - make
+  - gcc
+  - libltdl-dev
+  - libssl-dev
+  - libdb-dev
+  - libsasl2-dev
+  - pkg-config
+  - libwiredtiger-dev
+openldap_config_params: "--prefix={{ openldap_conf_dir }} --enable-debug=no --enable-cleartext=no --enable-auditlog --with-cyrus-sasl --with-tls=openssl --enable-overlays=mod
+  --enable-backends=mod --disable-perl --enable-crypt --enable-modules --enable-dynamic --enable-syslog --enable-local --enable-spasswd --disable-sql"
 
 ## Folders
 openldap_conf_dir: /etc/openldap
+openldap_temp_dir: /tmp
 
 ## Files
+openldap_temp_path: "{{ openldap_temp_dir }}/{{ openldap_package_name }}"
+openldap_sha_path: "{{ openldap_temp_path }}/contrib/slapd-modules/passwd/sha2"
+openldap_test_file_path: "{{ openldap_temp_path }}/test_results.txt"
+openldap_configuration_script_path: "{{ openldap_temp_path }}/configure"

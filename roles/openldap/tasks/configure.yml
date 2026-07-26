@@ -11,3 +11,58 @@
       - "{{ openldap_group }}"
       - ssl-cert
     state: present
+    shell: /bin/false
+    comment: "OpenLDAP Server Account"
+    home: "{{ openldap_conf_dir }}"
+
+- name: Executes the configuration
+  ansible.builtin.command: "{{ openldap_configuration_script_path }} {{ openldap_config_params }}"
+  changed_when: false
+
+- name: Compilation and test execution
+  block:
+    - name: Compiles project dependencies
+      community.general.make:
+        chdir: "{{ openldap_temp_path }}"
+        target: depend
+
+    - name: Compiles project
+      community.general.make:
+        chdir: "{{ openldap_temp_path }}"
+
+    - name: Compiles SHA2 dependency (used for hardening)
+      community.general.make:
+        chdir: "{{ openldap_sha_path }}"
+
+    - name: Run test suite
+      ansible.builtin.command:
+        cmd: make test
+        chdir: "{{ openldap_temp_path }}"
+      register: openldap_make_test
+      changed_when: false
+      failed_when: false
+
+    - name: Save test results to file
+      ansible.builtin.copy:
+        content: "{{ openldap_make_test.stdout }}\n{{ openldap_make_test.stderr }}"
+        dest: "{{ openldap_test_file_path }}"
+        mode: "0640"
+
+    - name: Check for failed tests
+      ansible.builtin.command:
+        cmd: "grep '>>>>>.*failed' {{ openldap_test_file_path }}"
+      register: openldap_failed_tests
+      changed_when: false
+      failed_when: false
+
+    - name: Fail the play if any tests failed
+      ansible.builtin.fail:
+        msg: |
+          OpenLDAP test suite reported failures:
+          {{ openldap_failed_tests.stdout }}
+      when: openldap_failed_tests.rc == 0
+
+    - name: Removes generated tests file
+      ansible.builtin.file:
+        path: "{{ openldap_test_file_path }}"
+        state: absent
