@@ -7,7 +7,7 @@
     - openldap
   vars:
     ssl_provider: selfsigned
-    ssl_cert_path: /etc/ssl/certs/openldap.crt
-    ssl_key_path: /etc/ssl/private/openldap.key
+    ssl_cert_path: /etc/ssl/certs/openldap.pem
+    ssl_key_path: /etc/ssl/private/openldap.pem
     ssl_generate: true
     ssl_domain: "openldap.easysec.x"

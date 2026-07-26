@@ -3,8 +3,8 @@ openldap_user: ldap
 openldap_group: ldap
 
 openldap_ssl:
-  cert_path: /etc/ssl/certs/openldap.crt
-  key_path: /etc/ssl/private/openldap.key
+  cert_path: /etc/ssl/certs/openldap.pem
+  key_path: /etc/ssl/private/openldap.pem
 
 # Config envs - Should not be changed unless knowing what they do
 ## Config
@@ -21,15 +21,40 @@ openldap_required_packages:
   - libsasl2-dev
   - pkg-config
   - libwiredtiger-dev
-openldap_config_params: "--prefix={{ openldap_conf_dir }} --enable-debug=no --enable-cleartext=no --enable-auditlog --with-cyrus-sasl --with-tls=openssl --enable-overlays=mod
+openldap_config_params: "--prefix={{ openldap_conf_folder }} --enable-debug --enable-cleartext=no --enable-auditlog --with-cyrus-sasl --with-tls=openssl --enable-overlays=mod
   --enable-backends=mod --disable-perl --enable-crypt --enable-modules --enable-dynamic --enable-syslog --enable-local --enable-spasswd --disable-sql"
+openldap_service_name: slapd
 
 ## Folders
-openldap_conf_dir: /etc/openldap
-openldap_temp_dir: /tmp
+openldap_conf_folder: /etc/{{ openldap_package_name }}
+openldap_temp_folder: /tmp
+openldap_sha_usr_folder: "{{ openldap_conf_folder }}/usr/local/libexec/openldap"
+openldap_sha_final_folder: "{{ openldap_conf_folder }}/libexec/openldap"
+openldap_run_folder: "{{ openldap_conf_folder }}/var/run"
 
 ## Files
-openldap_temp_path: "{{ openldap_temp_dir }}/{{ openldap_package_name }}"
+openldap_temp_path: "{{ openldap_temp_folder }}/{{ openldap_package_name }}"
 openldap_sha_path: "{{ openldap_temp_path }}/contrib/slapd-modules/passwd/sha2"
 openldap_test_file_path: "{{ openldap_temp_path }}/test_results.txt"
 openldap_configuration_script_path: "{{ openldap_temp_path }}/configure"
+openldap_libtool_script_path: "{{ openldap_temp_path }}/libtool"
+openldap_system_unit_path: "/etc/systemd/system/slapd.service"
+openldap_env_path: "/etc/default/slapd-current"
+
+## Templates
+openldap_template_service: templates/service.unit.j2
+openldap_template_config: templates/slapd.conf.j2
+
+## Linked files and paths - This is useful for multiple versions
+### Folders
+openldap_linked_conf_folder: "/etc/openldap-current"
+openldap_linked_run_folder: "{{ openldap_linked_conf_folder }}/var/run"
+openldap_linked_inner_config_folder: "{{ openldap_linked_conf_folder }}/etc/openldap/slapd.d"
+openldap_linked_module_folder: "{{ openldap_linked_conf_folder }}/libexec/openldap"
+
+### Files
+openldap_linked_pid_path: "{{ openldap_linked_conf_folder }}/slapd.pid"
+openldap_linked_binary_path: "{{ openldap_linked_conf_folder }}/libexec/slapd"
+openldap_linked_config_path: "{{ openldap_linked_conf_folder }}/etc/openldap/slapd.ldif"
+openldap_linked_slapadd_binary_path: "{{ openldap_linked_conf_folder }}/sbin/slapadd"
+openldap_linked_args_path: "{{ openldap_linked_run_folder }}/slapd.args"

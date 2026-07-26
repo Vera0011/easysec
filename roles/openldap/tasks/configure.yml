@@ -1,21 +1,23 @@
 ---
-- name: Creates a new group to manage the instance
-  ansible.builtin.group:
-    name: "{{ openldap_group }}"
-    state: present
+- name: User and group configuration
+  block:
+    - name: Creates a new group to manage the instance
+      ansible.builtin.group:
+        name: "{{ openldap_group }}"
+        state: present
 
-- name: Creates a new user to manage the instance
-  ansible.builtin.user:
-    name: "{{ openldap_user }}"
-    groups:
-      - "{{ openldap_group }}"
-      - ssl-cert
-    state: present
-    shell: /bin/false
-    comment: "OpenLDAP Server Account"
-    home: "{{ openldap_conf_dir }}"
+    - name: Creates a new user to manage the instance
+      ansible.builtin.user:
+        name: "{{ openldap_user }}"
+        groups:
+          - "{{ openldap_group }}"
+          - ssl-cert
+        state: present
+        shell: /bin/false
+        comment: "OpenLDAP Server Account"
+        home: "{{ openldap_conf_folder }}"
 
-- name: Executes the configuration
+- name: Executes the initial configuration
   changed_when: false
   ansible.builtin.command:
     chdir: "{{ openldap_temp_path }}"
@@ -58,7 +60,7 @@
       changed_when: false
       failed_when: false
 
-    - name: Fail the play if any tests failed
+    - name: CHeck if any test failed
       ansible.builtin.fail:
         msg: |
           OpenLDAP test suite reported failures:
@@ -68,4 +70,110 @@
     - name: Removes generated tests file
       ansible.builtin.file:
         path: "{{ openldap_test_file_path }}"
+        state: absent
+
+    - name: Installs software
+      changed_when: false
+      ansible.builtin.command:
+        chdir: "{{ openldap_temp_path }}"
+        cmd: "make install"
+
+    - name: Installs dependencies - SHA2
+      changed_when: false
+      ansible.builtin.command:
+        chdir: "{{ openldap_sha_path }}"
+        cmd: "make DESTDIR={{ openldap_conf_folder }} install"
+
+    - name: We finish the SHA2 module compilation
+      changed_when: false
+      ansible.builtin.command:
+        chdir: "{{ openldap_temp_path }}"
+        cmd: "{{ openldap_libtool_script_path }} --finish {{ openldap_sha_usr_folder }}"
+
+    - name: We move SHA2 files from one path to another - To avoid breaking under different versions
+      ansible.builtin.copy:
+        src: "{{ openldap_sha_usr_folder }}/"
+        dest: "{{ openldap_sha_final_folder }}"
+        remote_src: true
+        mode: preserve
+
+    #- name: We ensure pw-sha2 versioned symlinks exist (contrib module install doesn't create them)
+    #  loop:
+    #    - pw-sha2.so
+    #    - pw-sha2.so.0
+    #  ansible.builtin.file:
+    #    src: "{{ openldap_sha_final_folder }}/pw-sha2.so.0.0.0"
+    #    dest: "{{ openldap_sha_final_folder }}/{{ item }}"
+    #    state: link
+    #    force: true
+
+- name: Final destination configurations
+  block:
+    - name: Change owner and group for execution folder
+      ansible.builtin.file:
+        path: "{{ openldap_run_folder }}"
+        state: directory
+        recurse: true
+        owner: "{{ openldap_user }}"
+        group: "{{ openldap_group }}"
+
+    - name: Changes permissions for all folders
+      changed_when: false
+      ansible.builtin.command:
+        chdir: "{{ openldap_conf_folder }}"
+        cmd: "find . -type d -exec chmod 755 {} \\;"
+
+    - name: Creates simlink between installation and current, to allow multiple versions
+      ansible.builtin.file:
+        src: "{{ openldap_conf_folder }}"
+        dest: "{{ openldap_linked_conf_folder }}"
+        state: link
+
+- name: Sends template to unit system path
+  notify:
+    - Reload daemon
+  ansible.builtin.template:
+    src: "{{ openldap_template_service }}"
+    dest: "{{ openldap_system_unit_path }}"
+    mode: "0644"
+    owner: root
+    group: root
+
+- name: Server configuration for OpenLDAP
+  notify:
+    - Reload daemon
+    - Restart OpenLDAP
+  block:
+    - name: Sends template to configuration path
+      ansible.builtin.template:
+        src: "{{ openldap_template_config }}"
+        dest: "{{ openldap_linked_config_path }}"
+        mode: "0640"
+        owner: "{{ openldap_user }}"
+        group: "{{ openldap_group }}"
+
+    - name: Removes data inside inner config folder
+      ansible.builtin.file:
+        path: "{{ openldap_linked_inner_config_folder }}"
+        state: absent
+
+    - name: Creating inner config folder
+      ansible.builtin.file:
+        path: "{{ openldap_linked_inner_config_folder }}"
+        state: directory
+        owner: "{{ openldap_user }}"
+        group: "{{ openldap_group }}"
+        mode: "0750"
+
+    - name: We load configurations from file
+      changed_when: false
+      ansible.builtin.command:
+        chdir: "{{ openldap_linked_conf_folder }}/etc/openldap"
+        cmd: "{{ openldap_linked_slapadd_binary_path }} -n 0 -F slapd.d -l slapd.ldif"
+
+- name: Cleanup stage
+  block:
+    - name: Removes temporary folder
+      ansible.builtin.file:
+        path: "{{ openldap_temp_path }}"
         state: absent

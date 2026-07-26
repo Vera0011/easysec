@@ -1,13 +1,12 @@
 ---
 - name: Downloads required packages
-  loop: "{{ openldap_required_packages }}"
   ansible.builtin.apt:
-    name: "{{ item }}"
+    name: "{{ openldap_required_packages }}"
     state: present
     update_cache: true
 
 - name: Downloads software
   ansible.builtin.unarchive:
     src: "{{ openldap_host }}"
-    dest: "{{ openldap_temp_dir }}"
+    dest: "{{ openldap_temp_folder }}"
     remote_src: true

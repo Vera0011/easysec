@@ -1,0 +1,15 @@
+[Unit]
+Description=OpenLDAP Server Daemon
+After=syslog.target network-online.target
+
+[Service]
+Type=forking
+PIDFile={{ openldap_linked_pid_path }}
+EnvironmentFile={{ openldap_env_path }}
+User={{ openldap_user }}
+Group={{ openldap_group }}
+
+ExecStart={{ openldap_linked_binary_path }} -u openldap -g openldap -h ${SLAPD_URLS} $SLAPD_OPTIONS
+
+[Install]
+WantedBy=multi-user.target
