@@ -1,0 +1,12 @@
+---
+openldap_user: ldap
+openldap_group: ldap
+
+# Config envs - Should not be changed unless knowing what they do
+## Config
+
+## Folders
+
+## Files
+
+## Cron job
