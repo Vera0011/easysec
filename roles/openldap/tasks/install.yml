@@ -1,0 +1,16 @@
+---
+- name: Downloads required packages
+  loop: "{{ openldap_required_packages }}"
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+
+- name: Downloads software
+  ansible.builtin.unarchive:
+    src: "{{ openldap_host }}"
+    dest: "{{ openldap_conf_dir }}"
+    remote_src: true
+    mode: "0750"
+    owner: "{{ openldap_user }}"
+    group: "{{ openldap_group }}"

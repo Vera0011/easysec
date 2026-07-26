@@ -2,11 +2,18 @@
 openldap_user: ldap
 openldap_group: ldap
 
+openldap_ssl:
+  cert_path: /etc/ssl/certs/openldap.crt
+  key_path: /etc/ssl/private/openldap.key
+
 # Config envs - Should not be changed unless knowing what they do
 ## Config
+openldap_version: "2.6.13"
+openldap_host: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-{{ openldap_version }}.tgz
+openldap_required_packages:
+  - openssl
 
 ## Folders
+openldap_conf_dir: /etc/openldap
 
 ## Files
-
-## Cron job

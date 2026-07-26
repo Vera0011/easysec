@@ -1,0 +1,13 @@
+---
+- name: Creates a new group to manage the instance
+  ansible.builtin.group:
+    name: "{{ openldap_group }}"
+    state: present
+
+- name: Creates a new user to manage the instance
+  ansible.builtin.user:
+    name: "{{ openldap_user }}"
+    groups:
+      - "{{ openldap_group }}"
+      - ssl-cert
+    state: present
