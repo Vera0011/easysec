@@ -16,15 +16,18 @@
     home: "{{ openldap_conf_dir }}"
 
 - name: Executes the configuration
-  ansible.builtin.command: "{{ openldap_configuration_script_path }} {{ openldap_config_params }}"
   changed_when: false
+  ansible.builtin.command:
+    chdir: "{{ openldap_temp_path }}"
+    cmd: "{{ openldap_configuration_script_path }} {{ openldap_config_params }}"
 
 - name: Compilation and test execution
   block:
     - name: Compiles project dependencies
-      community.general.make:
+      changed_when: false
+      ansible.builtin.command:
         chdir: "{{ openldap_temp_path }}"
-        target: depend
+        cmd: "make depend"
 
     - name: Compiles project
       community.general.make:
