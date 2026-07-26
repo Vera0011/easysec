@@ -31,11 +31,12 @@ Vagrant.configure("2") do |config|
         { name: "vagrant-kali-1", box: "kalilinux/rolling", ip: "192.168.56.3", memory: "2048", cpus: 2, boot_timeout: 600 },
         { name: "vagrant-ubuntu-1", box: "ubuntu/jammy64", ip: "192.168.56.4", memory: "2048", cpus: 2, boot_timeout: 600 },
         { name: "vagrant-keycloak-1", box: "ubuntu/jammy64", ip: "192.168.56.5", memory: "4096", cpus: 2, boot_timeout: 600 },
-        { name: "vagrant-postgresql-1", box: "ubuntu/jammy64", ip: "192.168.56.6", memory: "2048", cpus: 2, boot_timeout: 600 }
+        { name: "vagrant-postgresql-1", box: "ubuntu/jammy64", ip: "192.168.56.6", memory: "2048", cpus: 2, boot_timeout: 600 },
+        { name: "vagrant-openldap-1", box: "ubuntu/jammy64", ip: "192.168.56.7", memory: "2048", cpus: 2, boot_timeout: 600 }
     ]
 
     # Tasks to execute - Single playbooks and complete workflows
-    ALL_MODULES = ["proxychains", "lynis", "grype", "syft", "grant", "ssl", "postgresql"]
+    ALL_MODULES = ["proxychains", "lynis", "grype", "syft", "grant", "ssl", "postgresql", "openldap"]
     ALL_WORKFLOWS = ["anchore", "keycloak"]
     MAPPING_SERVERS = {
         "proxychains" => ["vagrant-kali-1"],
@@ -46,7 +47,8 @@ Vagrant.configure("2") do |config|
         "ssl"         => ["vagrant-ubuntu-1"],
         "postgresql"  => ["vagrant-postgresql-1"],
         "keycloak"    => ["vagrant-keycloak-1", "vagrant-postgresql-1"],
-        "anchore"     => ["vagrant-ubuntu-1"]
+        "anchore"     => ["vagrant-ubuntu-1"],
+        "openldap"    => ["vagrant-openldap-1"]
     }
 
     # Updates list if requested by the user

@@ -1,0 +1,13 @@
+---
+- name: Installs OpenLDAP (Vagrant)
+  hosts: vagrant-openldap-1
+  become: true
+  roles:
+    - ssl
+    - openldap
+  vars:
+    ssl_provider: selfsigned
+    ssl_cert_path: /etc/ssl/certs/openldap.crt
+    ssl_key_path: /etc/ssl/private/openldap.key
+    ssl_generate: true
+    ssl_domain: "openldap.easysec.x"
