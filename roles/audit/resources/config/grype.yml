@@ -1,0 +1,12 @@
+log:
+  quiet: true
+
+output: table
+add-cpes-if-none: true
+check-for-app-update: false
+
+search:
+  scope: "all-layers"
+
+cache:
+  ttl: "0"

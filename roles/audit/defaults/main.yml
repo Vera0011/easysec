@@ -1,0 +1,39 @@
+---
+# Config envs - Should not be changed unless knowing what they do
+# # Config
+audit_lynis_command: "{{ audit_remote_lynis_binary_path }} --report-file {{ audit_remote_lynis_output_path }} --no-log audit system 2>&1"
+audit_syft_command: "{{ audit_remote_syft_binary_path }} / -c {{ audit_remote_syft_config_path }} > {{ audit_remote_syft_output_path }}"
+audit_grype_command: cat {{ audit_remote_syft_output_path }} | {{ audit_remote_grype_binary_path }} -c {{ audit_remote_grype_config_path }} > {{
+  audit_remote_grype_output_path }}
+audit_grant_command: cat {{ audit_remote_syft_output_path }} | {{ audit_remote_grant_binary_path }} check -c {{ audit_remote_grant_config_path }} > {{
+  audit_remote_grant_output_path }}
+audit_target_host: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
+
+## Folders
+audit_main_folder: "{{ role_path }}/resources"
+audit_report_folder: "{{ role_path }}/reports"
+audit_target_report_folder: "{{ audit_report_folder }}/{{ audit_target_host }}"
+
+audit_remote_folder: "/tmp"
+audit_remote_main_folder: "{{ audit_remote_folder }}/resources"
+audit_remote_report_folder: "{{ audit_remote_main_folder }}/reports"
+audit_remote_bin_folder: "{{ audit_remote_main_folder }}/bin"
+audit_remote_config_folder: "{{ audit_remote_main_folder }}/config"
+
+## Files
+audit_tarball_path: "{{ role_path }}/audit-tools.tar.gz"
+audit_tarball_dest_path: "~/audit-tools.tar.gz"
+
+audit_remote_lynis_binary_path: "{{ audit_remote_main_folder }}/bin/lynis/lynis"
+audit_remote_syft_binary_path: "{{ audit_remote_main_folder }}/bin/syft"
+audit_remote_grype_binary_path: "{{ audit_remote_main_folder }}/bin/grype"
+audit_remote_grant_binary_path: "{{ audit_remote_main_folder }}/bin/grant"
+
+audit_remote_syft_config_path: "{{ audit_remote_config_folder }}/syft.yml"
+audit_remote_grype_config_path: "{{ audit_remote_config_folder }}/grype.yml"
+audit_remote_grant_config_path: "{{ audit_remote_config_folder }}/grant.yml"
+
+audit_remote_lynis_output_path: "{{ audit_remote_report_folder }}/lynis.dat"
+audit_remote_syft_output_path: "{{ audit_remote_report_folder }}/syft.json"
+audit_remote_grype_output_path: "{{ audit_remote_report_folder }}/grype.log"
+audit_remote_grant_output_path: "{{ audit_remote_report_folder }}/grant.log"

@@ -1,0 +1,25 @@
+log:
+  quiet: true
+
+output:
+  - "cyclonedx-json@1.6"
+
+check-for-app-update: false
+scope: "all-layers"
+cache:
+  ttl: "0"
+
+exclude:
+  - '**/.cache/**'
+  - './proc/**'
+  - './sys/**'
+  - './dev/**'
+  - './tmp/**'
+  - './etc/**'
+  - '**/audit/**'
+  - './var/lib/docker/**'
+  - './var/log/**'
+  - '**/__pycache__/**'
+  - '**/.tox/**'
+  - '**/node_modules/.cache/**'
+  - '**/.git/**'

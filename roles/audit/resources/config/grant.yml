@@ -1,0 +1,5 @@
+add-cpes-if-none: true
+format: table
+quiet: true
+search:
+  scope: "all-layers"

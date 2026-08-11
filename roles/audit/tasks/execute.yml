@@ -1,0 +1,54 @@
+---
+- name: Tarball management
+  block:
+    - name: Sending to target
+      ansible.builtin.copy:
+        src: "{{ audit_tarball_path }}"
+        dest: "{{ audit_tarball_dest_path }}"
+        mode: "0775"
+
+    - name: Decompression
+      ansible.builtin.unarchive:
+        remote_src: true
+        src: "{{ audit_tarball_dest_path }}"
+        dest: "{{ audit_remote_folder }}"
+        mode: "0775"
+
+    - name: Removal
+      ansible.builtin.file:
+        path: "{{ audit_tarball_dest_path }}"
+        state: absent
+
+- name: Execution of binaries
+  block:
+    - name: Lynis execution
+      args:
+        chdir: "{{ audit_remote_main_folder }}"
+      become: true
+      changed_when: false
+      ansible.builtin.shell: >
+        cd bin && chown -P 0:0 lynis && cd lynis && sudo {{ audit_lynis_command }}
+
+    - name: Syft execution
+      args:
+        chdir: "{{ audit_remote_main_folder }}"
+      become: true
+      changed_when: false
+      ansible.builtin.shell: >
+        "{{ audit_syft_command }}"
+
+    - name: Grype execution
+      args:
+        chdir: "{{ audit_remote_main_folder }}"
+      become: true
+      changed_when: false
+      ansible.builtin.shell: >
+        "{{ audit_grype_command }}"
+
+    - name: Grant execution
+      args:
+        chdir: "{{ audit_remote_main_folder }}"
+      become: true
+      changed_when: false
+      ansible.builtin.shell: >
+        "{{ audit_grant_command }}"

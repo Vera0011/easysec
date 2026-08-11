@@ -1,0 +1,9 @@
+---
+- name: Local setup
+  ansible.builtin.include_tasks: local.yml
+
+- name: Installation and execution
+  ansible.builtin.include_tasks: execute.yml
+
+- name: Extraction from target to local
+  ansible.builtin.include_tasks: extract.yml

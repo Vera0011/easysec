@@ -5,3 +5,4 @@
 old
 vagrant/*
 generated/*
+*.tar.gz

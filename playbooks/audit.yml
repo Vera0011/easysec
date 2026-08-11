@@ -1,0 +1,5 @@
+---
+- name: Installs Grant on test host (Vagrant)
+  hosts: vagrant-ubuntu-1
+  roles:
+    - audit

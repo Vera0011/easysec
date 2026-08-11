@@ -4,7 +4,7 @@ set -euo pipefail
 
 mkdir -p generated
 ## - Available modules - ##
-ALL_BLUE_MODULES="lynis,grype,syft,grant,ssl,postgresql"
+ALL_BLUE_MODULES="lynis,grype,syft,grant,ssl,postgresql,audit"
 ALL_BLUE_WORKFLOWS="anchore,keycloak"
 ALL_RED_MODULES="proxychains"
 ALL_RED_WORKFLOWS=""

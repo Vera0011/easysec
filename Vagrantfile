@@ -16,14 +16,24 @@ Vagrant.configure("2") do |config|
         trigger.run = { path: "./scripts/create_keys.sh" }
     end
 
-    # We set custom keys for the Vagrant main process
-    config.vm.provision "shell", privileged: false, inline: <<-SCRIPT
-        cp /vagrant/vagrant/id_rsa.pub /home/vagrant/.ssh/id_rsa.pub
-        cp /vagrant/vagrant/id_rsa /home/vagrant/.ssh/id_rsa
-        cat /vagrant/vagrant/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
-        chown vagrant:vagrant /home/vagrant/.ssh/id_rsa*
-        chmod 600 /home/vagrant/.ssh/id_rsa*
-    SCRIPT
+    # We configure custom keys for the Vagrant main process and avoid re-adding new keys
+    config.ssh.private_key_path = [
+        "vagrant/id_rsa",
+        "~/.vagrant.d/insecure_private_key"
+    ]
+    config.ssh.insert_key = false
+    config.trigger.after :up do |trigger|
+        trigger.name = "Bootstrap SSH keys"
+        trigger.run_remote = {
+            inline: <<-SCRIPT
+                cp /vagrant/vagrant/id_rsa.pub /home/vagrant/.ssh/id_rsa.pub
+                cp /vagrant/vagrant/id_rsa /home/vagrant/.ssh/id_rsa
+                cat /vagrant/vagrant/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
+                chown vagrant:vagrant /home/vagrant/.ssh/id_rsa*
+                chmod 600 /home/vagrant/.ssh/id_rsa*
+            SCRIPT
+        }
+    end
 
     ## Servers to set up
     ALL_SERVERS = [
@@ -35,7 +45,7 @@ Vagrant.configure("2") do |config|
     ]
 
     # Tasks to execute - Single playbooks and complete workflows
-    ALL_MODULES = ["proxychains", "lynis", "grype", "syft", "grant", "ssl", "postgresql"]
+    ALL_MODULES = ["proxychains", "lynis", "grype", "syft", "grant", "ssl", "postgresql", "audit"]
     ALL_WORKFLOWS = ["anchore", "keycloak"]
     MAPPING_SERVERS = {
         "proxychains" => ["vagrant-kali-1"],
@@ -46,7 +56,8 @@ Vagrant.configure("2") do |config|
         "ssl"         => ["vagrant-ubuntu-1"],
         "postgresql"  => ["vagrant-postgresql-1"],
         "keycloak"    => ["vagrant-keycloak-1", "vagrant-postgresql-1"],
-        "anchore"     => ["vagrant-ubuntu-1"]
+        "anchore"     => ["vagrant-ubuntu-1"],
+        "audit"       => ["vagrant-ubuntu-1"]
     }
 
     # Updates list if requested by the user
