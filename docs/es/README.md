@@ -68,6 +68,9 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - [ ] ScoutSuite
 - [ ] NixOS - Basado en [Sécurix](https://github.com/cloud-gouv/securix)
 - [ ] Entorno Red Teaming - Herramientas necesarias
+- [ ] Fleet
+- [ ] GLPI
+- [ ] OWASP Dependency-Track
 
 ## Recursos
 ### Red team

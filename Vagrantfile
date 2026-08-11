@@ -106,7 +106,7 @@ Vagrant.configure("2") do |config|
                 playbooks.each do |task|
                     node.vm.provision task, type: "ansible" do |ansible|
                         ansible.playbook = "playbooks/#{task}.yml"
-                        ansible.inventory_path = "inventory/hosts.yml"
+                        ansible.inventory_path = "inventory/vagrant/hosts.yml"
                         ansible.limit = "all"
                         ansible.raw_ssh_args = [
                             '-o ControlMaster=auto',

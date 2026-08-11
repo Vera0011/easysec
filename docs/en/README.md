@@ -68,6 +68,9 @@ Depending on how the project progresses, these are the tools and environments I 
 - [ ] ScoutSuite
 - [ ] NixOS - Based on [Sécurix](https://github.com/cloud-gouv/securix)
 - [ ] Red Teaming Environment - Required Tools
+- [ ] Fleet
+- [ ] GLPI
+- [ ] OWASP Dependency-Track
 
 ## Resources
 ### Red Team
