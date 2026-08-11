@@ -19,8 +19,8 @@
 
     - name: Deploy certificate and key
       loop:
-        - { src: fullchain.pem, dest: "{{ ssl_cert_path }}", when: "{{ ssl_move_cert }}", mode: "0644" }
-        - { src: privkey.key, dest: "{{ ssl_key_path }}", when: "{{ ssl_move_key }}", mode: "0600" }
+        - { src: fullchain.pem, dest: "{{ ssl_cert_path }}", when: "{{ ssl_move_cert }}", mode: "0444" }
+        - { src: privkey.key, dest: "{{ ssl_key_path }}", when: "{{ ssl_move_key }}", mode: "0440" }
       when: item.when
       ansible.builtin.copy:
         src: "{{ ssl_live_certs_folder }}/{{ ssl_domain }}/{{ item.src }}"
