@@ -35,6 +35,8 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - [X] Syft
 - [X] Grant
 - [X] Keycloak
+- [ ] Auditoría
+- [ ] Hardening
 - [ ] OpenLDAP
 - [ ] Netmaker
 - [ ] Pomerium
@@ -83,3 +85,6 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 
 #### Workflows
 - Anchore - Workflow que incluye varias herramientas para analizar dependencias y licencias. Información sobre la implementación [aquí](./workflows/blue/anchore.md)
+- Keycloak - Workflow que implementa una instancia de Keycloak. Información sobre la implementación [aquí](./workflows/blue/keycloak.md)
+- Auditory - Workflow que incluye varias herramientas para auditar un cierto sistema. Información sobre la implementación [aquí](./workflows/blue/audit.yml)
+- Hardening - Workflow que aplica varias configuraciones relacionadas con el hardening de sistemas. Información sobre la implementación [aquí](./workflows/blue/hardening.yml)

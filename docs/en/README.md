@@ -35,6 +35,8 @@ Depending on how the project progresses, these are the tools and environments I 
 - [X] Syft
 - [X] Grant
 - [X] Keycloak
+- [ ] Auditory
+- [ ] Hardening
 - [ ] OpenLDAP
 - [ ] Netmaker
 - [ ] Pomerium
@@ -84,3 +86,5 @@ Depending on how the project progresses, these are the tools and environments I 
 #### Workflows
 - Anchore - Workflow including multiple tools to analyze dependencies and licenses. Information of implementation [here](./workflows/blue/anchore.md).
 - Keycloak - Workflow that implements a Keycloak instance. Information of implementation [here](./workflows/blue/keycloak.md).
+- Auditory  Workflow that incñudes multiple tools to audit a specific system. Information of implementation [here](./workflows/blue/audit.md)
+- Hardening - Workflow that applies multiple configurations related to system hardening. Information of implementation [here](./workflows/blue/hardening.md)
