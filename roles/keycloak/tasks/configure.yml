@@ -15,6 +15,7 @@
     shell: /sbin/nologin
     home: "{{ keycloak_path }}"
     create_home: false
+    state: present
 
 - name: Moves files to correct directory
   block:
