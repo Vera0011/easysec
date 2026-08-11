@@ -6,7 +6,7 @@
       ansible.builtin.file:
         path: "{{ ssl_config_folder }}"
         mode: "0750"
-        group: "{{ ssl_user }}"
+        group: "{{ ssl_group }}"
         owner: "{{ ssl_user }}"
         state: directory
 
@@ -14,7 +14,7 @@
       ansible.builtin.file:
         path: "{{ ssl_log_folder }}"
         mode: "0755"
-        group: "{{ ssl_user }}"
+        group: "{{ ssl_group }}"
         owner: "{{ ssl_user }}"
         state: directory
 
