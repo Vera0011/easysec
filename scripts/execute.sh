@@ -1,16 +1,20 @@
 #!/bin/bash
 
-# Moves execution path to scripts location
-SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]:-$0}")"
-cd "$(dirname "$SCRIPT_PATH")" || exit 1
-
-source helpers/io.sh
-source helpers/menus.sh
-source helpers/shared_variables.sh
-
 set -euo pipefail
 
-mkdir -p generated
+# Moves execution path to scripts location
+MAIN_PATH="$(readlink -f "${BASH_SOURCE[0]:-$0}")"
+SCRIPT_DIR="$(dirname "$MAIN_PATH")"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
+cd "$PROJECT_ROOT" || exit 1
+
+source scripts/helpers/io.sh
+source scripts/helpers/menus.sh
+source scripts/helpers/shared_variables.sh
+source scripts/helpers/helper.sh
+
+mkdir -p generated $LOG_DIR
 
 ## - Module selection - ##
 display_banner
@@ -21,12 +25,12 @@ while true; do
 
     case "$MAIN_MENU_CHOICE" in
         1)
-            MODULES="${ALL_BLUE_MODULES},${ALL_BLUE_WORKFLOWS}"
+            CLEAN_MODULES=$(get_all_blue_team)
             log "Loaded blue team modules and workflows" success
             break
             ;;
         2)
-            MODULES="${ALL_RED_MODULES}"
+            CLEAN_MODULES=$(get_all_red_team)
             log "Loaded red team modules and workflows" success
             break
             ;;
@@ -35,8 +39,11 @@ while true; do
                 log "Please try again." warn
                 sleep 2
             done
-            log "Loaded custom modules and workflows" success
-            break
+            
+            if [[ "$CLEAN_MODULES" != "5" ]]; then
+                log "Loaded custom modules and workflows" success
+                break
+            fi
             ;;
         4)
             display_modules_and_workflows
@@ -53,45 +60,35 @@ while true; do
     esac
 done
 
+sleep 2
+
 ## - Environment selection - ##
 while true; do
-    show_menu
+    until select_environment; do
+        log "Please try again." warn
+        sleep 2
+    done
 
-    case "$ENVIRONMENT_MENU_CHOICE" in
-        1)
-            MODULES="${ALL_BLUE_MODULES},${ALL_BLUE_WORKFLOWS}"
-            log "Loaded blue team modules and workflows" success
-            break
-            ;;
-        2)
-            MODULES="${ALL_RED_MODULES}"
-            log "Loaded red team modules and workflows" success
-            break
-            ;;
-        3)
-            until show_module_3; do
-                log "Please try again." warn
-                sleep 2
-            done
-            log "Loaded custom modules and workflows" success
-            break
-            ;;
-        4)
-            show_list
-            sleep 5
-            ;;
-        5)
-            log "Exiting EasySec" info
-            exit 1
-            ;;
-        *)
-            log "Invalid option" error
-            sleep 2
-            ;;
-    esac
+    if [[ "$CLEAN_ENVIRONMENT" == "5" ]]; then
+        log "Exiting EasySec" info
+        exit 1
+    fi
+
+    break
 done
 
 ## - Execution - ##
-export CUSTOM_MODULES=$MODULES
-vagrant up --provision-with shell --parallel && \
+if [[ -z $CLEAN_INV_PATH ]]; then
+    export CUSTOM_MODULES=$CLEAN_MODULES
+    vagrant up --provision-with shell --parallel && \
     vagrant provision --provision-with ansible
+else
+    IFS=',' read -ra MODULE_LIST <<< "$CLEAN_MODULES"
+
+    for module in ${MODULE_LIST}; do
+        ansible-playbook -i $CLEAN_INV_PATH "${PLAYBOOK_TO_MODULES[$module]}"
+        
+        log "Executed playbook for $module" info
+        sleep 2
+    done
+fi

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source helpers/io.sh
-source helpers/fonts.sh
+source scripts/helpers/io.sh
+source scripts/helpers/fonts.sh
 
 # Displays welcome banner (EasySec)
 display_banner() {

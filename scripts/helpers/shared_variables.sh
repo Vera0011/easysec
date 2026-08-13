@@ -1,14 +1,56 @@
 #!/bin/bash
 
-## - Available modules - ##
-ALL_BLUE_MODULES="lynis,grype,syft,grant,ssl,postgresql,audit"
-ALL_BLUE_WORKFLOWS="anchore,keycloak"
-ALL_RED_MODULES="proxychains"
-ALL_RED_WORKFLOWS=""
-ALL_ENVIRONMENTS="production,staging,testing/vagrant"
+## - Configuration variables - ##
+LOG_DIR="logs"
+LOG_FILE="$LOG_DIR/$(date +%s).log"
 
-## - General variables (overriden in functions) - ##
+## - Available modules and workflows - ##
+declare -A MODULES=(
+    ["lynis"]="Blue team"
+    ["grype"]="Blue team"
+    ["syft"]="Blue team"
+    ["grant"]="Blue team"
+    ["ssl"]="Blue team"
+    ["postgresql"]="Blue team"
+    ["audit"]="Blue team"
+    ["proxychains"]="Red team"
+)
+
+declare -A WORKFLOWS=(
+    ["anchore"]="Blue team"
+    ["keycloak"]="Blue team"
+)
+
+declare -A PLAYBOOK_TO_MODULES=(
+    ["anchore"]="workflows/anchore.yml"
+    ["keycloak"]="workflows/keycloak.yml"
+    ["lynis"]="playbooks/lynis.yml"
+    ["grype"]="playbooks/grype.yml"
+    ["syft"]="playbooks/syft.yml"
+    ["grant"]="playbooks/grant.yml"
+    ["ssl"]="playbooks/ssl.yml"
+    ["postgresql"]="playbooks/postgresql.yml"
+    ["audit"]="playbooks/audit.yml"
+    ["proxychains"]="playbooks/proxychains.yml"
+)
+
+## - Available environments - ##
+declare -A ALL_ENVIRONMENTS=(
+    ["production"]="Will use the hosts located in inventory/production."
+    ["staging"]="Will use the hosts located in inventory/staging."
+    ["testing"]="Will use the hosts located in inventory/vagrant. Vagrant has to be set up."
+)
+
+declare -A ALL_INVENTORY_PATHS=(
+    ["production"]="inventory/production/hosts.yml"
+    ["staging"]="inventory/staging/hosts.yml"
+)
+
+## - Choice variables (overriden in functions) - ##
 MAIN_MENU_CHOICE=""
-MODULES=""
 ENVIRONMENT_MENU_CHOICE=""
-ENVIRONMENT=""
+
+## - Cleaned outputs (to be used in the execution) - ##
+CLEAN_MODULES=""
+CLEAN_ENVIRONMENT=""
+CLEAN_INV_PATH=""

@@ -4,6 +4,7 @@
 RESET="\033[0m"
 BOLD="\033[1m"
 DIM="\033[2m"
+ITALIC="\e[3m"
 CYAN="\033[0;36m"
 BLUE="\033[0;34m"
 GREEN="\033[0;32m"

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source helpers/fonts.sh
+source scripts/helpers/fonts.sh
+source scripts/helpers/shared_variables.sh
 
 log() {
     # Log function. Displays current time and different colors (based on type, which are: info, success, warn and error)
@@ -20,6 +21,7 @@ log() {
     esac
 
     echo -e "${BOLD}${color}[${timestamp}] [${type^^}]${RESET} $1"
+    echo -e "[${timestamp}] [${type^^}] $1" >> $LOG_FILE
 }
 
 lock_input() {

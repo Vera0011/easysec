@@ -1,8 +1,8 @@
 #!/bin/bash
 
-source helpers/io.sh
-source helpers/fonts.sh
-source helpers/shared_variables.sh
+source scripts/helpers/io.sh
+source scripts/helpers/fonts.sh
+source scripts/helpers/shared_variables.sh
 
 display_main_menu() {
     # Menu interface - Displays the current options of this script
@@ -20,6 +20,6 @@ display_main_menu() {
     echo -en "\n  Choice [1/2/3/4/5]: "
 
     unlock_input
-    read -r CHOICE
+    read -r MAIN_MENU_CHOICE
     lock_input
 }
