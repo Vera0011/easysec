@@ -7,8 +7,8 @@ Este proyecto es completamente open source, creado por Vera y con licencia [MIT]
 
 ## Configuración
 Hay dos scripts disponibles en [`scripts/`](../../scripts/):
-- **execute.sh**: Interfaz de línea de comandos interactiva para seleccionar y ejecutar módulos o flujos de trabajo específicos en Vagrant
-- **test.sh**: Ejecuta todos los módulos y flujos de trabajo en Vagrant; se utiliza para validar la configuración
+- **execute.sh**: Interfaz de línea de comandos interactiva para seleccionar y ejecutar módulos o workflows
+- **populate.sh**: Añade hosts a los inventarios de forma manual o automática (producción y staging)
 
 ### Entorno
 La configuración recomendada utiliza [UV](https://github.com/astral-sh/uv) para la gestión del entorno de Python. Estas son las acciones recomendadas:
@@ -22,10 +22,10 @@ uv pip install -r requirements.txt  # Instala las dependencias necesarias
 ### Ejecución
 El script se puede ejecutar (desde la ruta raíz del proyecto) con:
 ```bash
-./script/execute.sh
+./scripts/execute.sh
 ```
 > [!NOTE]
-> Asegúrate de que Vagrant y VirtualBox estén instalados y en ejecución antes de ejecutar cualquier script
+> Asegúrate de que Vagrant y VirtualBox estén instalados y en ejecución antes de ejecutar cualquier script (si vas a trabajar solamente con Vagrant)
 
 ## Roadmap
 Según cómo vaya el proyecto, estas son las herramientas y entornos que me gustaría implementar:
@@ -35,8 +35,8 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - [X] Syft
 - [X] Grant
 - [X] Keycloak
-- [ ] Auditoría
-- [ ] Hardening
+- [X] Auditoría
+- [X] Hardening
 - [ ] OpenLDAP
 - [ ] Netmaker
 - [ ] Pomerium

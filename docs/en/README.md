@@ -7,8 +7,8 @@ This project is completely open source, created by Vera and licensed under the [
 
 ## Setup
 Two scripts are available under [`scripts/`](../../scripts/):
-- **execute.sh**: Interactive CLI to select and run specific modules or workflows in Vagrant
-- **test.sh**: Ruls all modules and workflows in Vagrant - used to valide setup
+- **execute.sh**: Interactive CLI to select and run specific modules or workflows
+- **populate.sh**: Fills the inventory hosts section automatically or manuall (production or staging)
 
 ### Environment
 The recommended setup uses [UV](https://github.com/astral-sh/uv) for Python environment management. These are the recommended actions:
@@ -20,12 +20,12 @@ uv pip install -r requirements.txt  # Installs required dependencies
 ```
 
 ### Running
-The script can be executed (from the root project path) with:
+The main script can be executed (from the root project path) with:
 ```bash
-./script/execute.sh
+./scripts/execute.sh
 ```
 > [!NOTE]
-> Ensure Vagrant and VirtualBox are installed and running before executing any script
+> Ensure Vagrant and VirtualBox are installed and running before executing any script (if you will be using Vagrant)
 
 ## Roadmap
 Depending on how the project progresses, these are the tools and environments I would like to implement:
@@ -35,8 +35,8 @@ Depending on how the project progresses, these are the tools and environments I 
 - [X] Syft
 - [X] Grant
 - [X] Keycloak
-- [ ] Auditory
-- [ ] Hardening
+- [X] Auditory
+- [X] Hardening
 - [ ] OpenLDAP
 - [ ] Netmaker
 - [ ] Pomerium

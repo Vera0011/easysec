@@ -1,3 +1,4 @@
+---
 log:
   quiet: true
 
@@ -10,16 +11,16 @@ cache:
   ttl: "0"
 
 exclude:
-  - '**/.cache/**'
-  - './proc/**'
-  - './sys/**'
-  - './dev/**'
-  - './tmp/**'
-  - './etc/**'
-  - '**/audit/**'
-  - './var/lib/docker/**'
-  - './var/log/**'
-  - '**/__pycache__/**'
-  - '**/.tox/**'
-  - '**/node_modules/.cache/**'
-  - '**/.git/**'
+  - "**/.cache/**"
+  - "./proc/**"
+  - "./sys/**"
+  - "./dev/**"
+  - "./tmp/**"
+  - "./etc/**"
+  - "**/audit/**"
+  - "./var/lib/docker/**"
+  - "./var/log/**"
+  - "**/__pycache__/**"
+  - "**/.tox/**"
+  - "**/node_modules/.cache/**"
+  - "**/.git/**"
