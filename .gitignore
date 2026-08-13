@@ -3,6 +3,7 @@
 .ansible
 .vscode
 old
+logs/*
 vagrant/*
 generated/*
 *.tar.gz
