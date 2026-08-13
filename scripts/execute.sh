@@ -1,5 +1,11 @@
 #!/bin/bash
 
+########################################################
+# This file is the main entry for starting the program #
+#                                                      #
+# Author: Vera                              13/08/2026 #
+########################################################
+
 set -euo pipefail
 
 # Moves execution path to scripts location

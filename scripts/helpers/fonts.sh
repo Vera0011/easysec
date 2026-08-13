@@ -1,5 +1,12 @@
 #!/bin/bash
 
+######################################################
+# This script contains all fonts used in the program #
+#                                                    #
+# Author: Vera                            13/08/2026 #
+######################################################
+
+
 ## - Colors and fonts - ##
 RESET="\033[0m"
 BOLD="\033[1m"

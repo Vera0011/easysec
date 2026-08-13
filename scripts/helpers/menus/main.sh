@@ -1,5 +1,11 @@
 #!/bin/bash
 
+################################################
+# This script displays the main menu (options) #
+#                                              #
+# Author: Vera                      13/08/2026 #
+################################################
+
 source scripts/helpers/io.sh
 source scripts/helpers/fonts.sh
 source scripts/helpers/shared_variables.sh

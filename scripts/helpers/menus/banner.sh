@@ -1,5 +1,11 @@
 #!/bin/bash
 
+###########################################
+# This script contains the startup banner #
+#                                         #
+# Author: Vera                 13/08/2026 #
+###########################################
+
 source scripts/helpers/io.sh
 source scripts/helpers/fonts.sh
 

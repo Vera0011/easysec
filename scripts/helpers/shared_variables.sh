@@ -1,5 +1,11 @@
 #!/bin/bash
 
+####################################################
+# This file contains variables used in all scripts #
+#                                                  #
+# Author: Vera                          13/08/2026 #
+####################################################
+
 ## - Configuration variables - ##
 LOG_DIR="logs"
 LOG_FILE="$LOG_DIR/$(date +%s).log"
@@ -42,8 +48,8 @@ declare -A ALL_ENVIRONMENTS=(
 )
 
 declare -A ALL_INVENTORY_PATHS=(
-    ["production"]="inventory/production/hosts.yml"
-    ["staging"]="inventory/staging/hosts.yml"
+    ["production"]="inventory/production"
+    ["staging"]="inventory/staging"
 )
 
 ## - Choice variables (overriden in functions) - ##

@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#########################################################
+# This script manages I/O functions (input and outputs) #
+#                                                       #
+# Author: Vera                               13/08/2026 #
+#########################################################
+
 source scripts/helpers/fonts.sh
 source scripts/helpers/shared_variables.sh
 
