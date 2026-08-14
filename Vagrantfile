@@ -5,9 +5,9 @@ Vagrant.configure("2") do |config|
 
     # Config for VirtualBox
     config.vm.provider "virtualbox" do |vb|
-      vb.linked_clone = true
-      vb.check_guest_additions = false
-      vb.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"] # Allows promiscuous mode
+        vb.linked_clone = true
+        vb.check_guest_additions = false
+        vb.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"] # Allows promiscuous mode
     end
 
     # Generate RSA keys on the host before provisioning
@@ -41,7 +41,8 @@ Vagrant.configure("2") do |config|
         { name: "vagrant-kali-1", box: "kalilinux/rolling", ip: "192.168.56.3", memory: "2048", cpus: 2, boot_timeout: 600 },
         { name: "vagrant-ubuntu-1", box: "ubuntu/jammy64", ip: "192.168.56.4", memory: "2048", cpus: 2, boot_timeout: 600 },
         { name: "vagrant-keycloak-1", box: "ubuntu/jammy64", ip: "192.168.56.5", memory: "4096", cpus: 2, boot_timeout: 600 },
-        { name: "vagrant-postgresql-1", box: "ubuntu/jammy64", ip: "192.168.56.6", memory: "2048", cpus: 2, boot_timeout: 600 }
+        { name: "vagrant-postgresql-1", box: "ubuntu/jammy64", ip: "192.168.56.6", memory: "2048", cpus: 2, boot_timeout: 600 },
+        { name: "vagrant-audit-1", box: "ubuntu/jammy64", ip: "192.168.56.7", memory: "4096", cpus: 4, boot_timeout: 600 }
     ]
 
     # Tasks to execute - Single playbooks and complete workflows
@@ -57,7 +58,7 @@ Vagrant.configure("2") do |config|
         "postgresql"  => ["vagrant-postgresql-1"],
         "keycloak"    => ["vagrant-keycloak-1", "vagrant-postgresql-1"],
         "anchore"     => ["vagrant-ubuntu-1"],
-        "audit"       => ["vagrant-ubuntu-1"]
+        "audit"       => ["vagrant-audit-1"]
     }
 
     # Updates list if requested by the user

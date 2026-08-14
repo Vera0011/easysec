@@ -6,6 +6,8 @@
 # Author: Vera                                 13/08/2026 #
 ###########################################################
 
+set -euo pipefail
+
 # Groups keys by values (dicts). Used to display and manage available modules and workflows
 group_by_value() {
     local -n arr="$1"

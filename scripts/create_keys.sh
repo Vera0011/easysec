@@ -6,6 +6,8 @@
 # Author: Vera                                                                 13/08/2026 #
 ###########################################################################################
 
+set -euo pipefail
+
 cd "$(dirname "$0")/.." && \
     mkdir -p ./vagrant && \
     if [ ! -f ./vagrant/id_rsa ]; then

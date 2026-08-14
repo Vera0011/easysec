@@ -6,6 +6,8 @@
 # Author: Vera                          13/08/2026 #
 ####################################################
 
+set -euo pipefail
+
 ## - Configuration variables - ##
 LOG_DIR="logs"
 LOG_FILE="$LOG_DIR/$(date +%s).log"

@@ -6,6 +6,7 @@
 # Author: Vera                            13/08/2026 #
 ######################################################
 
+set -euo pipefail
 
 ## - Colors and fonts - ##
 RESET="\033[0m"

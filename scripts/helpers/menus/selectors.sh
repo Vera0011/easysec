@@ -6,6 +6,8 @@
 # Author: Vera                                                  13/08/2026 #
 ############################################################################
 
+set -euo pipefail
+
 source scripts/helpers/io.sh
 source scripts/helpers/fonts.sh
 source scripts/helpers/shared_variables.sh
@@ -114,7 +116,7 @@ select_environment() {
         return 1
     fi
 
-    if [[ "${ALL_ENVIRONMENTS[$CLEAN_ENVIRONMENT]}" != "testing" ]]; then
+    if [[ $CLEAN_ENVIRONMENT != "testing" ]]; then
         CLEAN_INV_PATH="${ALL_INVENTORY_PATHS[$CLEAN_ENVIRONMENT]}"
     fi
 
