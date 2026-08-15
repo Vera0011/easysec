@@ -1,0 +1,12 @@
+---
+# AUTH-9262
+- name: Downloads and configures required software
+  when: hardening_passwords
+  block:
+    - name: Downloads packages
+      ansible.builtin.apt:
+        name:
+          - libpam-passwdqc
+          - libpam-pwquality
+        update_cache: true
+        state: present

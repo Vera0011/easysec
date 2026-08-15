@@ -13,7 +13,7 @@ hardening_header: "## -- {mark} EASYSEC CUSTOM CONFIGURATION -- ##"
 hardening_grub_config: |
   set superusers="admin"
   password_pbkdf2 admin {{ hardening_grub_text_password }}
-hardening_limits_policies:
+hardening_coredumps_policies:
   - path: /etc/security/limits.conf
     config: |
       * hard core 0
@@ -42,6 +42,22 @@ hardening_limits_policies:
     config: |
       ulimit -S -c 0
     position: BOF
+
+hardening_password_policies:
+  - path: /etc/login.defs
+    config: |
+      SULOG_FILE /var/log/sulog
+
+      UMASK 027
+
+      PASS_MAX_DAYS 90
+      PASS_MIN_DAYS 7
+      PASS_WARN_AGE 7
+
+      ENCRYPT_METHOD SHA512
+      SHA_CRYPT_MIN_ROUND 100000
+      SHA_CRYPT_MAX_ROUNDS 100000
+    position: EOF
 
 ## Folders
 
