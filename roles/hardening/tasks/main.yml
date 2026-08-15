@@ -1,3 +1,12 @@
 ---
-- name: Tool installation
-  ansible.builtin.include_tasks: install.yml
+- name: Hardening - System
+  ansible.builtin.include_tasks: system.yml
+
+- name: Hardening - Communications
+  ansible.builtin.include_tasks: comms.yml
+
+- name: Hardening - Software
+  ansible.builtin.include_tasks: software.yml
+
+- name: Hardening - Users
+  ansible.builtin.include_tasks: users.yml
