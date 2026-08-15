@@ -46,7 +46,7 @@ Vagrant.configure("2") do |config|
     ]
 
     # Tasks to execute - Single playbooks and complete workflows
-    ALL_MODULES = ["proxychains", "lynis", "grype", "syft", "grant", "ssl", "postgresql", "audit"]
+    ALL_MODULES = ["proxychains", "lynis", "grype", "syft", "grant", "ssl", "postgresql", "audit", "hardening"]
     ALL_WORKFLOWS = ["anchore", "keycloak"]
     MAPPING_SERVERS = {
         "proxychains" => ["vagrant-kali-1"],
@@ -58,6 +58,7 @@ Vagrant.configure("2") do |config|
         "postgresql"  => ["vagrant-postgresql-1"],
         "keycloak"    => ["vagrant-keycloak-1", "vagrant-postgresql-1"],
         "anchore"     => ["vagrant-ubuntu-1"],
+        "hardening"   => ["vagrant-ubuntu-1"],
         "audit"       => ["vagrant-audit-1"]
     }
 

@@ -22,6 +22,7 @@ declare -A MODULES=(
     ["postgresql"]="Blue team"
     ["audit"]="Blue team"
     ["proxychains"]="Red team"
+    ["hardening"]="Blue team"
 )
 
 declare -A WORKFLOWS=(
@@ -40,6 +41,7 @@ declare -A PLAYBOOK_TO_MODULES=(
     ["postgresql"]="playbooks/postgresql.yml"
     ["audit"]="playbooks/audit.yml"
     ["proxychains"]="playbooks/proxychains.yml"
+    ["hardening"]="playbooks/hardening.yml"
 )
 
 ## - Available environments - ##
