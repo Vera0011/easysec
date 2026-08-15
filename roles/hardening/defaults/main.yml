@@ -1,8 +1,51 @@
 ---
+
+hardening_user: root
+hardening_group: root
+
+hardening_grub_enabled: false
+hardening_disable_coredumps: true
+hardening_passwords: true
+
 # Config envs - Should not be changed unless knowing what they do
 # # Config
-hardening_x: x
+hardening_header: "## -- {mark} EASYSEC CUSTOM CONFIGURATION -- ##"
+hardening_grub_config: |
+  set superusers="admin"
+  password_pbkdf2 admin {{ hardening_grub_text_password }}
+hardening_limits_policies:
+  - path: /etc/security/limits.conf
+    config: |
+      * hard core 0
+      * soft core 0
+    position: EOF
+
+  - path: /etc/sysctl.conf
+    config: |
+      fs.suid_dumpable=0
+      kernel.core_pattern=|/bin/false
+    position: EOF
+
+  - path: /etc/systemd/coredump.conf
+    config: |
+      [Coredump]
+      Storage=none
+      ProcessSizeMax=0
+    position: EOF
+
+  - path: /etc/systemd/system.conf
+    config: |
+      DefaultLimitCORE=infinity
+    position: EOF
+
+  - path: /etc/profile
+    config: |
+      ulimit -S -c 0
+    position: BOF
 
 ## Folders
 
 ## Files
+hardening_grub_path: /etc/grub.d/40_custom
+hardening_grub_hash_output_path: "{{ playbook_dir }}/../generated/grub_password.txt"
+hardening_grub_hash_vagrant_output_path: "{{ playbook_dir }}/../vagrant/.grub_pw_{{ inventory_hostname }}.txt"

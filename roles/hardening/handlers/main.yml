@@ -1,0 +1,24 @@
+---
+- name: Update GRUB
+  changed_when: false
+  ansible.builtin.command: update-grub
+
+- name: Exports GRUB password - General
+  delegate_to: localhost
+  when: hardening_grub_applied_result is changed
+  ansible.builtin.copy:
+    content: "{{ hardening_grub_text_password }}"
+    dest: "{{ hardening_grub_hash_output_path }}"
+    mode: "0640"
+
+- name: Exports GRUB password - If executed in Vagrant
+  when: "'vagrant' in group_names and hardening_grub_applied_result is changed"
+  ansible.builtin.copy:
+    content: "{{ hardening_grub_text_password }}"
+    dest: "{{ hardening_grub_hash_vagrant_output_path }}"
+    mode: "0640"
+
+- name: Daemon refresh
+  ansible.builtin.systemd:
+    daemon_reload: true
+    daemon_reexec: true

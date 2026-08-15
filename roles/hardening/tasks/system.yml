@@ -1,0 +1,49 @@
+---
+- name: GRUB hardening
+  when: hardening_grub_enabled
+  block:
+    - name: Generate random plaintext password
+      ansible.builtin.set_fact:
+        hardening_grub_text_password: "{{ lookup('community.general.random_string', length=20, special=true) }}"
+
+    - name: Generating password hash
+      register: hardening_grub_hash
+      ansible.builtin.expect:
+        command: /usr/bin/grub-mkpasswd-pbkdf2
+        responses:
+          "(?i)Enter password:": "{{ hardening_grub_text_password }}"
+          "(?i)Reenter password:": "{{ hardening_grub_text_password }}"
+
+    - name: Splits and corrects hash variable
+      ansible.builtin.set_fact:
+        hardening_grub_text_password: "{{ hardening_grub_hash.stdout_lines[-1].split()[-1] }}"
+
+    - name: Stores GRUB password in system
+      notify:
+        - Update GRUB
+        - Exports GRUB password - General
+        - Exports GRUB password - If executed in Vagrant
+      register: hardening_grub_applied_result
+      ansible.builtin.blockinfile:
+        path: "{{ hardening_grub_path }}"
+        marker: "{{ hardening_header }}"
+        block: "{{ hardening_grub_config }}"
+        insertafter: EOF
+
+- name: Disabling Core dumps
+  when: hardening_disable_coredumps
+  block:
+    - name: Disables core dumps (multiple files)
+      loop: "{{ hardening_limits_policies }}"
+      notify: Daemon refresh
+      loop_control:
+        index_var: i
+      ansible.builtin.blockinfile:
+        create: true
+        mode: "0644"
+        owner: "{{ hardening_user }}"
+        group: "{{ hardening_group }}"
+        path: "{{ item.path }}"
+        marker: "{{ hardening_header }}"
+        block: "{{ item.config }}"
+        insertafter: "{{ item.position }}"
