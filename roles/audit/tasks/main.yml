@@ -2,6 +2,9 @@
 - name: Local setup
   ansible.builtin.include_tasks: local.yml
 
+- name: Sending templates
+  ansible.builtin.include_tasks: configure.yml
+
 - name: Installation and execution
   ansible.builtin.include_tasks: execute.yml
 

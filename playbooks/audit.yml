@@ -1,5 +1,5 @@
 ---
 - name: Starts auditory on host
-  hosts: vagrant-ubuntu-1
+  hosts: vagrant-audit-1
   roles:
     - audit
