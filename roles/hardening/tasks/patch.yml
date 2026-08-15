@@ -1,13 +1,10 @@
 ---
-# AUTH-9262, PKGS-7370, PKGS-7394
+# PKGS-7370, PKGS-7394
 - name: Downloads and configures required software
-  when: hardening_passwords
   block:
     - name: Downloads packages
       ansible.builtin.apt:
         name:
-          - libpam-passwdqc
-          - libpam-pwquality
           - debsums
           - apt-show-versions
         update_cache: true

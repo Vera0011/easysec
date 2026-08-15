@@ -3,11 +3,13 @@
 hardening_user: root
 hardening_group: root
 
-hardening_grub_enabled: false
-hardening_disable_coredumps: true
+hardening_grub: false
+hardening_coredumps: true
 hardening_passwords: true
 hardening_ports: true
 hardening_protocols: true
+hardening_antivirus: true
+hardening_patch_management: true
 
 # Config envs - Should not be changed unless knowing what they do
 # # Config
