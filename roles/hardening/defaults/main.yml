@@ -6,13 +6,29 @@ hardening_group: root
 hardening_grub_enabled: false
 hardening_disable_coredumps: true
 hardening_passwords: true
+hardening_ports: true
+hardening_protocols: true
 
 # Config envs - Should not be changed unless knowing what they do
 # # Config
 hardening_header: "## -- {mark} EASYSEC CUSTOM CONFIGURATION -- ##"
-hardening_grub_config: |
-  set superusers="admin"
-  password_pbkdf2 admin {{ hardening_grub_text_password }}
+hardening_grub_policies:
+  - path: /etc/default/grub
+    config: |
+      GRUB_DISABLE_RECOVERY="true"
+    position: EOF
+
+  - path: /etc/default/grub
+    config: |
+      GRUB_ENABLE_CRYPTODISK=y
+    position: EOF
+
+  - path: /etc/grub.d/40_custom
+    config: |
+      set superusers="admin"
+      password_pbkdf2 admin {{ hardening_grub_text_password }}
+    position: EOF
+
 hardening_coredumps_policies:
   - path: /etc/security/limits.conf
     config: |
@@ -22,7 +38,7 @@ hardening_coredumps_policies:
 
   - path: /etc/sysctl.conf
     config: |
-      fs.suid_dumpable=0
+      fs.suid_dumpable=2
       kernel.core_pattern=|/bin/false
     position: EOF
 
@@ -52,16 +68,58 @@ hardening_password_policies:
 
       PASS_MAX_DAYS 90
       PASS_MIN_DAYS 7
-      PASS_WARN_AGE 7
+      PASS_WARN_AGE 14
 
       ENCRYPT_METHOD SHA512
       SHA_CRYPT_MIN_ROUND 100000
       SHA_CRYPT_MAX_ROUNDS 100000
     position: EOF
 
+hardening_physical_policies:
+  - path: /etc/modprobe.d/disable-usb-storage.conf
+    config: |
+      blacklist usb-storage
+    position: EOF
+
+  - path: /etc/securetty
+    config: |
+      console
+    position: EOF
+
+  - path: /etc/modprobe.d/disable-firewire.conf
+    config: |
+      install firewire-core /bin/true
+      install firewire-ohci /bin/true
+    position: EOF
+
+  - path: /etc/udev/rules.d/99-restrict-serial.rules
+    config: |
+      KERNEL=="ttyS*", MODE="0700"
+    position: EOF
+
+hardening_protocol_policies:
+  - path: /etc/modprobe.d/nodccp.conf
+    config: |
+      install dccp /bin/true
+    position: EOF
+
+  - path: /etc/modprobe.d/nosctp.conf
+    config: |
+      install sctp /bin/true
+    position: EOF
+
+  - path: /etc/modprobe.d/nords.conf
+    config: |
+      install rds /bin/true
+    position: EOF
+
+  - path: /etc/modprobe.d/notipc.conf
+    config: |
+      install tipc /bin/true
+    position: EOF
+
 ## Folders
 
 ## Files
-hardening_grub_path: /etc/grub.d/40_custom
 hardening_grub_hash_output_path: "{{ playbook_dir }}/../generated/grub_password.txt"
 hardening_grub_hash_vagrant_output_path: "{{ playbook_dir }}/../vagrant/.grub_pw_{{ inventory_hostname }}.txt"

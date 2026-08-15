@@ -9,4 +9,5 @@ This role configures a system to apply different hardening configurations. It is
 ## Available modules
 - GRUB password activation. Sets a master password when accessign GRUB (starting system). Default: `false`.
 - CoreDumps deactivation: Deactivates all coredumps in the system. Default: `true`.
-- Password management: Sets expiration to passwords, activates SU logs, increases hashing rouds, installs `libpam-passwdqc` and `libpam-pwquality`. Default: `true`.
+- Password management: Sets expiration to passwords, activates SU logs, locks root account password, increases hashing rouds, installs `libpam-passwdqc` and `libpam-pwquality`. Default: `true`.
+- Protocols: Disables `dccp`, `sctp`, `rds` and `tipc` network protocols. Default: `true`.

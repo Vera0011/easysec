@@ -22,3 +22,7 @@
   ansible.builtin.systemd:
     daemon_reload: true
     daemon_reexec: true
+
+- name: Reload Udev rules
+  changed_when: false
+  ansible.builtin.command: udevadm control --reload-rules
