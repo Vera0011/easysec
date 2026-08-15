@@ -26,3 +26,7 @@
 - name: Hardening - Patch management policies
   when: hardening_patch_management
   ansible.builtin.include_tasks: patch.yml
+
+- name: Hardening - Banner policies
+  when: hardening_banners
+  ansible.builtin.include_tasks: banners.yml

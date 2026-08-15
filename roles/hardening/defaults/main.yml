@@ -8,6 +8,7 @@ hardening_coredumps: true
 hardening_passwords: true
 hardening_ports: true
 hardening_protocols: true
+hardening_banners: true
 hardening_antivirus: true
 hardening_patch_management: true
 
@@ -119,6 +120,13 @@ hardening_protocol_policies:
     config: |
       install tipc /bin/true
     position: EOF
+
+hardening_banners_config:
+  - src: templates/banner.j2
+    dest: /etc/issue
+
+  - src: templates/banner.j2
+    dest: /etc/issue.net
 
 ## Folders
 

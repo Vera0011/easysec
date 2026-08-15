@@ -1,0 +1,12 @@
+---
+# BANN-7126, BANN-7130
+- name: Sets a custom banner
+  block:
+    - name: Sets banners
+      loop: "{{ hardening_banners_config }}"
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: "0644"
+        owner: "{{ hardening_user }}"
+        group: "{{ hardening_group }}"
