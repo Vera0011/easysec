@@ -30,3 +30,7 @@
 - name: Hardening - Banner policies
   when: hardening_banners
   ansible.builtin.include_tasks: banners.yml
+
+- name: Hardening - Partition policies
+  when: hardening_partitions
+  ansible.builtin.include_tasks: partitions.yml

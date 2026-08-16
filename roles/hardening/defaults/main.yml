@@ -11,6 +11,7 @@ hardening_protocols: true
 hardening_banners: true
 hardening_antivirus: true
 hardening_patch_management: true
+hardening_partitions: false
 
 # Config envs - Should not be changed unless knowing what they do
 # # Config
@@ -91,8 +92,8 @@ hardening_password_policies:
       data: ENCRYPT_METHOD SHA512
 
     - path: /etc/login.defs
-      regex: SHA_CRYPT_MIN_ROUND\s+
-      data: SHA_CRYPT_MIN_ROUND 100000
+      regex: SHA_CRYPT_MIN_ROUNDS\s+
+      data: SHA_CRYPT_MIN_ROUNDS 100000
 
     - path: /etc/login.defs
       regex: SHA_CRYPT_MAX_ROUNDS\s+
@@ -150,8 +151,24 @@ hardening_banners_config:
   - src: templates/banner.j2
     dest: /etc/issue.net
 
-## Folders
+hardening_partition_policies:
+  - name: Home
+    path: /home
+    size: "35" # 35% of available disk
+    logic_group_ref: easysec_grp
 
-## Files
+  - name: Temp
+    path: /tmp
+    size: "15" # 15% of available disk
+    logic_group_ref: easysec_grp
+
+  - name: Var
+    path: /var
+    size: "50" # 50% of available disk
+    logic_group_ref: easysec_grp
+
+# # Folders
+
+# # Files
 hardening_grub_hash_output_path: "{{ playbook_dir }}/../generated/grub_password.txt"
 hardening_grub_hash_vagrant_output_path: "{{ playbook_dir }}/../vagrant/.grub_pw_{{ inventory_hostname }}.txt"
