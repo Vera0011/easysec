@@ -1,0 +1,4 @@
+---
+- name: Hardening - UFW policies
+  when: hardening_services and hardening_services_policies.ufw.enabled
+  ansible.builtin.include_tasks: services/ufw.yml

@@ -182,6 +182,53 @@ hardening_partition_policies:
     needs_sync: false
     encrypted: true
 
+hardening_services_policies:
+  ufw:
+    enabled: true
+    blocks:
+      - path: /etc/systemd/system/ufw.service.d/override.conf
+        config: |
+          [Service]
+          PrivateTmp=true
+          ProtectSystem=strict
+          UMask=027
+          ProtectHome=true
+          NoNewPrivileges=true
+          PrivateDevices=true
+          ProtectKernelTunables=true
+          ProtectKernelModules=true
+          ProtectControlGroups=true
+          RestrictRealtime=true
+          RestrictSUIDSGID=true
+          LockPersonality=true
+          MemoryDenyWriteExecute=true
+        position: BOF
+
+    rules:
+      - direction: incoming
+        default: deny
+
+      - direction: outgoing
+        default: allow
+
+      - rule: allow
+        port: "{{ ansible_port }}"
+        proto: tcp
+        from_ip: "192.168.56.1"
+        comment: "Ansible provider - Host"
+
+      - rule: allow
+        port: "{{ ansible_port }}"
+        proto: tcp
+        from_ip: "10.0.2.2"
+        comment: "Ansible provider - Vagrant"
+
+      - rule: allow
+        port: "{{ ansible_port }}"
+        proto: tcp
+        from_ip: "{{ hostvars['vagrant-manager-1'].ansible_host }}"
+        comment: "Ansible provider - Manager"
+
 hardening_mounting_prefix: /mnt/migrate_
 hardening_luks_prefix: "crypt_"
 
