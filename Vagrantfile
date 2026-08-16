@@ -37,7 +37,6 @@ Vagrant.configure("2") do |config|
 
     ## Servers to set up
     ALL_SERVERS = [
-        { name: "vagrant-manager-1", box: "ubuntu/jammy64", ip: "192.168.56.2", memory: "512", cpus: 1, boot_timeout: 600, disks: [] },
         { name: "vagrant-kali-1", box: "kalilinux/rolling", ip: "192.168.56.3", memory: "2048", cpus: 2, boot_timeout: 600, disks: [] },
         { name: "vagrant-ubuntu-1", box: "ubuntu/jammy64", ip: "192.168.56.4", memory: "2048", cpus: 2, boot_timeout: 600, disks: [] },
         { name: "vagrant-keycloak-1", box: "ubuntu/jammy64", ip: "192.168.56.5", memory: "4096", cpus: 2, boot_timeout: 600, disks: [] },
@@ -45,9 +44,12 @@ Vagrant.configure("2") do |config|
         { name: "vagrant-audit-1", box: "ubuntu/jammy64", ip: "192.168.56.7", memory: "2048", cpus: 4, boot_timeout: 600, disks: [] },
         { name: "vagrant-hardening-1", box: "ubuntu/jammy64", ip: "192.168.56.8", memory: "4096", cpus: 4, boot_timeout: 600, disks: 
             [
-                { name: "hardening-data", size: "40GB" },
+                { name: "hardening-data", size: "40GB" }
             ]
-        }
+        },
+
+        # Must always be set the last one to avoid Ansible execution before setting up all servers
+        { name: "vagrant-manager-1", box: "ubuntu/jammy64", ip: "192.168.56.2", memory: "512", cpus: 1, boot_timeout: 600, disks: [] },
     ]
 
     # Tasks to execute - Single playbooks and complete workflows

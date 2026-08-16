@@ -16,56 +16,90 @@
 
     - name: Retrieves partitions to be moved
       loop: "{{ hardening_target_devices.results }}"
-      loop_control:
-        label: "{{ item.item.path }}"
       ansible.builtin.set_fact:
         hardening_partitions_to_move: >-
-          {{ hardening_partition_policies | default([]) + ([item.item] if item.stdout == hardening_root_disk.stdout else []) }}
+          {{
+            hardening_partition_policies | default([])
+            + (
+                [item.item]
+                if item.stdout == hardening_root_disk.stdout
+                and item.item not in (hardening_partition_policies | default([]))
+                else []
+              )
+          }}
 
     - name: Fail when no partitions can be moved
       when: hardening_partitions_to_move | length == 0
       ansible.builtin.fail:
         msg: "No partitions found to be moved. Aborting module"
 
-    - name: Checks if empty disk is available (using DF, must be mounted)
-      register: hardening_avail_disk
-      changed_when: false
-      ansible.builtin.shell: |
-        set -uo pipefail &&
-        df -P | awk '$1 ~ /^\/dev\// && $5 == "0%" {print $1, $4, $6}'
+    - name: Extracts partitions that need encryption
+      ansible.builtin.set_fact:
+        hardening_pending_to_encrypt: >-
+          {{
+            hardening_partitions_to_move
+            | selectattr('encrypted', 'defined')
+            | selectattr('encrypted', 'equalto', true)
+            | list
+          }}
 
-    - name: Fail when no disks are available
-      when: hardening_avail_disk.stdout == ""
+    - name: Get block devices
+      ansible.builtin.command:
+        cmd: lsblk -J -o NAME,TYPE,FSTYPE,MOUNTPOINTS
+      register: hardening_lsblk
+      changed_when: false
+
+    - name: Extract empty disks
+      ansible.builtin.set_fact:
+        hardening_list_avail_disk: >-
+          {{
+            (hardening_lsblk.stdout | from_json).blockdevices
+            | selectattr('type', 'equalto', 'disk')
+            | selectattr('fstype', 'none')
+            | rejectattr('children', 'defined')
+            | list
+          }}
+
+    - name: Fail when no empty disk is available
+      when: hardening_list_avail_disk | length == 0
       ansible.builtin.fail:
-        msg: "No empty disk found. Aborting module"
+        msg: "No empty disk found. Aborting module."
+
+    - name: Setting correct env variable for available disk
+      ansible.builtin.set_fact:
+        hardening_avail_disk: "{{ hardening_list_avail_disk | first }}"
 
 - name: Creating partitions
   block:
     - name: Installing dependencies
       ansible.builtin.apt:
-        name: lvm2
+        name:
+          - lvm2
+          - cryptsetup
         state: present
+        update_cache: true
 
     - name: Checks if volume group exists
       changed_when: false
       register: hardening_vg_check
-      loop: "{{ hardening_partitions_to_move.logic_group_ref }}"
-      ansible.builtin.command: "vgs {{ item }}"
+      loop: "{{ hardening_partitions_to_move }}"
+      failed_when: false
+      ansible.builtin.command: "vgs {{ item.logic_group_ref }}"
 
     - name: Create volume group if not exists in empty disk
-      loop: "{{ hardening_partitions_to_move.logic_group_ref }}"
+      loop: "{{ hardening_partitions_to_move }}"
       loop_control:
         index_var: i
       when: hardening_vg_check.results[i].rc != 0
       community.general.lvg:
-        vg: "{{ item }}"
-        pvs: "{{ hardening_avail_disk }}"
+        vg: "{{ item.logic_group_ref }}"
+        pvs: "/dev/{{ hardening_avail_disk.name }}"
 
     - name: Extracts total of available disk space
       changed_when: false
       register: hardening_avail_disk_space
-      loop: "{{ hardening_partitions_to_move.logic_group_ref }}"
-      ansible.builtin.command: "vgs --noheadings --units g --nosuffix -o vg_free {{ item }}"
+      loop: "{{ hardening_partitions_to_move }}"
+      ansible.builtin.command: "vgs --noheadings --units g --nosuffix -o vg_free {{ item.logic_group_ref }}"
 
     - name: Create logical volumes in emtpy disk
       loop: "{{ hardening_partitions_to_move }}"
@@ -76,21 +110,176 @@
         vg: "{{ item.logic_group_ref }}"
         size: >-
           {{
-            (
+            '100%FREE'
+            if i == (hardening_partitions_to_move | length - 1)
+            else (
               hardening_avail_disk_space.results[i].stdout
               | regex_replace('[A-Za-z]+$', '')
               | float
-              * item.size | float
-              / 100
-            )
-            | round(2)
-          }}G
+              * item.size | float / 100
+            ) | round(0, 'floor') | int ~ 'G'
+          }}
+
+- name: Encrypting and formating volumes
+  when: hardening_pending_to_encrypt | length != 0
+  block:
+    - name: Keyfile directory creation
+      ansible.builtin.file:
+        path: "{{ hardening_luks_key_dir }}"
+        state: directory
+        owner: "{{ hardening_user }}"
+        group: "{{ hardening_group }}"
+        mode: "0700"
+
+    - name: Get partitions that are not encrypted
+      loop: "{{ hardening_pending_to_encrypt }}"
+      changed_when: false
+      failed_when: false
+      register: hardening_check_if_encrypted
+      ansible.builtin.command: "cryptsetup isLuks /dev/{{ item.logic_group_ref }}/{{ item.name }}"
+
+    - name: Generate keys for encryption
+      loop: "{{ hardening_pending_to_encrypt }}"
+      loop_control:
+        index_var: i
+      when: hardening_check_if_encrypted.results[i].rc != 0
+      changed_when: false
+      failed_when: false
+      ansible.builtin.command: "dd if=/dev/urandom of={{ hardening_luks_key_dir }}/{{ item.name }}.key bs=512 count=4"
+
+    - name: Restrict keyfile permissions
+      loop: "{{ hardening_pending_to_encrypt }}"
+      loop_control:
+        index_var: i
+      when: hardening_check_if_encrypted.results[i].rc != 0
+      ansible.builtin.file:
+        path: "{{ hardening_luks_key_dir }}/{{ item.name }}.key"
+        mode: "0400"
+        owner: "{{ hardening_user }}"
+        group: "{{ hardening_group }}"
+
+    - name: Format logical volumes as LUKS
+      loop: "{{ hardening_pending_to_encrypt }}"
+      loop_control:
+        index_var: i
+      when: hardening_check_if_encrypted.results[i].rc != 0
+      community.crypto.luks_device:
+        device: "/dev/{{ item.logic_group_ref }}/{{ item.name }}"
+        state: present
+        name: "{{ hardening_luks_prefix }}{{ item.name }}"
+        keyfile: "{{ hardening_luks_key_dir }}/{{ item.name }}.key"
+
+    - name: Open LUKS volumes
+      loop: "{{ hardening_pending_to_encrypt }}"
+      loop_control:
+        index_var: i
+      when: hardening_check_if_encrypted.results[i].rc != 0
+      community.crypto.luks_device:
+        device: "/dev/{{ item.logic_group_ref }}/{{ item.name }}"
+        state: opened
+        name: "{{ hardening_luks_prefix }}{{ item.name }}"
+        keyfile: "{{ hardening_luks_key_dir }}/{{ item.name }}.key"
+
+    - name: Add crypttab entries for automatic unlock at boot
+      loop: "{{ hardening_pending_to_encrypt }}"
+      loop_control:
+        index_var: i
+      when: hardening_check_if_encrypted.results[i].rc != 0
+      ansible.builtin.lineinfile:
+        path: /etc/crypttab
+        regexp: "^{{ hardening_luks_prefix }}{{ item.name }}\\s"
+        line: "{{ hardening_luks_prefix }}{{ item.name }} /dev/{{ item.logic_group_ref }}/{{ item.name }} {{ hardening_luks_key_dir }}/{{ item.name }}.key luks"
 
     - name: Apply format to created logical volumes
       loop: "{{ hardening_partitions_to_move }}"
       community.general.filesystem:
         fstype: ext4
-        dev: "/dev/{{ item.logic_group_ref }}/lv_{{ item.name }}"
+        dev: >-
+          {{
+            '/dev/mapper/' ~ hardening_luks_prefix ~ item.name
+            if item.encrypted
+            else '/dev/' ~ item.logic_group_ref ~ '/' ~ item.name
+          }}
 
-#- name: Migrate partitions
-#  block:
+- name: Migrate partitions
+  block:
+    - name: Create mount points for migration
+      loop: "{{ hardening_partitions_to_move }}"
+      ansible.posix.mount:
+        path: "{{ hardening_mounting_prefix }}{{ item.name }}"
+        src: >-
+          {{
+            '/dev/mapper/' ~ hardening_luks_prefix ~ item.name
+            if item.encrypted
+            else '/dev/' ~ item.logic_group_ref ~ '/' ~ item.name
+          }}
+        fstype: ext4
+        state: mounted
+
+    - name: Sync data to new volumes
+      loop: "{{ hardening_partitions_to_move }}"
+      delegate_to: "{{ inventory_hostname }}"
+      changed_when: true
+      when: item.needs_sync
+      ansible.posix.synchronize:
+        src: "{{ item.path }}/"
+        dest: "{{ hardening_mounting_prefix }}{{ item.name }}/"
+        archive: true
+        delete: false
+        checksum: true
+        rsync_opts:
+          - "--xattrs"
+          - "--hard-links"
+          - "--acls"
+          - "--sparse"
+          - "--numeric-ids"
+
+    - name: Recreate empty mount point directory
+      loop: "{{ hardening_partitions_to_move }}"
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: "0755"
+
+    - name: Add persistent fstab entries for new mounts
+      loop: "{{ hardening_partitions_to_move }}"
+      ansible.posix.mount:
+        path: "{{ item.path }}"
+        fstype: ext4
+        opts: defaults
+        state: present
+        src: >-
+          {{
+            '/dev/mapper/' ~ hardening_luks_prefix ~ item.name
+            if item.encrypted
+            else '/dev/' ~ item.logic_group_ref ~ '/' ~ item.name
+          }}
+
+    - name: Reboot to apply new mounts
+      ansible.builtin.reboot:
+        reboot_timeout: 600
+        msg: "Rebooting to finalize partition migration for: {{ hardening_partitions_to_move | map(attribute='name') | join(', ') }}"
+
+    - name: Verify migrated filesystems
+      loop: "{{ hardening_partitions_to_move }}"
+      changed_when: false
+      args:
+        executable: /bin/bash
+      ansible.builtin.shell: |
+        expected=$(readlink -f \
+          "{{ '/dev/mapper/' ~ hardening_luks_prefix ~ item.name if item.encrypted else '/dev/' ~ item.logic_group_ref ~ '/' ~ item.name }}")
+        actual=$(findmnt -n -o SOURCE --target "{{ item.path }}")
+        actual=$(readlink -f "$actual")
+
+        if [ "$actual" != "$expected" ]; then
+          echo "ERROR: {{ item.path }} -> $actual (expected $expected)"
+          exit 1
+        fi
+
+        echo "OK: {{ item.path }} -> $actual"
+
+    - name: Unmount temp locations before finalizing
+      loop: "{{ hardening_partitions_to_move }}"
+      ansible.posix.mount:
+        path: "{{ hardening_mounting_prefix }}{{ item.name }}"
+        state: unmounted

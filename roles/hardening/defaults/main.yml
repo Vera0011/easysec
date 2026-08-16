@@ -14,7 +14,7 @@ hardening_patch_management: true
 hardening_partitions: false
 
 # Config envs - Should not be changed unless knowing what they do
-# # Config
+## Config
 hardening_header: "## -- {mark} EASYSEC CUSTOM CONFIGURATION -- ##"
 hardening_grub_policies:
   lines:
@@ -152,23 +152,40 @@ hardening_banners_config:
     dest: /etc/issue.net
 
 hardening_partition_policies:
-  - name: Home
+  - name: home
     path: /home
-    size: "35" # 35% of available disk
-    logic_group_ref: easysec_grp
+    size: "25" # 25% of available disk
+    logic_group_ref: easysec
+    needs_sync: true
+    encrypted: false
 
-  - name: Temp
+  - name: temp
     path: /tmp
     size: "15" # 15% of available disk
-    logic_group_ref: easysec_grp
+    logic_group_ref: easysec
+    needs_sync: true
+    encrypted: false
 
-  - name: Var
+  - name: var
     path: /var
-    size: "50" # 50% of available disk
-    logic_group_ref: easysec_grp
+    size: "40" # 40% of available disk
+    logic_group_ref: easysec
+    needs_sync: true
+    encrypted: false
 
-# # Folders
+  - name: secrets
+    path: /secrets
+    size: "10" # 10% of available disk
+    logic_group_ref: easysec
+    needs_sync: false
+    encrypted: true
 
-# # Files
+hardening_mounting_prefix: /mnt/migrate_
+hardening_luks_prefix: "crypt_"
+
+## Folders
+hardening_luks_key_dir: /etc/luks
+
+## Files
 hardening_grub_hash_output_path: "{{ playbook_dir }}/../generated/grub_password.txt"
 hardening_grub_hash_vagrant_output_path: "{{ playbook_dir }}/../vagrant/.grub_pw_{{ inventory_hostname }}.txt"
