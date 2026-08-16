@@ -34,3 +34,11 @@
 - name: Hardening - Partition policies
   when: hardening_partitions
   ansible.builtin.include_tasks: partitions.yml
+
+- name: Hardening - Auditory policies
+  when: hardening_partitions
+  ansible.builtin.include_tasks: audit.yml
+
+- name: Hardening - Services
+  when: hardening_services
+  ansible.builtin.include_tasks: services.yml

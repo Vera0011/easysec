@@ -125,7 +125,7 @@
   block:
     - name: Keyfile directory creation
       ansible.builtin.file:
-        path: "{{ hardening_luks_key_dir }}"
+        path: "{{ hardening_luks_key_folder }}"
         state: directory
         owner: "{{ hardening_user }}"
         group: "{{ hardening_group }}"
@@ -145,7 +145,7 @@
       when: hardening_check_if_encrypted.results[i].rc != 0
       changed_when: false
       failed_when: false
-      ansible.builtin.command: "dd if=/dev/urandom of={{ hardening_luks_key_dir }}/{{ item.name }}.key bs=512 count=4"
+      ansible.builtin.command: "dd if=/dev/urandom of={{ hardening_luks_key_folder }}/{{ item.name }}.key bs=512 count=4"
 
     - name: Restrict keyfile permissions
       loop: "{{ hardening_pending_to_encrypt }}"
@@ -153,7 +153,7 @@
         index_var: i
       when: hardening_check_if_encrypted.results[i].rc != 0
       ansible.builtin.file:
-        path: "{{ hardening_luks_key_dir }}/{{ item.name }}.key"
+        path: "{{ hardening_luks_key_folder }}/{{ item.name }}.key"
         mode: "0400"
         owner: "{{ hardening_user }}"
         group: "{{ hardening_group }}"
@@ -167,7 +167,7 @@
         device: "/dev/{{ item.logic_group_ref }}/{{ item.name }}"
         state: present
         name: "{{ hardening_luks_prefix }}{{ item.name }}"
-        keyfile: "{{ hardening_luks_key_dir }}/{{ item.name }}.key"
+        keyfile: "{{ hardening_luks_key_folder }}/{{ item.name }}.key"
 
     - name: Open LUKS volumes
       loop: "{{ hardening_pending_to_encrypt }}"
@@ -178,7 +178,7 @@
         device: "/dev/{{ item.logic_group_ref }}/{{ item.name }}"
         state: opened
         name: "{{ hardening_luks_prefix }}{{ item.name }}"
-        keyfile: "{{ hardening_luks_key_dir }}/{{ item.name }}.key"
+        keyfile: "{{ hardening_luks_key_folder }}/{{ item.name }}.key"
 
     - name: Add crypttab entries for automatic unlock at boot
       loop: "{{ hardening_pending_to_encrypt }}"
@@ -188,7 +188,7 @@
       ansible.builtin.lineinfile:
         path: /etc/crypttab
         regexp: "^{{ hardening_luks_prefix }}{{ item.name }}\\s"
-        line: "{{ hardening_luks_prefix }}{{ item.name }} /dev/{{ item.logic_group_ref }}/{{ item.name }} {{ hardening_luks_key_dir }}/{{ item.name }}.key luks"
+        line: "{{ hardening_luks_prefix }}{{ item.name }} /dev/{{ item.logic_group_ref }}/{{ item.name }} {{ hardening_luks_key_folder }}/{{ item.name }}.key luks"
 
     - name: Apply format to created logical volumes
       loop: "{{ hardening_partitions_to_move }}"

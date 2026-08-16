@@ -12,6 +12,8 @@ hardening_banners: true
 hardening_antivirus: true
 hardening_patch_management: true
 hardening_partitions: false
+hardening_auditory: true
+hardening_services: true
 
 # Config envs - Should not be changed unless knowing what they do
 ## Config
@@ -184,8 +186,10 @@ hardening_mounting_prefix: /mnt/migrate_
 hardening_luks_prefix: "crypt_"
 
 ## Folders
-hardening_luks_key_dir: /etc/luks
+hardening_luks_key_folder: /etc/luks
 
 ## Files
 hardening_grub_hash_output_path: "{{ playbook_dir }}/../generated/grub_password.txt"
 hardening_grub_hash_vagrant_output_path: "{{ playbook_dir }}/../vagrant/.grub_pw_{{ inventory_hostname }}.txt"
+hardening_auditd_template_path: templates/auditd.j2
+hardening_auditd_rules_path: /etc/audit/rules.d/audit.rules

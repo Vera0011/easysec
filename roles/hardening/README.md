@@ -16,6 +16,7 @@ This role configures a system to apply different hardening configurations. It is
 - `hardening_antivirus`: Installs `rkhunter` and `chkrootkit` software. Default: `true`.
 - `hardening_patch_management`: Installs `debsums` and `apt-show-versions` software. Default: `true`.
 - `hardening_partitions`: Moves partitions `/home`, `/var` and `/tmp` to a new disk (maintaining data and required an empty disk). Creates partition `/secrets` LUKS encrypted. Default: `false`.
+- `hardening_auditory`: Downloads AIDE, Sysstat and AuditD, inits and starts software, adds custom audit rules (from Neo23x0)
 
 ## Consequences
 > [!CAUTION]
