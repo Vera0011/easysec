@@ -1,6 +1,6 @@
 ---
 - name: Starts hardening on host
-  hosts: vagrant-ubuntu-1
+  hosts: vagrant-hardening-1
   become: true
   roles:
     - hardening
