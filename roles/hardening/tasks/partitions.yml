@@ -1,0 +1,96 @@
+---
+# FILE-6310
+- name: Pre-checks - To avoid actions if no requirements are met
+  block:
+    - name: Consults current disks
+      register: hardening_root_disk
+      changed_when: false
+      ansible.builtin.command: findmnt -n -o SOURCE --target /
+
+    - name: Check current mount device for each target path
+      register: hardening_target_devices
+      loop: "{{ hardening_partition_policies }}"
+      changed_when: false
+      failed_when: false
+      ansible.builtin.command: "findmnt -n -o SOURCE --target {{ item.path }}"
+
+    - name: Retrieves partitions to be moved
+      loop: "{{ hardening_target_devices.results }}"
+      loop_control:
+        label: "{{ item.item.path }}"
+      ansible.builtin.set_fact:
+        hardening_partitions_to_move: >-
+          {{ hardening_partition_policies | default([]) + ([item.item] if item.stdout == hardening_root_disk.stdout else []) }}
+
+    - name: Fail when no partitions can be moved
+      when: hardening_partitions_to_move | length == 0
+      ansible.builtin.fail:
+        msg: "No partitions found to be moved. Aborting module"
+
+    - name: Checks if empty disk is available (using DF, must be mounted)
+      register: hardening_avail_disk
+      changed_when: false
+      ansible.builtin.shell: |
+        set -uo pipefail &&
+        df -P | awk '$1 ~ /^\/dev\// && $5 == "0%" {print $1, $4, $6}'
+
+    - name: Fail when no disks are available
+      when: hardening_avail_disk.stdout == ""
+      ansible.builtin.fail:
+        msg: "No empty disk found. Aborting module"
+
+- name: Creating partitions
+  block:
+    - name: Installing dependencies
+      ansible.builtin.apt:
+        name: lvm2
+        state: present
+
+    - name: Checks if volume group exists
+      changed_when: false
+      register: hardening_vg_check
+      loop: "{{ hardening_partitions_to_move.logic_group_ref }}"
+      ansible.builtin.command: "vgs {{ item }}"
+
+    - name: Create volume group if not exists in empty disk
+      loop: "{{ hardening_partitions_to_move.logic_group_ref }}"
+      loop_control:
+        index_var: i
+      when: hardening_vg_check.results[i].rc != 0
+      community.general.lvg:
+        vg: "{{ item }}"
+        pvs: "{{ hardening_avail_disk }}"
+
+    - name: Extracts total of available disk space
+      changed_when: false
+      register: hardening_avail_disk_space
+      loop: "{{ hardening_partitions_to_move.logic_group_ref }}"
+      ansible.builtin.command: "vgs --noheadings --units g --nosuffix -o vg_free {{ item }}"
+
+    - name: Create logical volumes in emtpy disk
+      loop: "{{ hardening_partitions_to_move }}"
+      loop_control:
+        index_var: i
+      community.general.lvol:
+        lv: "{{ item.name }}"
+        vg: "{{ item.logic_group_ref }}"
+        size: >-
+          {{
+            (
+              hardening_avail_disk_space.results[i].stdout
+              | regex_replace('[A-Za-z]+$', '')
+              | float
+              * item.size | float
+              / 100
+            )
+            | round(2)
+          }}G
+
+    - name: Apply format to created logical volumes
+      loop: "{{ hardening_partitions_to_move }}"
+      community.general.filesystem:
+        fstype: ext4
+        dev: "/dev/{{ item.logic_group_ref }}/lv_{{ item.name }}"
+
+#- name: Migrate partitions
+#  block:
