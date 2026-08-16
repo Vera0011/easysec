@@ -22,12 +22,20 @@
       ansible.builtin.set_fact:
         hardening_grub_text_password: "{{ hardening_grub_hash.stdout_lines[-1].split()[-1] }}"
 
-    - name: Stores GRUB password in system
-      loop: "{{ hardening_grub_policies }}"
-      register: hardening_grub_applied_result
+    - name: Applies configurations for GRUB policies
+      loop: "{{ hardening_grub_policies.blocks }}"
       ansible.builtin.blockinfile:
         path: "{{ item.path }}"
         marker: "{{ hardening_header }}"
         block: "{{ item.config }}"
         insertafter: "{{ item.position }}"
+        backup: true
+
+    - name: Applies configurations for GRUB policies
+      loop: "{{ hardening_grub_policies.lines }}"
+      ansible.builtin.lineinfile:
+        path: "{{ item.path }}"
+        regexp: "{{ item.regex }}"
+        line: "{{ item.data }}"
+        state: present
         backup: true

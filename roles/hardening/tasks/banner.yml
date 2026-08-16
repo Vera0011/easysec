@@ -10,3 +10,4 @@
         mode: "0644"
         owner: "{{ hardening_user }}"
         group: "{{ hardening_group }}"
+        backup: true

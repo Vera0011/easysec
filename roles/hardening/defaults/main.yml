@@ -16,110 +16,132 @@ hardening_patch_management: true
 # # Config
 hardening_header: "## -- {mark} EASYSEC CUSTOM CONFIGURATION -- ##"
 hardening_grub_policies:
-  - path: /etc/default/grub
-    config: |
-      GRUB_DISABLE_RECOVERY="true"
-    position: EOF
+  lines:
+    - path: /etc/default/grub
+      regex: GRUB_DISABLE_RECOVERY\s+
+      data: GRUB_DISABLE_RECOVERY="true"
 
-  - path: /etc/default/grub
-    config: |
-      GRUB_ENABLE_CRYPTODISK=y
-    position: EOF
+    - path: /etc/default/grub
+      regex: GRUB_ENABLE_CRYPTODISK\s+
+      data: GRUB_ENABLE_CRYPTODISK=y
 
-  - path: /etc/grub.d/40_custom
-    config: |
-      set superusers="admin"
-      password_pbkdf2 admin {{ hardening_grub_text_password }}
-    position: EOF
+  blocks:
+    - path: /etc/grub.d/40_custom
+      config: |
+        set superusers="admin"
+        password_pbkdf2 admin {{ hardening_grub_text_password }}
+      position: EOF
 
 hardening_coredumps_policies:
-  - path: /etc/security/limits.conf
-    config: |
-      * hard core 0
-      * soft core 0
-    position: EOF
+  lines:
+    - path: /etc/sysctl.conf
+      regex: fs\.suid_dumpable
+      data: fs.suid_dumpable=2
 
-  - path: /etc/sysctl.conf
-    config: |
-      fs.suid_dumpable=2
-      kernel.core_pattern=|/bin/false
-    position: EOF
+    - path: /etc/sysctl.conf
+      regex: kernel\.core_pattern
+      data: kernel.core_pattern=|/bin/false
 
-  - path: /etc/systemd/coredump.conf
-    config: |
-      [Coredump]
-      Storage=none
-      ProcessSizeMax=0
-    position: EOF
+    - path: /etc/systemd/system.conf
+      regex: DefaultLimitCORE=
+      data: DefaultLimitCORE=infinity
 
-  - path: /etc/systemd/system.conf
-    config: |
-      DefaultLimitCORE=infinity
-    position: EOF
+    - path: /etc/profile
+      regex: ulimit\s+
+      data: ulimit -S -c 0
 
-  - path: /etc/profile
-    config: |
-      ulimit -S -c 0
-    position: BOF
+  blocks:
+    - path: /etc/security/limits.conf
+      config: |
+        * hard core 0
+        * soft core 0
+      position: EOF
+
+    - path: /etc/systemd/coredump.conf
+      config: |
+        [Coredump]
+        Storage=none
+        ProcessSizeMax=0
+      position: EOF
 
 hardening_password_policies:
-  - path: /etc/login.defs
-    config: |
-      SULOG_FILE /var/log/sulog
+  lines:
+    - path: /etc/login.defs
+      regex: SULOG_FILE\s+
+      data: SULOG_FILE /var/log/sulog
 
-      UMASK 027
+    - path: /etc/login.defs
+      regex: ^UMASK\s+
+      data: UMASK 027
 
-      PASS_MAX_DAYS 90
-      PASS_MIN_DAYS 7
-      PASS_WARN_AGE 14
+    - path: /etc/login.defs
+      regex: ^PASS_MAX_DAYS\s+
+      data: PASS_MAX_DAYS 90
 
-      ENCRYPT_METHOD SHA512
-      SHA_CRYPT_MIN_ROUND 100000
-      SHA_CRYPT_MAX_ROUNDS 100000
-    position: EOF
+    - path: /etc/login.defs
+      regex: ^PASS_MIN_DAYS\s+
+      data: PASS_MIN_DAYS 7
 
-hardening_physical_policies:
-  - path: /etc/modprobe.d/disable-usb-storage.conf
-    config: |
-      blacklist usb-storage
-    position: EOF
+    - path: /etc/login.defs
+      regex: ^PASS_WARN_AGE\s+
+      data: PASS_WARN_AGE 14
 
-  - path: /etc/securetty
-    config: |
-      console
-    position: EOF
+    - path: /etc/login.defs
+      regex: ^ENCRYPT_METHOD\s+
+      data: ENCRYPT_METHOD SHA512
 
-  - path: /etc/modprobe.d/disable-firewire.conf
-    config: |
-      install firewire-core /bin/true
-      install firewire-ohci /bin/true
-    position: EOF
+    - path: /etc/login.defs
+      regex: SHA_CRYPT_MIN_ROUND\s+
+      data: SHA_CRYPT_MIN_ROUND 100000
 
-  - path: /etc/udev/rules.d/99-restrict-serial.rules
-    config: |
-      KERNEL=="ttyS*", MODE="0700"
-    position: EOF
+    - path: /etc/login.defs
+      regex: SHA_CRYPT_MAX_ROUNDS\s+
+      data: SHA_CRYPT_MAX_ROUNDS 100000
+
+hardening_ports_policies:
+  blocks:
+    - path: /etc/modprobe.d/disable-usb-storage.conf
+      config: |
+        blacklist usb-storage
+      position: EOF
+
+    - path: /etc/securetty
+      config: |
+        console
+      position: EOF
+
+    - path: /etc/modprobe.d/disable-firewire.conf
+      config: |
+        install firewire-core /bin/true
+        install firewire-ohci /bin/true
+      position: EOF
+
+    - path: /etc/udev/rules.d/99-restrict-serial.rules
+      config: |
+        KERNEL=="ttyS*", MODE="0700"
+      position: EOF
 
 hardening_protocol_policies:
-  - path: /etc/modprobe.d/nodccp.conf
-    config: |
-      install dccp /bin/true
-    position: EOF
+  blocks:
+    - path: /etc/modprobe.d/nodccp.conf
+      config: |
+        install dccp /bin/true
+      position: EOF
 
-  - path: /etc/modprobe.d/nosctp.conf
-    config: |
-      install sctp /bin/true
-    position: EOF
+    - path: /etc/modprobe.d/nosctp.conf
+      config: |
+        install sctp /bin/true
+      position: EOF
 
-  - path: /etc/modprobe.d/nords.conf
-    config: |
-      install rds /bin/true
-    position: EOF
+    - path: /etc/modprobe.d/nords.conf
+      config: |
+        install rds /bin/true
+      position: EOF
 
-  - path: /etc/modprobe.d/notipc.conf
-    config: |
-      install tipc /bin/true
-    position: EOF
+    - path: /etc/modprobe.d/notipc.conf
+      config: |
+        install tipc /bin/true
+      position: EOF
 
 hardening_banners_config:
   - src: templates/banner.j2

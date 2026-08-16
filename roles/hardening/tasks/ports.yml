@@ -4,7 +4,7 @@
   notify: Reload Udev rules
   block:
     - name: Applies configurations for port policies
-      loop: "{{ hardening_physical_policies }}"
+      loop: "{{ hardening_ports_policies.blocks }}"
       ansible.builtin.blockinfile:
         create: true
         mode: "0644"

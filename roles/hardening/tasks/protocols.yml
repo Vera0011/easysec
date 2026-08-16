@@ -2,8 +2,8 @@
 # NETW-3200
 - name: Restricting network protocols
   block:
-    - name: Applies configurations for protocols
-      loop: "{{ hardening_protocol_policies }}"
+    - name: Applies configurations for protocol policies
+      loop: "{{ hardening_protocol_policies.blocks }}"
       ansible.builtin.blockinfile:
         create: true
         mode: "0644"
