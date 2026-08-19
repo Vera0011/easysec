@@ -1,0 +1,43 @@
+---
+- name: Update GRUB
+  changed_when: false
+  ansible.builtin.command: update-grub
+
+- name: Exports GRUB password - General
+  delegate_to: localhost
+  when: hardening_grub_applied_result is changed
+  ansible.builtin.copy:
+    content: "{{ hardening_grub_text_password }}"
+    dest: "{{ hardening_grub_hash_output_path }}"
+    mode: "0640"
+
+- name: Exports GRUB password - If executed in Vagrant
+  when: "'vagrant' in group_names and hardening_grub_applied_result is changed"
+  ansible.builtin.copy:
+    content: "{{ hardening_grub_text_password }}"
+    dest: "{{ hardening_grub_hash_vagrant_output_path }}"
+    mode: "0640"
+
+- name: Daemon refresh
+  ansible.builtin.systemd:
+    daemon_reload: true
+    daemon_reexec: true
+
+- name: Reload Udev rules
+  changed_when: false
+  ansible.builtin.command: udevadm control --reload-rules
+
+- name: Reload UFW
+  ansible.builtin.systemd:
+    name: ufw
+    state: restarted
+
+- name: Applies auto-upgrade
+  changed_when: false
+  ansible.builtin.command: unattended-upgrade --dry-run --debug
+
+- name: Enable and start AppArmor
+  ansible.builtin.systemd:
+    name: apparmor
+    enabled: true
+    state: started

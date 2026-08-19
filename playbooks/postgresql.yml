@@ -1,5 +1,5 @@
 ---
-- name: Installs PostgreSQL (Vagrant)
+- name: Installs PostgreSQL on host
   hosts: vagrant-postgresql-1
   become: true
   roles:

@@ -1,5 +1,5 @@
 ---
-- name: Installs Lynis on test host (Vagrant)
+- name: Installs Lynis on host
   hosts: vagrant-ubuntu-1
   become: true
   roles:

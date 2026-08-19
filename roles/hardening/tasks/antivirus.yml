@@ -1,0 +1,12 @@
+---
+# HRDN-7230
+- name: Downloads and configures required software
+  block:
+    - name: Installs antivirus packages
+      ansible.builtin.apt:
+        name:
+          - rkhunter
+          - chkrootkit
+          - clamav
+        update_cache: true
+        state: present

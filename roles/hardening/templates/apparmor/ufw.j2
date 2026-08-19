@@ -1,0 +1,42 @@
+abi <abi/3.0>,
+
+include <tunables/global>
+
+/usr/sbin/ufw {
+  include <abstractions/base>
+  include <abstractions/nameservice>
+  include <abstractions/openssl>
+  include <abstractions/python>
+  include <abstractions/user-tmp>
+
+  capability dac_read_search,
+  capability net_admin,
+
+  /usr/bin/cat mrix,
+  /usr/bin/{{ ansible_python.version.major }}.{{ ansible_python.version.minor }} ix,
+  /usr/sbin/ufw r,
+  /usr/sbin/xtables-nft-multi mrix,
+  owner /etc/apt/apt.conf.d/ r,
+  owner /etc/default/apport r,
+  owner /etc/default/ufw r,
+  owner /etc/gai.conf r,
+  owner /etc/ld.so.cache r,
+  owner /etc/locale.alias r,
+  owner /etc/nsswitch.conf r,
+  owner /etc/passwd r,
+  owner /etc/protocols r,
+  owner /etc/services r,
+  owner /etc/ufw/applications.d/ r,
+  owner /etc/ufw/applications.d/openssh-server r,
+  owner /etc/ufw/applications.d/postfix r,
+  owner /etc/ufw/ufw.conf r,
+  owner /etc/ufw/user.rules rw,
+  owner /etc/ufw/user6.rules rw,
+  owner /proc/*/fd/ r,
+  owner /proc/*/net/ip6_tables_names r,
+  owner /proc/*/net/ip_tables_names r,
+  owner /run/ufw.lock wk,
+  owner /usr/sbin/ r,
+  owner /usr/share/dpkg/cputable r,
+
+}

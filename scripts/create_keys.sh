@@ -1,8 +1,12 @@
 #!/bin/bash
 
-######################################################################################
-# This script generates RSA keys to share access between instances (used by Vagrant) #
-######################################################################################
+###########################################################################################
+# This script generates RSA keys to share access between instances (used only by Vagrant) #
+#                                                                                         #
+# Author: Vera                                                                 13/08/2026 #
+###########################################################################################
+
+set -euo pipefail
 
 cd "$(dirname "$0")/.." && \
     mkdir -p ./vagrant && \

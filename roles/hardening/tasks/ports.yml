@@ -1,0 +1,35 @@
+---
+# USB-1000
+- name: Restricting port access (serial, USB, physical access)
+  notify: Reload Udev rules
+  block:
+    - name: Applies configurations for port policies
+      loop: "{{ hardening_ports_policies.blocks }}"
+      ansible.builtin.blockinfile:
+        create: true
+        mode: "0644"
+        owner: "{{ hardening_user }}"
+        group: "{{ hardening_group }}"
+        path: "{{ item.path }}"
+        marker: "{{ hardening_header }}"
+        block: "{{ item.config }}"
+        insertafter: "{{ item.position }}"
+        backup: true
+
+    - name: Executes modprobe to apply restriction to USB ports
+      community.general.modprobe:
+        name: usb-storage
+        state: absent
+
+    - name: Find serial port devices
+      register: hardening_serial_ports
+      ansible.builtin.find:
+        paths: /dev
+        patterns: "ttyS*"
+        file_type: any
+
+    - name: Restrict access to serial ports
+      loop: "{{ hardening_serial_ports.files }}"
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        mode: "0700"

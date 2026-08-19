@@ -1,0 +1,44 @@
+---
+- name: Hardening - GRUB policies
+  when: hardening_grub
+  ansible.builtin.include_tasks: grub.yml
+
+- name: Hardening - CoreDump policies
+  when: hardening_coredumps
+  ansible.builtin.include_tasks: coredumps.yml
+
+- name: Hardening - Password policies
+  when: hardening_passwords
+  ansible.builtin.include_tasks: passwords.yml
+
+- name: Hardening - Port policies
+  when: hardening_ports
+  ansible.builtin.include_tasks: ports.yml
+
+- name: Hardening - Protocol policies
+  when: hardening_protocols
+  ansible.builtin.include_tasks: protocols.yml
+
+- name: Hardening - Antivirus policies
+  when: hardening_antivirus
+  ansible.builtin.include_tasks: antivirus.yml
+
+- name: Hardening - Patch management policies
+  when: hardening_patch_management
+  ansible.builtin.include_tasks: patch.yml
+
+- name: Hardening - Banner policies
+  when: hardening_banners
+  ansible.builtin.include_tasks: banners.yml
+
+- name: Hardening - Partition policies
+  when: hardening_partitions
+  ansible.builtin.include_tasks: partitions.yml
+
+- name: Hardening - Auditory policies
+  when: hardening_partitions
+  ansible.builtin.include_tasks: audit.yml
+
+- name: Hardening - Services
+  when: hardening_services
+  ansible.builtin.include_tasks: services.yml

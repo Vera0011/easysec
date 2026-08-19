@@ -1,0 +1,292 @@
+---
+
+hardening_user: root
+hardening_group: root
+
+hardening_grub: false
+hardening_coredumps: true
+hardening_passwords: true
+hardening_ports: true
+hardening_protocols: true
+hardening_banners: true
+hardening_antivirus: true
+hardening_patch_management: true
+hardening_partitions: false
+hardening_auditory: true
+hardening_services: true
+
+# Config envs - Should not be changed unless knowing what they do
+## Config
+hardening_header: "## -- {mark} EASYSEC CUSTOM CONFIGURATION -- ##"
+hardening_grub_policies:
+  lines:
+    - path: /etc/default/grub
+      regex: GRUB_DISABLE_RECOVERY\s+
+      data: GRUB_DISABLE_RECOVERY="true"
+
+    - path: /etc/default/grub
+      regex: GRUB_ENABLE_CRYPTODISK\s+
+      data: GRUB_ENABLE_CRYPTODISK=y
+
+  blocks:
+    - path: /etc/grub.d/40_custom
+      config: |
+        set superusers="admin"
+        password_pbkdf2 admin {{ hardening_grub_text_password }}
+      position: EOF
+
+hardening_coredumps_policies:
+  lines:
+    - path: /etc/sysctl.conf
+      regex: fs\.suid_dumpable
+      data: fs.suid_dumpable=2
+
+    - path: /etc/sysctl.conf
+      regex: kernel\.core_pattern
+      data: kernel.core_pattern=|/bin/false
+
+    - path: /etc/systemd/system.conf
+      regex: DefaultLimitCORE=
+      data: DefaultLimitCORE=infinity
+
+    - path: /etc/profile
+      regex: ulimit\s+
+      data: ulimit -S -c 0
+
+  blocks:
+    - path: /etc/security/limits.conf
+      config: |
+        * hard core 0
+        * soft core 0
+      position: EOF
+
+    - path: /etc/systemd/coredump.conf
+      config: |
+        [Coredump]
+        Storage=none
+        ProcessSizeMax=0
+      position: EOF
+
+hardening_password_policies:
+  lines:
+    - path: /etc/login.defs
+      regex: SULOG_FILE\s+
+      data: SULOG_FILE /var/log/sulog
+
+    - path: /etc/login.defs
+      regex: ^UMASK\s+
+      data: UMASK 027
+
+    - path: /etc/login.defs
+      regex: ^PASS_MAX_DAYS\s+
+      data: PASS_MAX_DAYS 90
+
+    - path: /etc/login.defs
+      regex: ^PASS_MIN_DAYS\s+
+      data: PASS_MIN_DAYS 7
+
+    - path: /etc/login.defs
+      regex: ^PASS_WARN_AGE\s+
+      data: PASS_WARN_AGE 14
+
+    - path: /etc/login.defs
+      regex: ^ENCRYPT_METHOD\s+
+      data: ENCRYPT_METHOD SHA512
+
+    - path: /etc/login.defs
+      regex: SHA_CRYPT_MIN_ROUNDS\s+
+      data: SHA_CRYPT_MIN_ROUNDS 100000
+
+    - path: /etc/login.defs
+      regex: SHA_CRYPT_MAX_ROUNDS\s+
+      data: SHA_CRYPT_MAX_ROUNDS 100000
+
+hardening_ports_policies:
+  blocks:
+    - path: /etc/modprobe.d/disable-usb-storage.conf
+      config: |
+        blacklist usb-storage
+      position: EOF
+
+    - path: /etc/securetty
+      config: |
+        console
+      position: EOF
+
+    - path: /etc/modprobe.d/disable-firewire.conf
+      config: |
+        install firewire-core /bin/true
+        install firewire-ohci /bin/true
+      position: EOF
+
+    - path: /etc/udev/rules.d/99-restrict-serial.rules
+      config: |
+        KERNEL=="ttyS*", MODE="0700"
+      position: EOF
+
+hardening_protocol_policies:
+  blocks:
+    - path: /etc/modprobe.d/nodccp.conf
+      config: |
+        install dccp /bin/true
+      position: EOF
+
+    - path: /etc/modprobe.d/nosctp.conf
+      config: |
+        install sctp /bin/true
+      position: EOF
+
+    - path: /etc/modprobe.d/nords.conf
+      config: |
+        install rds /bin/true
+      position: EOF
+
+    - path: /etc/modprobe.d/notipc.conf
+      config: |
+        install tipc /bin/true
+      position: EOF
+
+hardening_banners_config:
+  templates:
+    - src: templates/banner.j2
+      dest: /etc/issue
+
+    - src: templates/banner.j2
+      dest: /etc/issue.net
+
+hardening_partition_policies:
+  - name: home
+    path: /home
+    size: "25" # 25% of available disk
+    logic_group_ref: easysec
+    needs_sync: true
+    encrypted: false
+
+  - name: temp
+    path: /tmp
+    size: "15" # 15% of available disk
+    logic_group_ref: easysec
+    needs_sync: true
+    encrypted: false
+
+  - name: var
+    path: /var
+    size: "40" # 40% of available disk
+    logic_group_ref: easysec
+    needs_sync: true
+    encrypted: false
+
+  - name: secrets
+    path: /secrets
+    size: "10" # 10% of available disk
+    logic_group_ref: easysec
+    needs_sync: false
+    encrypted: true
+
+hardening_patch_management_policies:
+  lines:
+    - path: /etc/apt/apt.conf.d/20auto-upgrades
+      regex: ^APT::Periodic::Update-Package-Lists
+      data: APT::Periodic::Update-Package-Lists "1";
+
+    - path: /etc/apt/apt.conf.d/20auto-upgrades
+      regex: ^APT::Periodic::Unattended-Upgrade
+      data: APT::Periodic::Unattended-Upgrade "1";
+
+  blocks:
+    - path: /etc/apt/apt.conf.d/50unattended-upgrades
+      config: |
+        Unattended-Upgrade::Allowed-Origins {
+          "${distro_id}:${distro_codename}-security";
+          "${distro_id}ESMApps:${distro_codename}-apps-security";
+          "${distro_id}ESM:${distro_codename}-infra-security";
+        };
+
+        Unattended-Upgrade::Package-Blacklist {
+        };
+
+        Unattended-Upgrade::DevRelease "auto";
+        Unattended-Upgrade::AutoFixInterruptedDpkg "true";
+        Unattended-Upgrade::MinimalSteps "true";
+        Unattended-Upgrade::Remove-Unused-Dependencies "false";
+        Unattended-Upgrade::Automatic-Reboot "false";
+        Unattended-Upgrade::MailReport "on-change";
+      position: BOF
+
+hardening_service_policies:
+  ufw:
+    enabled: true
+    templates:
+      - src: templates/apparmor/ufw.j2
+        dest: /etc/apparmor.d/usr.sbin.ufw
+
+    lines:
+      - path: /etc/sysctl.conf
+        regex: net\.ipv4\.icmp_echo_ignore_all
+        data: net.ipv4.icmp_echo_ignore_all=1
+
+    blocks:
+      - path: /etc/systemd/system/ufw.service.d/override.conf
+        config: |
+          [Service]
+          PrivateTmp=yes
+          CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
+          UMask=027
+          RestrictNamespaces=~CLONE_NEWUSER
+          RestrictAddressFamilies=AF_UNIX AF_NETLINK
+          PrivateDevices=yes
+          NoNewPrivileges=yes
+          ProtectClock=yes
+          ProtectControlGroups=yes
+          ProtectHome=yes
+          ProtectKernelLogs=yes
+          ProtectKernelModules=yes
+          ProtectProc=invisible
+          ProtectSystem=yes
+          RestrictSUIDSGID=yes
+          SystemCallArchitectures=native
+          SystemCallFilter=~@clock @debug @module @mount @reboot @swap @privileged @resources @cpu-emulation @obsolete
+          LockPersonality=yes
+          ProtectHostname=yes
+          ProcSubset=pid
+        position: BOF
+
+    rules:
+      - direction: incoming
+        default: deny
+
+      - direction: outgoing
+        default: allow
+
+      - rule: deny
+        proto: icmp
+
+      - rule: limit
+        port: "{{ ansible_port }}"
+        proto: tcp
+        from_ip: "192.168.56.1"
+        comment: "Ansible provider - Host"
+
+      - rule: limit
+        port: "{{ ansible_port }}"
+        proto: tcp
+        from_ip: "10.0.2.2"
+        comment: "Ansible provider - Vagrant"
+
+      - rule: limit
+        port: "{{ ansible_port }}"
+        proto: tcp
+        from_ip: "{{ hostvars['vagrant-manager-1'].ansible_host }}"
+        comment: "Ansible provider - Manager"
+
+hardening_mounting_prefix: /mnt/migrate_
+hardening_luks_prefix: "crypt_"
+
+## Folders
+hardening_luks_key_folder: /etc/luks
+
+## Files
+hardening_grub_hash_output_path: "{{ playbook_dir }}/../generated/grub_password.txt"
+hardening_grub_hash_vagrant_output_path: "{{ playbook_dir }}/../vagrant/.grub_pw_{{ inventory_hostname }}.txt"
+hardening_auditd_template_path: templates/auditd.j2
+hardening_auditd_rules_path: /etc/audit/rules.d/audit.rules

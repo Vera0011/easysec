@@ -1,0 +1,41 @@
+---
+# BOOT-5122
+- name: GRUB hardening
+  notify:
+    - Update GRUB
+    - Exports GRUB password - General
+    - Exports GRUB password - If executed in Vagrant
+  block:
+    - name: Generate random plaintext password
+      ansible.builtin.set_fact:
+        hardening_grub_text_password: "{{ lookup('community.general.random_string', length=20, special=true) }}"
+
+    - name: Generating password hash
+      register: hardening_grub_hash
+      ansible.builtin.expect:
+        command: /usr/bin/grub-mkpasswd-pbkdf2
+        responses:
+          "(?i)Enter password:": "{{ hardening_grub_text_password }}"
+          "(?i)Reenter password:": "{{ hardening_grub_text_password }}"
+
+    - name: Splits and corrects hash variable
+      ansible.builtin.set_fact:
+        hardening_grub_text_password: "{{ hardening_grub_hash.stdout_lines[-1].split()[-1] }}"
+
+    - name: Applies configurations for GRUB policies
+      loop: "{{ hardening_grub_policies.blocks }}"
+      ansible.builtin.blockinfile:
+        path: "{{ item.path }}"
+        marker: "{{ hardening_header }}"
+        block: "{{ item.config }}"
+        insertafter: "{{ item.position }}"
+        backup: true
+
+    - name: Applies configurations for GRUB policies
+      loop: "{{ hardening_grub_policies.lines }}"
+      ansible.builtin.lineinfile:
+        path: "{{ item.path }}"
+        regexp: "{{ item.regex }}"
+        line: "{{ item.data }}"
+        state: present
+        backup: true

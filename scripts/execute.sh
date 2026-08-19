@@ -1,201 +1,58 @@
 #!/bin/bash
 
+########################################################
+# This file is the main entry for starting the program #
+#                                                      #
+# Author: Vera                              13/08/2026 #
+########################################################
+
 set -euo pipefail
 
-mkdir -p generated
-## - Available modules - ##
-ALL_BLUE_MODULES="lynis,grype,syft,grant,ssl,postgresql"
-ALL_BLUE_WORKFLOWS="anchore,keycloak"
-ALL_RED_MODULES="proxychains"
-ALL_RED_WORKFLOWS=""
+# Moves execution path to scripts location
+MAIN_PATH="$(readlink -f "${BASH_SOURCE[0]:-$0}")"
+SCRIPT_DIR="$(dirname "$MAIN_PATH")"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
-## - General variables (overriden in functions) - ##
-CHOICE=""
-MODULES=""
+cd "$PROJECT_ROOT" || exit 1
 
-## - Colors and fonts - ##
-RESET="\033[0m"
-BOLD="\033[1m"
-DIM="\033[2m"
-CYAN="\033[0;36m"
-BLUE="\033[0;34m"
-GREEN="\033[0;32m"
-YELLOW="\033[0;33m"
-RED="\033[0;31m"
-WHITE="\033[1;37m"
-LINE="──────────────────────────────────────"
+source scripts/helpers/io.sh
+source scripts/helpers/menus.sh
+source scripts/helpers/shared_variables.sh
+source scripts/helpers/helper.sh
 
-log() {
-    # Log function. Displays current time and different colors (based on type, which are: info, success, warn and error)
-    # Usage example: log "Hi" success
+mkdir -p generated $LOG_DIR
 
-    local type="${2:-info}"
-    local timestamp
-    timestamp=$(date '+%H:%M:%S')
-    local color
-
-    case "$type" in
-        info)    color=$BLUE ;;   # blue
-        success) color=$GREEN ;;   # green
-        warn)    color=$YELLOW ;;   # yellow
-        error)   color=$RED ;;   # red
-        *)       color=$WHITE ;;   # white
-    esac
-
-    echo -e "${BOLD}${color}[${timestamp}] [${type^^}]${RESET} $1"
-}
-
-lock_input() {
-    # This function locks the input available for the user (to avoid discrepancies with the interface)
-    stty -echo -icanon
-}
-
-unlock_input() {
-    # This function unlocks the input available for the user (to avoid discrepancies with the interface)
-    read -r -d '' -t 0.1 FLUSH || true
-    stty echo icanon
-}
-
-show_banner() {
-    # Displays welcome banner (EasySec)
-    clear
-    lock_input
-    echo -e "${CYAN}"
-    cat << 'EOF'
-    ███████╗ █████╗ ███████╗██╗   ██╗███████╗███████╗ ██████╗
-    ██╔════╝██╔══██╗██╔════╝╚██╗ ██╔╝██╔════╝██╔════╝██╔════╝
-    █████╗  ███████║███████╗ ╚████╔╝ ███████╗█████╗  ██║
-    ██╔══╝  ██╔══██║╚════██║  ╚██╔╝  ╚════██║██╔══╝  ██║
-    ███████╗██║  ██║███████║   ██║   ███████║███████╗╚██████╗
-    ╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚══════╝ ╚═════╝
-EOF
-    echo -e "${RESET}"
-    echo -e "  ${DIM}by Vera${RESET}\n"
-    echo -e "  ${BOLD}${WHITE}Security automation for SMEs${RESET}"
-    echo -e "${DIM}"
-    cat << 'EOF'
-    ─────────────────────────────────────────────────────────────────
-    Roles, tools and documentation to help small and medium-sized
-    enterprises implement security measures, penetration testing
-    and red teaming exercises — idempotent by design.
-    ─────────────────────────────────────────────────────────────────
-EOF
-    echo -e "${RESET}"
-}
-
-show_list() {
-    # LIst interface - Shows available modules and workflows (at the start of the program)
-    clear
-    lock_input
-    echo -e "\n${DIM}${LINE}${RESET}"
-    echo -e "${BOLD}${WHITE}  List - Available resources${RESET}"
-    echo -e "${DIM}${LINE}${RESET}\n"
-    echo -e "  ${CYAN}Blue team Modules${RESET}   ${DIM}─ ${ALL_BLUE_MODULES//,/, }${RESET}"
-    echo -e "  ${CYAN}Blue team Workflows${RESET} ${DIM}─ ${ALL_BLUE_WORKFLOWS//,/, }${RESET}"
-    echo -e ""
-    echo -e "  ${CYAN}Red team Modules${RESET}    ${DIM}─ ${ALL_RED_MODULES//,/, }${RESET}"
-    #echo -e "  ${CYAN}Red team Workflows${RESET}  ${DIM}─ ${ALL_RED_WORKFLOWS}${RESET}"
-    echo -e "\n${DIM}${LINE}${RESET}"
-}
-
-show_menu() {
-    # Menu interface - Displays the current options of this script
-    clear
-    lock_input
-    echo -e "\n${DIM}${LINE}${RESET}"
-    echo -e "${BOLD}${WHITE}  Menu - Select modules to provision${RESET}"
-    echo -e "${DIM}${LINE}${RESET}\n"
-    echo -e "  ${CYAN}1)${RESET} Blue Team   ${DIM}─ Workflows and modules${RESET}"
-    echo -e "  ${CYAN}2)${RESET} Red Team    ${DIM}─ Workflows and modules${RESET}"
-    echo -e "  ${CYAN}3)${RESET} Specific    ${DIM}─ Enter a module name${RESET}"
-    echo -e "  ${CYAN}4)${RESET} List        ${DIM}─ Show all available modules${RESET}"
-    echo -e "\n${DIM}${LINE}${RESET}"
-    echo -en "\n  Choice [1/2/3/4]: "
-
-    unlock_input
-    read -r CHOICE
-    lock_input
-}
-
-show_module_3() {
-    # Module 3 interface - Displays the current modules and workflows, and allows to select multiple of them and validates the input
-    clear
-    lock_input
-    local valid_modules="${ALL_BLUE_MODULES},${ALL_RED_MODULES}"
-    local valid_workflows="${ALL_BLUE_WORKFLOWS}"
-    local all_valid="${valid_modules},${valid_workflows}"
-    local errors=()
-
-    echo -e "\n${DIM}${LINE}${RESET}"
-    echo -e "${BOLD}${WHITE}  MODULE 3 - Available resources${RESET}"
-    echo -e "${DIM}${LINE}${RESET}\n"
-    echo -e "  ${CYAN}Modules${RESET}   ${DIM}─ ${ALL_BLUE_MODULES//,/, }, ${ALL_RED_MODULES//,/, }${RESET}"
-    echo -e "  ${CYAN}Workflows${RESET} ${DIM}─ ${ALL_BLUE_WORKFLOWS//,/, }${RESET}" #,${ALL_RED_WORKFLOWS}${RESET}"
-    echo -e "\n${DIM}${LINE}${RESET}"
-    echo -en "\nEnter comma-separated name(s): "
-
-    # Inputs
-    unlock_input
-    read -r RAW_MODULES
-    lock_input
-    IFS=',' read -ra REQUESTED <<< "$RAW_MODULES"
-
-    # Validation
-    for mod in "${REQUESTED[@]}"; do
-        mod="$(echo "$mod" | xargs)"  # trim whitespace
-
-        if [[ -z "$mod" ]]; then
-            continue
-        fi
-        if [[ ",${all_valid}," != *",${mod},"* ]]; then
-            errors+=("$mod")
-            continue
-        fi
-
-        # Appends correctly value (validating if non-first to add the ',')
-        if [[ -n "$MODULES" ]]; then
-            MODULES+=",$mod"
-        else
-            MODULES+="$mod"
-        fi
-    done
-
-    if [[ ${#errors[@]} -gt 0 ]]; then
-        log "Unknown module(s): ${errors[*]}" error
-        return 1
-    fi
-
-    return 0
-}
-
-## - Input - ##
-show_banner
+## - Module selection - ##
+display_banner
 sleep 2
 
 while true; do
-    show_menu
+    display_main_menu
 
-    case "$CHOICE" in
+    case "$MAIN_MENU_CHOICE" in
         1)
-            MODULES="${ALL_BLUE_MODULES},${ALL_BLUE_WORKFLOWS}"
+            CLEAN_MODULES=$(get_all_blue_team)
             log "Loaded blue team modules and workflows" success
             break
             ;;
         2)
-            MODULES="${ALL_RED_MODULES}"
+            CLEAN_MODULES=$(get_all_red_team)
             log "Loaded red team modules and workflows" success
             break
             ;;
         3)
-            until show_module_3; do
+            until select_modules_and_workflows; do
                 log "Please try again." warn
                 sleep 2
             done
-            log "Loaded custom modules and workflows" success
-            break
+            
+            if [[ "$CLEAN_MODULES" != "5" ]]; then
+                log "Loaded custom modules and workflows" success
+                break
+            fi
             ;;
         4)
-            show_list
+            display_modules_and_workflows
             sleep 5
             ;;
         5)
@@ -209,7 +66,35 @@ while true; do
     esac
 done
 
+sleep 2
+
+## - Environment selection - ##
+while true; do
+    until select_environment; do
+        log "Please try again." warn
+        sleep 2
+    done
+
+    if [[ "$CLEAN_ENVIRONMENT" == "5" ]]; then
+        log "Exiting EasySec" info
+        exit 1
+    fi
+
+    break
+done
+
 ## - Execution - ##
-export CUSTOM_MODULES=$MODULES
-vagrant up --provision-with shell --parallel && \
+if [[ -z $CLEAN_INV_PATH ]]; then
+    export CUSTOM_MODULES=$CLEAN_MODULES
+    vagrant up --provision-with shell --parallel && \
     vagrant provision --provision-with ansible
+else
+    IFS=',' read -ra MODULE_LIST <<< "$CLEAN_MODULES"
+
+    for module in ${MODULE_LIST}; do
+        ansible-playbook -i $CLEAN_INV_PATH "${PLAYBOOK_TO_MODULES[$module]}"
+        
+        log "Executed playbook for $module" info
+        sleep 2
+    done
+fi

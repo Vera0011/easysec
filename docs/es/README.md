@@ -7,8 +7,8 @@ Este proyecto es completamente open source, creado por Vera y con licencia [MIT]
 
 ## Configuración
 Hay dos scripts disponibles en [`scripts/`](../../scripts/):
-- **execute.sh**: Interfaz de línea de comandos interactiva para seleccionar y ejecutar módulos o flujos de trabajo específicos en Vagrant
-- **test.sh**: Ejecuta todos los módulos y flujos de trabajo en Vagrant; se utiliza para validar la configuración
+- **execute.sh**: Interfaz de línea de comandos interactiva para seleccionar y ejecutar módulos o workflows
+- **populate.sh**: Añade hosts a los inventarios de forma manual o automática (producción y staging)
 
 ### Entorno
 La configuración recomendada utiliza [UV](https://github.com/astral-sh/uv) para la gestión del entorno de Python. Estas son las acciones recomendadas:
@@ -22,10 +22,10 @@ uv pip install -r requirements.txt  # Instala las dependencias necesarias
 ### Ejecución
 El script se puede ejecutar (desde la ruta raíz del proyecto) con:
 ```bash
-./script/execute.sh
+./scripts/execute.sh
 ```
 > [!NOTE]
-> Asegúrate de que Vagrant y VirtualBox estén instalados y en ejecución antes de ejecutar cualquier script
+> Asegúrate de que Vagrant y VirtualBox estén instalados y en ejecución antes de ejecutar cualquier script (si vas a trabajar solamente con Vagrant)
 
 ## Roadmap
 Según cómo vaya el proyecto, estas son las herramientas y entornos que me gustaría implementar:
@@ -35,6 +35,8 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - [X] Syft
 - [X] Grant
 - [X] Keycloak
+- [X] Auditoría
+- [X] Hardening
 - [ ] OpenLDAP
 - [ ] Netmaker
 - [ ] Pomerium
@@ -66,6 +68,9 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - [ ] ScoutSuite
 - [ ] NixOS - Basado en [Sécurix](https://github.com/cloud-gouv/securix)
 - [ ] Entorno Red Teaming - Herramientas necesarias
+- [ ] Fleet
+- [ ] GLPI
+- [ ] OWASP Dependency-Track
 
 ## Recursos
 ### Red team
@@ -80,6 +85,9 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - Grant - Un software para analizar las licencias de las dependencias empleadas. Información sobre la implementación [aquí](./tools/blue/grant.md)
 - SSL - Una conjunto de herramientas que trabajan en conjunto para generar certificados SSL para dominios y usando proveedores DNS. Información sobre la implementación [aquí](./tools/blue/ssl.md)
 - PostgreSQL - Instalación y configuración de la base de datos. Información sobre la implementación [aquí](./tools/blue/postgresql.md)
+- Auditory - Rol que incluye varias herramientas para auditar un cierto sistema. Información sobre la implementación [aquí](./tools/blue/auditory.yml)
+- Hardening - Rol que aplica varias configuraciones relacionadas con el hardening de sistemas. Información sobre la implementación [aquí](./tools/blue/hardening.yml)
 
 #### Workflows
 - Anchore - Workflow que incluye varias herramientas para analizar dependencias y licencias. Información sobre la implementación [aquí](./workflows/blue/anchore.md)
+- Keycloak - Workflow que implementa una instancia de Keycloak. Información sobre la implementación [aquí](./workflows/blue/keycloak.md)
