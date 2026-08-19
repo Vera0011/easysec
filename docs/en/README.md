@@ -85,9 +85,9 @@ Depending on how the project progresses, these are the tools and environments I 
 - Grant - Software to analyze currently used Licenses. Information of implementation [here](./tools/blue/grant.md)
 - SSL - A set of tools that work together to generate SSL certificates for domains and using DNS providers. Information of the implementation [here](./tools/blue/ssl.md)
 - PostgreSQL - Database installation and configuration. Information of the implementation [here](./tools/blue/postgresql.md)
+- Auditory  Role that includes multiple tools to audit a specific system. Information of implementation [here](./tools/blue/auditory.md)
+- Hardening - Role that applies multiple configurations related to system hardening. Information of implementation [here](./tools/blue/hardening.md)
 
 #### Workflows
 - Anchore - Workflow including multiple tools to analyze dependencies and licenses. Information of implementation [here](./workflows/blue/anchore.md)
 - Keycloak - Workflow that implements a Keycloak instance. Information of implementation [here](./workflows/blue/keycloak.md)
-- Auditory  Role that includes multiple tools to audit a specific system. Information of implementation [here](./workflows/blue/auditory.md)
-- Hardening - ROle that applies multiple configurations related to system hardening. Information of implementation [here](./workflows/blue/hardening.md)

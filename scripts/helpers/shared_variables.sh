@@ -21,13 +21,13 @@ declare -A MODULES=(
     ["ssl"]="Blue team"
     ["postgresql"]="Blue team"
     ["proxychains"]="Red team"
+    ["audit"]="Blue team"
+    ["hardening"]="Blue team"
 )
 
 declare -A WORKFLOWS=(
     ["anchore"]="Blue team"
     ["keycloak"]="Blue team"
-    ["audit"]="Blue team"
-    ["hardening"]="Blue team"
 )
 
 declare -A PLAYBOOK_TO_MODULES=(
@@ -39,9 +39,9 @@ declare -A PLAYBOOK_TO_MODULES=(
     ["grant"]="playbooks/grant.yml"
     ["ssl"]="playbooks/ssl.yml"
     ["postgresql"]="playbooks/postgresql.yml"
-    ["audit"]="workflows/audit.yml"
+    ["audit"]="playbooks/audit.yml"
     ["proxychains"]="playbooks/proxychains.yml"
-    ["hardening"]="workflows/hardening.yml"
+    ["hardening"]="playbooks/hardening.yml"
 )
 
 ## - Available environments - ##

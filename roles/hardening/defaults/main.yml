@@ -4,7 +4,7 @@ hardening_user: root
 hardening_group: root
 
 hardening_grub: false
-hardening_coredumps: false
+hardening_coredumps: true
 hardening_passwords: true
 hardening_ports: true
 hardening_protocols: true
