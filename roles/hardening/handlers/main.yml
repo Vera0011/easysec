@@ -31,3 +31,7 @@
   ansible.builtin.systemd:
     name: ufw
     state: restarted
+
+- name: Applies auto-upgrade
+  changed_when: false
+  ansible.builtin.command: unattended-upgrade --dry-run --debug

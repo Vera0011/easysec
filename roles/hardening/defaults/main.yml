@@ -182,6 +182,36 @@ hardening_partition_policies:
     needs_sync: false
     encrypted: true
 
+hardening_patch_management_policies:
+  lines:
+    - path: /etc/apt/apt.conf.d/20auto-upgrades
+      regex: ^APT::Periodic::Update-Package-Lists
+      data: APT::Periodic::Update-Package-Lists "1";
+
+    - path: /etc/apt/apt.conf.d/20auto-upgrades
+      regex: ^APT::Periodic::Unattended-Upgrade
+      data: APT::Periodic::Unattended-Upgrade "1";
+
+  blocks:
+    - path: /etc/apt/apt.conf.d/50unattended-upgrades
+      config: |
+        Unattended-Upgrade::Allowed-Origins {
+          "${distro_id}:${distro_codename}-security";
+          "${distro_id}ESMApps:${distro_codename}-apps-security";
+          "${distro_id}ESM:${distro_codename}-infra-security";
+        };
+
+        Unattended-Upgrade::Package-Blacklist {
+        };
+
+        Unattended-Upgrade::DevRelease "auto";
+        Unattended-Upgrade::AutoFixInterruptedDpkg "true";
+        Unattended-Upgrade::MinimalSteps "true";
+        Unattended-Upgrade::Remove-Unused-Dependencies "false";
+        Unattended-Upgrade::Automatic-Reboot "false";
+        Unattended-Upgrade::MailReport "on-change";
+      position: BOF
+
 hardening_service_policies:
   ufw:
     enabled: true
