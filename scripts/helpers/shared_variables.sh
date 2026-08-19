@@ -20,8 +20,8 @@ declare -A MODULES=(
     ["grant"]="Blue team"
     ["ssl"]="Blue team"
     ["postgresql"]="Blue team"
-    ["audit"]="Blue team"
     ["proxychains"]="Red team"
+    ["audit"]="Blue team"
     ["hardening"]="Blue team"
 )
 

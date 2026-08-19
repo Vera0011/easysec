@@ -4,15 +4,15 @@ hardening_user: root
 hardening_group: root
 
 hardening_grub: false
-hardening_coredumps: false
-hardening_passwords: false
-hardening_ports: false
-hardening_protocols: false
-hardening_banners: false
-hardening_antivirus: false
-hardening_patch_management: false
+hardening_coredumps: true
+hardening_passwords: true
+hardening_ports: true
+hardening_protocols: true
+hardening_banners: true
+hardening_antivirus: true
+hardening_patch_management: true
 hardening_partitions: false
-hardening_auditory: false
+hardening_auditory: true
 hardening_services: true
 
 # Config envs - Should not be changed unless knowing what they do

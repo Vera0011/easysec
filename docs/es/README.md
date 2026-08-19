@@ -85,9 +85,9 @@ Según cómo vaya el proyecto, estas son las herramientas y entornos que me gust
 - Grant - Un software para analizar las licencias de las dependencias empleadas. Información sobre la implementación [aquí](./tools/blue/grant.md)
 - SSL - Una conjunto de herramientas que trabajan en conjunto para generar certificados SSL para dominios y usando proveedores DNS. Información sobre la implementación [aquí](./tools/blue/ssl.md)
 - PostgreSQL - Instalación y configuración de la base de datos. Información sobre la implementación [aquí](./tools/blue/postgresql.md)
+- Auditory - Rol que incluye varias herramientas para auditar un cierto sistema. Información sobre la implementación [aquí](./tools/blue/auditory.yml)
+- Hardening - Rol que aplica varias configuraciones relacionadas con el hardening de sistemas. Información sobre la implementación [aquí](./tools/blue/hardening.yml)
 
 #### Workflows
 - Anchore - Workflow que incluye varias herramientas para analizar dependencias y licencias. Información sobre la implementación [aquí](./workflows/blue/anchore.md)
 - Keycloak - Workflow que implementa una instancia de Keycloak. Información sobre la implementación [aquí](./workflows/blue/keycloak.md)
-- Auditory - Workflow que incluye varias herramientas para auditar un cierto sistema. Información sobre la implementación [aquí](./workflows/blue/audit.yml)
-- Hardening - Workflow que aplica varias configuraciones relacionadas con el hardening de sistemas. Información sobre la implementación [aquí](./workflows/blue/hardening.yml)
