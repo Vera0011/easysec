@@ -3,7 +3,7 @@
 - name: Sets a custom banner
   block:
     - name: Sets banners
-      loop: "{{ hardening_banners_config }}"
+      loop: "{{ hardening_banners_config.templates }}"
       ansible.builtin.template:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"

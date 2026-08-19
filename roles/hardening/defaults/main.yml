@@ -147,11 +147,12 @@ hardening_protocol_policies:
       position: EOF
 
 hardening_banners_config:
-  - src: templates/banner.j2
-    dest: /etc/issue
+  templates:
+    - src: templates/banner.j2
+      dest: /etc/issue
 
-  - src: templates/banner.j2
-    dest: /etc/issue.net
+    - src: templates/banner.j2
+      dest: /etc/issue.net
 
 hardening_partition_policies:
   - name: home
@@ -215,6 +216,10 @@ hardening_patch_management_policies:
 hardening_service_policies:
   ufw:
     enabled: true
+    templates:
+      - src: templates/apparmor/ufw.j2
+        dest: /etc/apparmor.d/usr.sbin.ufw
+
     lines:
       - path: /etc/sysctl.conf
         regex: net\.ipv4\.icmp_echo_ignore_all

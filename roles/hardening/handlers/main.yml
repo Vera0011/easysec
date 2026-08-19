@@ -35,3 +35,9 @@
 - name: Applies auto-upgrade
   changed_when: false
   ansible.builtin.command: unattended-upgrade --dry-run --debug
+
+- name: Enable and start AppArmor
+  ansible.builtin.systemd:
+    name: apparmor
+    enabled: true
+    state: started
