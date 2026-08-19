@@ -1,0 +1,36 @@
+---
+# PKGS-7370, PKGS-7394
+- name: Downloads and configures required software
+  notify: Applies auto-upgrade
+  block:
+    - name: Downloads packages
+      ansible.builtin.apt:
+        name:
+          - debsums
+          - apt-show-versions
+          - unattended-upgrades
+          - apt-listchanges
+        update_cache: true
+        state: present
+
+    - name: Applies configurations for security update policies
+      loop: "{{ hardening_patch_management_policies.blocks }}"
+      ansible.builtin.blockinfile:
+        create: true
+        mode: "0644"
+        owner: "{{ hardening_user }}"
+        group: "{{ hardening_group }}"
+        path: "{{ item.path }}"
+        marker: "{{ hardening_header }}"
+        block: "{{ item.config }}"
+        insertafter: "{{ item.position }}"
+        backup: true
+
+    - name: Applies configurations for security update policies
+      loop: "{{ hardening_patch_management_policies.lines }}"
+      ansible.builtin.lineinfile:
+        path: "{{ item.path }}"
+        regexp: "{{ item.regex }}"
+        line: "{{ item.data }}"
+        state: present
+        backup: true

@@ -1,0 +1,42 @@
+---
+# ACCT-9622, ACCT-9626, ACCT-9628, FINT-4350
+- name: Enabling system resources tracking and auditory
+  block:
+    - name: Download resources
+      ansible.builtin.apt:
+        name:
+          - aide
+          - auditd
+          - sysstat
+        update_cache: true
+
+    - name: Configure AIDE
+      block:
+        - name: Starts AIDE database
+          changed_when: false
+          ansible.builtin.command: aideinit
+
+    - name: Configure Sysstat
+      block:
+        - name: Enable sysstat
+          ansible.builtin.systemd:
+            name: sysstat
+            state: started
+            enabled: true
+
+    - name: Configure Auditd
+      block:
+        - name: Applies custom rules
+          ansible.builtin.template:
+            src: "{{ hardening_auditd_template_path }}"
+            dest: "{{ hardening_auditd_rules_path }}"
+            mode: "0640"
+            owner: "{{ hardening_user }}"
+            group: "{{ hardening_group }}"
+            backup: true
+
+        - name: Enables Auditd
+          ansible.builtin.systemd:
+            name: auditd
+            state: started
+            enabled: true

@@ -1,0 +1,46 @@
+---
+- name: Hardens UFW service
+  block:
+    - name: Installs UFW and AppArmor
+      ansible.builtin.apt:
+        name:
+          - ufw
+          - apparmor-profiles
+        update_cache: true
+
+    - name: Enables UFW logging
+      community.general.ufw:
+        logging: medium
+
+    - name: Sets default rules
+      loop: "{{ hardening_service_policies.ufw.rules }}"
+      community.general.ufw:
+        direction: "{{ item.direction | default(omit) }}"
+        rule: "{{ item.rule | default(omit) }}"
+        default: "{{ item.default | default(omit) }}"
+        port: "{{ item.port | default(omit) }}"
+        from_ip: "{{ item.from_ip | default(omit) }}"
+        to_ip: "{{ item.to_ip | default(omit) }}"
+        to_port: "{{ item.to_port | default(omit) }}"
+        from_port: "{{ item.from_port | default(omit) }}"
+        proto: "{{ item.proto | default(omit) }}"
+
+    - name: Hardens system unit
+      notify:
+        - Daemon refresh
+        - Reload UFW
+      loop: "{{ hardening_service_policies.ufw.blocks }}"
+      ansible.builtin.blockinfile:
+        create: true
+        mode: "0644"
+        owner: "{{ hardening_user }}"
+        group: "{{ hardening_group }}"
+        path: "{{ item.path }}"
+        marker: "{{ hardening_header }}"
+        block: "{{ item.config }}"
+        insertafter: "{{ item.position }}"
+        backup: true
+
+    - name: Activate firewall
+      community.general.ufw:
+        state: enabled

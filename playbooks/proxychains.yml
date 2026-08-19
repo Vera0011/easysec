@@ -1,5 +1,5 @@
 ---
-- name: Installs Proxychains on test host (Vagrant)
+- name: Installs Proxychains on host
   hosts: vagrant-kali-1
   become: true
   roles:

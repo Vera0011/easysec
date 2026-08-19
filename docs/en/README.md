@@ -7,8 +7,8 @@ This project is completely open source, created by Vera and licensed under the [
 
 ## Setup
 Two scripts are available under [`scripts/`](../../scripts/):
-- **execute.sh**: Interactive CLI to select and run specific modules or workflows in Vagrant
-- **test.sh**: Ruls all modules and workflows in Vagrant - used to valide setup
+- **execute.sh**: Interactive CLI to select and run specific modules or workflows
+- **populate.sh**: Fills the inventory hosts section automatically or manuall (production or staging)
 
 ### Environment
 The recommended setup uses [UV](https://github.com/astral-sh/uv) for Python environment management. These are the recommended actions:
@@ -20,12 +20,12 @@ uv pip install -r requirements.txt  # Installs required dependencies
 ```
 
 ### Running
-The script can be executed (from the root project path) with:
+The main script can be executed (from the root project path) with:
 ```bash
-./script/execute.sh
+./scripts/execute.sh
 ```
 > [!NOTE]
-> Ensure Vagrant and VirtualBox are installed and running before executing any script
+> Ensure Vagrant and VirtualBox are installed and running before executing any script (if you will be using Vagrant)
 
 ## Roadmap
 Depending on how the project progresses, these are the tools and environments I would like to implement:
@@ -35,6 +35,8 @@ Depending on how the project progresses, these are the tools and environments I 
 - [X] Syft
 - [X] Grant
 - [X] Keycloak
+- [X] Auditory
+- [X] Hardening
 - [ ] OpenLDAP
 - [ ] Netmaker
 - [ ] Pomerium
@@ -66,6 +68,9 @@ Depending on how the project progresses, these are the tools and environments I 
 - [ ] ScoutSuite
 - [ ] NixOS - Based on [Sécurix](https://github.com/cloud-gouv/securix)
 - [ ] Red Teaming Environment - Required Tools
+- [ ] Fleet
+- [ ] GLPI
+- [ ] OWASP Dependency-Track
 
 ## Resources
 ### Red Team
@@ -84,3 +89,5 @@ Depending on how the project progresses, these are the tools and environments I 
 #### Workflows
 - Anchore - Workflow including multiple tools to analyze dependencies and licenses. Information of implementation [here](./workflows/blue/anchore.md).
 - Keycloak - Workflow that implements a Keycloak instance. Information of implementation [here](./workflows/blue/keycloak.md).
+- Auditory  Workflow that incñudes multiple tools to audit a specific system. Information of implementation [here](./workflows/blue/audit.md)
+- Hardening - Workflow that applies multiple configurations related to system hardening. Information of implementation [here](./workflows/blue/hardening.md)

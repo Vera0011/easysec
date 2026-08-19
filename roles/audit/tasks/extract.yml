@@ -1,0 +1,34 @@
+---
+- name: We extract logs from remote to local
+  become: true
+  loop:
+    - { path: "{{ audit_remote_lynis_output_path }}", name: "lynis.dat" }
+    - { path: "{{ audit_remote_syft_output_path }}", name: "syft.json" }
+    - { path: "{{ audit_remote_grype_output_path }}", name: "grype.log" }
+    - { path: "{{ audit_remote_grant_output_path }}", name: "grant.log" }
+  ansible.builtin.fetch:
+    src: "{{ item.path }}"
+    dest: "{{ audit_target_report_folder }}/{{ item.name }}"
+    flat: true
+
+- name: Removal of files
+  block:
+    - name: We remove generated folders and files
+      become: true
+      loop:
+        - "{{ audit_remote_main_folder }}"
+        - ~/.cache/syft
+        - ~/.cache/grype
+        - ~/.cache/grant
+        - /root/.cache/syft
+        - /root/.cache/grype
+        - /root/.cache/grant
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+
+    - name: We remove the .tar generated file
+      delegate_to: localhost
+      ansible.builtin.file:
+        path: "{{ audit_tarball_path }}"
+        state: absent

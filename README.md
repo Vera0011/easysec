@@ -1,4 +1,4 @@
-# EasySec - Open source
+# EasySec - Open source security
 > [!NOTE]
 > ¿Quieres ver esta documentación en español? Ve [aquí](./docs/es/README.md)
 

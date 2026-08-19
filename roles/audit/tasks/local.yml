@@ -1,0 +1,18 @@
+---
+- name: Creates local tarball
+  delegate_to: localhost
+  community.general.archive:
+    path: "{{ audit_main_folder }}"
+    dest: "{{ audit_tarball_path }}"
+    format: gz
+    exclude_path:
+      - "*.log"
+      - "*.json"
+    mode: "0770"
+
+- name: Creates reports in local
+  delegate_to: localhost
+  ansible.builtin.file:
+    path: "{{ audit_target_report_folder }}"
+    state: directory
+    mode: "0770"
