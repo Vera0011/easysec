@@ -87,7 +87,7 @@ Depending on how the project progresses, these are the tools and environments I 
 - PostgreSQL - Database installation and configuration. Information of the implementation [here](./tools/blue/postgresql.md)
 
 #### Workflows
-- Anchore - Workflow including multiple tools to analyze dependencies and licenses. Information of implementation [here](./workflows/blue/anchore.md).
-- Keycloak - Workflow that implements a Keycloak instance. Information of implementation [here](./workflows/blue/keycloak.md).
-- Auditory  Workflow that incñudes multiple tools to audit a specific system. Information of implementation [here](./workflows/blue/audit.md)
-- Hardening - Workflow that applies multiple configurations related to system hardening. Information of implementation [here](./workflows/blue/hardening.md)
+- Anchore - Workflow including multiple tools to analyze dependencies and licenses. Information of implementation [here](./workflows/blue/anchore.md)
+- Keycloak - Workflow that implements a Keycloak instance. Information of implementation [here](./workflows/blue/keycloak.md)
+- Auditory  Role that includes multiple tools to audit a specific system. Information of implementation [here](./workflows/blue/auditory.md)
+- Hardening - ROle that applies multiple configurations related to system hardening. Information of implementation [here](./workflows/blue/hardening.md)
