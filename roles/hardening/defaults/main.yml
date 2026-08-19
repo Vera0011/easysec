@@ -4,15 +4,15 @@ hardening_user: root
 hardening_group: root
 
 hardening_grub: false
-hardening_coredumps: true
-hardening_passwords: true
-hardening_ports: true
-hardening_protocols: true
-hardening_banners: true
-hardening_antivirus: true
-hardening_patch_management: true
+hardening_coredumps: false
+hardening_passwords: false
+hardening_ports: false
+hardening_protocols: false
+hardening_banners: false
+hardening_antivirus: false
+hardening_patch_management: false
 hardening_partitions: false
-hardening_auditory: true
+hardening_auditory: false
 hardening_services: true
 
 # Config envs - Should not be changed unless knowing what they do
@@ -182,26 +182,38 @@ hardening_partition_policies:
     needs_sync: false
     encrypted: true
 
-hardening_services_policies:
+hardening_service_policies:
   ufw:
     enabled: true
+    lines:
+      - path: /etc/sysctl.conf
+        regex: net\.ipv4\.icmp_echo_ignore_all
+        data: net.ipv4.icmp_echo_ignore_all=1
+
     blocks:
       - path: /etc/systemd/system/ufw.service.d/override.conf
         config: |
           [Service]
-          PrivateTmp=true
-          ProtectSystem=strict
+          PrivateTmp=yes
+          CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
           UMask=027
-          ProtectHome=true
-          NoNewPrivileges=true
-          PrivateDevices=true
-          ProtectKernelTunables=true
-          ProtectKernelModules=true
-          ProtectControlGroups=true
-          RestrictRealtime=true
-          RestrictSUIDSGID=true
-          LockPersonality=true
-          MemoryDenyWriteExecute=true
+          RestrictNamespaces=~CLONE_NEWUSER
+          RestrictAddressFamilies=AF_UNIX AF_NETLINK
+          PrivateDevices=yes
+          NoNewPrivileges=yes
+          ProtectClock=yes
+          ProtectControlGroups=yes
+          ProtectHome=yes
+          ProtectKernelLogs=yes
+          ProtectKernelModules=yes
+          ProtectProc=invisible
+          ProtectSystem=yes
+          RestrictSUIDSGID=yes
+          SystemCallArchitectures=native
+          SystemCallFilter=~@clock @debug @module @mount @reboot @swap @privileged @resources @cpu-emulation @obsolete
+          LockPersonality=yes
+          ProtectHostname=yes
+          ProcSubset=pid
         position: BOF
 
     rules:
@@ -211,19 +223,22 @@ hardening_services_policies:
       - direction: outgoing
         default: allow
 
-      - rule: allow
+      - rule: deny
+        proto: icmp
+
+      - rule: limit
         port: "{{ ansible_port }}"
         proto: tcp
         from_ip: "192.168.56.1"
         comment: "Ansible provider - Host"
 
-      - rule: allow
+      - rule: limit
         port: "{{ ansible_port }}"
         proto: tcp
         from_ip: "10.0.2.2"
         comment: "Ansible provider - Vagrant"
 
-      - rule: allow
+      - rule: limit
         port: "{{ ansible_port }}"
         proto: tcp
         from_ip: "{{ hostvars['vagrant-manager-1'].ansible_host }}"

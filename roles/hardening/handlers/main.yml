@@ -26,3 +26,8 @@
 - name: Reload Udev rules
   changed_when: false
   ansible.builtin.command: udevadm control --reload-rules
+
+- name: Reload UFW
+  ansible.builtin.systemd:
+    name: ufw
+    state: restarted
