@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
+from rich.console import Console
 
 from cli.core.exceptions import RepositoryError
 
@@ -10,7 +11,7 @@ class Context:
     """
     Runtime context for a command
 
-    Parameters
+    Attributes
     ----------
     root: Path
         Main application path
@@ -22,6 +23,8 @@ class Context:
         Path were are located inventories
     reports_dir: Path
         Path were are located reports
+    console: Console
+        A Console instance (for logging)
     """
 
     root: Path
@@ -29,6 +32,7 @@ class Context:
     roles_dir: Path
     inventory_dir: Path
     reports_dir: Path
+    console: Console
 
     @classmethod
     def discover(cls) -> Context:
@@ -69,6 +73,7 @@ class Context:
 
         return cls(
             root=root,
+            console=Console(),
             playbooks_dir=root / "playbooks",
             roles_dir=root / "roles",
             inventory_dir=root / "inventory",

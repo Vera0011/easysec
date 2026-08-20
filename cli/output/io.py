@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+import typer
 from pathlib import Path
 from datetime import datetime, timezone
 from rich.console import Console
@@ -8,7 +8,7 @@ from rich.table import Table
 from cli.core.models.audit.AuditResult import AuditResult
 
 
-def _render_success(console: Console, result: AuditResult) -> None:
+def _render_success(context: typer.Context, result: AuditResult) -> None:
     table = Table(title=f"Audit Summary - {datetime.now(timezone.utc)}")
 
     table.add_column("Status")
@@ -19,13 +19,12 @@ def _render_success(console: Console, result: AuditResult) -> None:
     table.add_row("[yellow]Skipped[/yellow]", str(result.summary.skipped))
     table.add_row("[red]Errors[/red]", str(result.summary.errors))
 
-    console.print(table)
-
-    console.print("\n[green]Audit completed successfully.[/green]")
+    context.console.print(table)
+    context.console.print("\n[green]Audit completed successfully.[/green]")
 
 
 def _write_result(
-    console: Console,
+    context: typer.Context,
     result: AuditResult,
     output: Path,
     output_format: str,
@@ -40,4 +39,4 @@ def _write_result(
         encoding="utf-8",
     )
 
-    console.print(f"\n[dim]Result written to {output}[/dim]")
+    context.console.print(f"\n[dim]Result written to {output}[/dim]")

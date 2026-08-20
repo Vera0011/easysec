@@ -1,10 +1,11 @@
+import typer
 from cli import __version__
-from cli.main import console, app
 
-@app.command()
-def version(console: Console) -> None:
+
+def version(ctx: typer.Context) -> None:
     """
     Display EasySec version
     """
 
+    console = ctx.obj.console
     console.print(f"EasySec {__version__}")
