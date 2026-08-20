@@ -8,3 +8,5 @@ vagrant/*
 generated/*
 *.tar.gz
 reports/
+__pycache__
+uv.lock
