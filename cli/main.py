@@ -1,13 +1,10 @@
 from __future__ import annotations
 import typer
 
-from pathlib import Path
-from typing import Annotated
-
 from cli.bin.audit import audit
-from cli.bin.version import version
+from cli.bin.version import show_version
+from cli.bin.help import show_help
 from cli.core.context import Context
-from cli.core.exceptions import EasySecError
 
 app = typer.Typer(
     name="easysec",
@@ -29,5 +26,6 @@ def main(ctx: typer.Context) -> None:
     context: Context = Context.discover()
     ctx.obj = context
 
-app.command(name="version")(version)
+app.command(name="help")(show_help)
+app.command(name="version")(show_version)
 app.command(name="audit")(audit)

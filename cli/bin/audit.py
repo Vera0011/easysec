@@ -16,21 +16,30 @@ from cli.core.exceptions import EasySecError
 def audit(
     ctx: typer.Context,
     inventory: Annotated[
-        Path | None,
+        Path,
         typer.Option(
             "--inventory",
             "-i",
             help="Ansible inventory path.",
             path_type=Path,
         ),
-    ] = None,
+    ],
     check: Annotated[
         bool,
         typer.Option(
             "--check",
-            help="Run Ansible in check mode.",
+            "-c",
+            help="Run Ansible in check mode. This means that the playbook will be executed but will not perform changes.",
         ),
-    ] = False,
+    ] = True,
+    diff: Annotated[
+        bool,
+        typer.Option(
+            "--diff",
+            "-d",
+            help="Run Ansible in diff mode. This means that it will display changes on the system without executing it.",
+        ),
+    ] = True,
     output: Annotated[
         Path | None,
         typer.Option(
@@ -44,21 +53,22 @@ def audit(
         str,
         typer.Option(
             "--format",
+            "-f",
             help="Output format: console or json.",
         ),
     ] = "console",
 ) -> None:
     """Run a security audit."""
 
-    context: Context = ctx.obj
+    ctx: Context = ctx.obj
 
     if output_format not in {"console", "json"}:
         ctx.obj.console.print("[red]Error:[/red] format must be 'console' or 'json'.")
         raise typer.Exit(code=2)
 
     try:
-        exit_code = run_audit(
-            context,
+        exit_code: int = run_audit(
+            ctx,
             inventory=inventory,
             check=check,
             output=output,
@@ -72,14 +82,14 @@ def audit(
 
 
 def run_audit(
-    context: Context, *, inventory: Path, output: Path, check: bool = False
+    ctx: Context, *, inventory: Path, output: Path, check: bool = False
 ) -> int:
     """
     Executes an auditory
 
     Parameters
     ----------
-    context: Context
+    ctx: Context
         Context of the application
     inventory: Path
         The selected inventory
@@ -97,44 +107,42 @@ def run_audit(
     inventory_value: str = str(inventory)
     result: AuditResult = AuditResult.create(inventory_value)
 
-    context.console.print()
-    context.console.print(
+    ctx.console.print()
+    ctx.console.print(
         Panel.fit(
             "[bold cyan]Security Audit[/bold cyan]\n"
-            f"Repository: {context.root}\n"
+            f"Repository: {ctx.root}\n"
             f"Inventory:  {inventory_value}\n",
             border_style="cyan",
         )
     )
 
-    if not context.audit_playbook.is_file():
-        context.console.print(
-            f"[red]Audit playbook not found:[/red] {context.audit_playbook}"
-        )
+    if not ctx.audit_playbook.is_file():
+        ctx.console.print(f"[red]Audit playbook not found:[/red] {ctx.audit_playbook}")
         return 2
 
-    runner: AnsibleRunner = AnsibleRunner(context.root)
+    runner: AnsibleRunner = AnsibleRunner(ctx.root)
 
-    context.console.print("[bold]Running audit...[/bold]\n")
+    ctx.console.print("[bold]Running audit...[/bold]\n")
 
     ansible_result: AnsibleResult = runner.run(
-        context.audit_playbook,
+        ctx.audit_playbook,
         inventory=inventory_value,
         check=check,
     )
 
-    context.console.print(ansible_result.stdout)
+    ctx.console.print(ansible_result.stdout)
 
     if ansible_result.stderr:
-        context.console.print(f"[yellow]{ansible_result.stderr}[/yellow]")
+        ctx.console.print(f"[yellow]{ansible_result.stderr}[/yellow]")
 
     result.success = ansible_result.success
 
     if ansible_result.success:
         result.finished_at = result.started_at
-        _render_success(context, result)
+        _render_success(ctx, result)
     else:
-        context.console.print(
+        ctx.console.print(
             Panel(
                 f"Ansible exited with code {ansible_result.returncode}",
                 title="Audit failed",
@@ -145,6 +153,6 @@ def run_audit(
         result.finished_at = result.started_at
 
     if output:
-        _write_result(context, result, output, "console")
+        _write_result(ctx, result, output, "console")
 
     return 0 if ansible_result.success else ansible_result.returncode
