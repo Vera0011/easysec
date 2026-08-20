@@ -87,11 +87,14 @@ dependencies = [
 ]
 
 [project.scripts]
-easysec = "easysec.bin.main:app"
+easysec = "cli.main:app"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["cli"]
 
 [dependency-groups]
 dev = [

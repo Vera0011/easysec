@@ -6,17 +6,15 @@ from typing import Annotated
 import typer
 from rich.console import Console
 
-from easysec import __version__
-from easysec.bin.audit import run_audit
-from easysec.core.context import EasySecContext
-from easysec.core.exceptions import EasySecError, RepositoryError
+from cli.bin.audit import run_audit
+from cli.core.context import Context
+from cli.core.exceptions import EasySecError
 
 app = typer.Typer(
     name="easysec",
-    help="EasySec — open source security automation",
+    help="EasySec — Open source security automation",
     no_args_is_help=True,
 )
-
 console = Console()
 
 
@@ -40,23 +38,8 @@ def main(
     if ctx.invoked_subcommand is None:
         return
 
-    try:
-        context = (
-            EasySecContext.from_root(root) if root else (EasySecContext.discover())
-        )
-
-        ctx.obj = context
-
-    except RepositoryError as exc:
-        console.print(f"[red]Error:[/red] {exc}")
-        raise typer.Exit(code=2) from exc
-
-
-@app.command()
-def version() -> None:
-    """Show EasySec version."""
-
-    console.print(f"EasySec {__version__}")
+    context: Context = Context.discover()
+    ctx.obj = context
 
 
 @app.command()
@@ -105,7 +88,7 @@ def audit(
 ) -> None:
     """Run a security audit."""
 
-    context: EasySecContext = ctx.obj
+    context: Context = ctx.obj
 
     if output_format not in {"console", "json"}:
         console.print("[red]Error:[/red] format must be 'console' or 'json'.")
@@ -115,10 +98,8 @@ def audit(
         exit_code = run_audit(
             context,
             inventory=inventory,
-            limit=limit,
             check=check,
             output=output,
-            output_format=output_format,
         )
 
     except EasySecError as exc:

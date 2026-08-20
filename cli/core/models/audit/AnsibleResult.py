@@ -5,6 +5,15 @@ from dataclasses import dataclass
 class AnsibleResult:
     """
     Class that returns an Ansible result
+
+    Parameters
+    ----------
+    returncode: int
+        Status code returned (integer) - 1 or 2
+    stdout: str
+        Standard output (code 1)
+    stderr: str
+        Standard error (code 2)
     """
 
     returncode: int

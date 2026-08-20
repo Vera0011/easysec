@@ -1,8 +1,9 @@
 from enum import StrEnum
 
+
 class Severity(StrEnum):
     """
-    Defines the severity available in auditory
+    Defines the severity available in an auditory
     """
 
     CRITICAL = "critical"
