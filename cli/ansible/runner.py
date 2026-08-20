@@ -15,7 +15,14 @@ class AnsibleRunner:
         self.repository_root = repository_root
 
     def run(
-        self, playbook: Path, *, inventory: Path, check: bool = False
+        self,
+        playbook: Path,
+        *,
+        inventory: Path,
+        ssh_key: str,
+        ssh_user: str,
+        check: bool,
+        diff: bool,
     ) -> AnsibleResult:
         """
         Executes a playbook given the specified parameters
@@ -26,8 +33,14 @@ class AnsibleRunner:
             Path of the selected playbook
         inventory: str
             Path of the selected inventory
+        ssh_key: str
+            If an access key must be used
+        ssh_user: str
+            If an access user must be used
         check: bool
-            If the parameter 'check' should be enabled or not. Default to 'False'
+            If the parameter 'check' should be enabled or not
+        diff: bool
+            If the parameter 'diff' should be enabled or not
 
         Returns
         -------
@@ -38,12 +51,21 @@ class AnsibleRunner:
         command = [
             "ansible-playbook",
             "-i",
-            str(inventory or "inventory"),
+            str(inventory),
             str(playbook),
         ]
 
         if check:
             command.append("--check")
+
+        if diff:
+            command.append("--diff")
+
+        if len(ssh_key) != 0:
+            command.extend(["--private-key", str(ssh_key)])
+
+        if len(ssh_user) != 0:
+            command.extend(["--user", str(ssh_user)])
 
         completed = subprocess.run(
             command,

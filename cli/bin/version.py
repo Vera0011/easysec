@@ -4,7 +4,7 @@ from cli import __version__
 
 def show_version(ctx: typer.Context) -> None:
     """
-    Display EasySec version
+    Display build version
     """
 
     console = ctx.obj.console

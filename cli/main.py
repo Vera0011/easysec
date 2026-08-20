@@ -3,7 +3,6 @@ import typer
 
 from cli.bin.audit import audit
 from cli.bin.version import show_version
-from cli.bin.help import show_help
 from cli.core.context import Context
 
 app = typer.Typer(
@@ -26,6 +25,6 @@ def main(ctx: typer.Context) -> None:
     context: Context = Context.discover()
     ctx.obj = context
 
-app.command(name="help")(show_help)
+
 app.command(name="version")(show_version)
 app.command(name="audit")(audit)

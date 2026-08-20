@@ -2,13 +2,13 @@ from __future__ import annotations
 import typer
 from pathlib import Path
 from datetime import datetime, timezone
-from rich.console import Console
 from rich.table import Table
 
+from cli.core.context import Context
 from cli.core.models.audit.AuditResult import AuditResult
 
 
-def _render_success(context: typer.Context, result: AuditResult) -> None:
+def _render_success(context: Context, result: AuditResult) -> None:
     table = Table(title=f"Audit Summary - {datetime.now(timezone.utc)}")
 
     table.add_column("Status")
@@ -24,19 +24,19 @@ def _render_success(context: typer.Context, result: AuditResult) -> None:
 
 
 def _write_result(
-    context: typer.Context,
+    context: Context,
     result: AuditResult,
-    output: Path,
     output_format: str,
 ) -> None:
-    output.parent.mkdir(parents=True, exist_ok=True)
-
     if output_format != "json":
         raise ValueError(f"Unsupported output format: {output_format}")
 
-    output.write_text(
+    context.reports_dir.mkdir(parents=True, exist_ok=True)
+    file_to_write = (context.reports_dir / f"{result.id}.json").resolve()
+
+    file_to_write.write_text(
         result.model_dump_json(indent=2),
         encoding="utf-8",
     )
 
-    context.console.print(f"\n[dim]Result written to {output}[/dim]")
+    context.console.print(f"\n[dim]Result written to {file_to_write}[/dim]")

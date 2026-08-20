@@ -4,6 +4,7 @@ import typer
 from pathlib import Path
 from typing import Annotated
 from rich.panel import Panel
+from rich.table import Table
 
 from cli.ansible.runner import AnsibleRunner
 from cli.core.context import Context
@@ -20,69 +21,85 @@ def audit(
         typer.Option(
             "--inventory",
             "-i",
-            help="Ansible inventory path.",
+            help="Ansible inventory path - This must point to the hosts.yml file",
             path_type=Path,
         ),
     ],
+    ssh_key: Annotated[
+        str,
+        typer.Option(
+            "--key",
+            "-k",
+            help="Uses a custom SSH key",
+        ),
+    ] = "",
+    ssh_user: Annotated[
+        str,
+        typer.Option(
+            "--user",
+            "-u",
+            help="Uses a custom SSH user",
+        ),
+    ] = "",
     check: Annotated[
         bool,
         typer.Option(
             "--check",
             "-c",
-            help="Run Ansible in check mode. This means that the playbook will be executed but will not perform changes.",
+            help="Run Ansible in check mode. This means that the playbook will be executed but will not perform changes",
         ),
-    ] = True,
+    ] = False,
     diff: Annotated[
         bool,
         typer.Option(
             "--diff",
             "-d",
-            help="Run Ansible in diff mode. This means that it will display changes on the system without executing it.",
+            help="Run Ansible in diff mode. This means that it will display changes on the system without executing it",
         ),
-    ] = True,
-    output: Annotated[
-        Path | None,
+    ] = False,
+    json: Annotated[
+        bool,
         typer.Option(
-            "--output",
-            "-o",
-            help="Write audit results to a file.",
-            path_type=Path,
+            "--json",
+            "-j",
+            help="Display output in JSON format",
         ),
-    ] = None,
-    output_format: Annotated[
-        str,
-        typer.Option(
-            "--format",
-            "-f",
-            help="Output format: console or json.",
-        ),
-    ] = "console",
+    ] = False,
 ) -> None:
-    """Run a security audit."""
+    """
+    Runs a security audit
+    """
 
     ctx: Context = ctx.obj
-
-    if output_format not in {"console", "json"}:
-        ctx.obj.console.print("[red]Error:[/red] format must be 'console' or 'json'.")
-        raise typer.Exit(code=2)
+    console = ctx.console
 
     try:
         exit_code: int = run_audit(
             ctx,
             inventory=inventory,
+            ssh_key=ssh_key,
+            ssh_user=ssh_user,
             check=check,
-            output=output,
+            json=json,
+            diff=diff,
         )
 
     except EasySecError as exc:
-        ctx.obj.console.print(f"[red]Error:[/red] {exc}")
+        console.print(f"[red]Error:[/red] {exc}")
         raise typer.Exit(code=2) from exc
 
     raise typer.Exit(code=exit_code)
 
 
 def run_audit(
-    ctx: Context, *, inventory: Path, output: Path, check: bool = False
+    ctx: Context,
+    *,
+    inventory: Path,
+    ssh_key: str,
+    ssh_user: str,
+    check: bool,
+    json: bool,
+    diff: bool,
 ) -> int:
     """
     Executes an auditory
@@ -93,33 +110,50 @@ def run_audit(
         Context of the application
     inventory: Path
         The selected inventory
-    output: Path
-        Where the output should be displayed
+    ssh_key: str
+        If an access key must be used
+    ssh_user: str
+        If an access user must be used
     check: bool
-        The parameter 'check' for the Ansible runner. Default to 'False'
+        The parameter 'check' for the Ansible runner
+    json: bool
+        If output must be written in JSON (automatically sends it to a new file)
+    diff: bool
+        The parameter 'diff' for the Ansible runner
+
 
     Returns
     -------
     int
-        The result as int (0, 1, 2) depending Ansible result
+        The result as int depending Ansible result
     """
+
+    if not ctx.audit_playbook.is_file():
+        ctx.console.print(f"[red]Audit playbook not found:[/red] {ctx.audit_playbook}")
+        return 2
 
     inventory_value: str = str(inventory)
     result: AuditResult = AuditResult.create(inventory_value)
 
     ctx.console.print()
+    table = Table.grid(padding=(0, 2))
+    table.add_column(style="bold", no_wrap=True)
+    table.add_column(style="spring_green1")
+
+    table.add_row("Repository", str(ctx.root))
+    table.add_row("Inventory", str(inventory_value))
+    table.add_row("Check enabled", str(check))
+    table.add_row("Diff enabled", str(diff))
+    table.add_row("JSON output", str(json))
+
     ctx.console.print(
-        Panel.fit(
-            "[bold cyan]Security Audit[/bold cyan]\n"
-            f"Repository: {ctx.root}\n"
-            f"Inventory:  {inventory_value}\n",
+        Panel(
+            table,
+            title="[bold cyan]Starting security audit[/bold cyan]",
+            width=100,
             border_style="cyan",
         )
     )
-
-    if not ctx.audit_playbook.is_file():
-        ctx.console.print(f"[red]Audit playbook not found:[/red] {ctx.audit_playbook}")
-        return 2
 
     runner: AnsibleRunner = AnsibleRunner(ctx.root)
 
@@ -128,7 +162,10 @@ def run_audit(
     ansible_result: AnsibleResult = runner.run(
         ctx.audit_playbook,
         inventory=inventory_value,
+        ssh_key=ssh_key,
+        ssh_user=ssh_user,
         check=check,
+        diff=diff,
     )
 
     ctx.console.print(ansible_result.stdout)
@@ -152,7 +189,7 @@ def run_audit(
 
         result.finished_at = result.started_at
 
-    if output:
-        _write_result(ctx, result, output, "console")
+    if json:
+        _write_result(ctx, result, "json")
 
     return 0 if ansible_result.success else ansible_result.returncode
